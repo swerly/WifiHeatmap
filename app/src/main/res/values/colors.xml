@@ -15,4 +15,5 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#BDBDBD</color>
     <color name="primary_alpha60">#96009688</color>
+    <color name="white_alpha80">#CCFFFFFF</color>
 </resources>
