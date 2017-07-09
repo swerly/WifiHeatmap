@@ -12,6 +12,7 @@ import android.view.MenuItem;
  * Created by Seth on 7/3/2017.
  *
  * Base Activity that all other activities will inherit from
+ * (right now only one activity exists, but for future reference...)
  */
 
 public class BaseActivity extends AppCompatActivity {
@@ -39,28 +40,6 @@ public class BaseActivity extends AppCompatActivity {
                 item.setIcon(drawable);
             }
         }
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_undo:
-                break;
-            case R.id.action_redo:
-                break;
-            case R.id.action_filter:
-                break;
-            case R.id.action_search:
-                break;
-            case R.id.action_help:
-                break;
-            case R.id.action_location:
-                break;
-            default:
-                break;
-        }
-
         return true;
     }
 }

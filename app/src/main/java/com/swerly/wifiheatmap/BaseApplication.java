@@ -7,4 +7,5 @@ import android.app.Application;
  */
 
 public class BaseApplication extends Application {
+    public final static String DEBUG_MESSAGE = "HeatmapDebug";
 }
