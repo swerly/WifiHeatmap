@@ -15,7 +15,7 @@ import android.view.MenuItem;
  * (right now only one activity exists, but for future reference...)
  */
 
-public class BaseActivity extends AppCompatActivity {
+public class ActivityBase extends AppCompatActivity {
     private BaseApplication app;
 
     @Override

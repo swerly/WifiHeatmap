@@ -24,6 +24,6 @@ public class FragmentHeatmap extends FragmentBase {
     @Override
     public void onResume(){
         super.onResume();
-        mainActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 }

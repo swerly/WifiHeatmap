@@ -5,12 +5,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.SupportMapFragment;
+
 /**
  * Created by Seth on 7/6/2017.
+ *
+ * Allows the user to use google maps to find the location of the building they want to
+ * create a wifi heatmap in
  */
 
-public class FragmentMap extends FragmentBase {
-
+public class FragmentMap extends FragmentBase{
     public static FragmentHome newInstance(){
         return new FragmentHome();
     }
@@ -18,8 +22,7 @@ public class FragmentMap extends FragmentBase {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mainActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -31,6 +34,6 @@ public class FragmentMap extends FragmentBase {
     @Override
     public void onResume(){
         super.onResume();
-        mainActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 }

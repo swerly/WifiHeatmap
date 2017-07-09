@@ -9,10 +9,10 @@ import android.view.View;
  */
 
 public class FabHelper{
-    private MainActivity context;
+    private ActivityMain context;
     private FloatingActionButton fab;
 
-    public FabHelper(MainActivity context, FloatingActionButton fab){
+    public FabHelper(ActivityMain context, FloatingActionButton fab){
         this.context = context;
         this.fab = fab;
     }

@@ -29,6 +29,6 @@ public class FragmentHome extends FragmentBase {
     @Override
     public void onResume(){
         super.onResume();
-        mainActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
 }

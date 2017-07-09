@@ -3,7 +3,7 @@ package com.swerly.wifiheatmap;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 
-public class MainActivity extends BaseActivity{
+public class ActivityMain extends ActivityBase {
     private String firstTransactionName;
 
     @Override

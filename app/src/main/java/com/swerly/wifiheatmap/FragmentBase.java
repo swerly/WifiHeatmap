@@ -21,7 +21,7 @@ public abstract class FragmentBase extends Fragment {
 
 
     protected FloatingActionButton mainFab;
-    protected MainActivity mainActivity;
+    protected ActivityMain activityMain;
     protected ActionBarHelper actionBarHelper;
 
     private FabHelper fabHelper;
@@ -29,12 +29,12 @@ public abstract class FragmentBase extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mainActivity = (MainActivity) getActivity();
-        mainFab = mainActivity.findViewById(R.id.fab);
-        fabHelper = new FabHelper(mainActivity, mainFab);
+        activityMain = (ActivityMain) getActivity();
+        mainFab = activityMain.findViewById(R.id.fab);
+        fabHelper = new FabHelper(activityMain, mainFab);
         actionBarHelper = new ActionBarHelper();
 
-        android.support.v7.app.ActionBar ab = ((MainActivity) getActivity()).getSupportActionBar();
+        android.support.v7.app.ActionBar ab = ((ActivityMain) getActivity()).getSupportActionBar();
 
     }
 
