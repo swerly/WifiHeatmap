@@ -15,6 +15,9 @@ import com.google.android.gms.maps.SupportMapFragment;
  */
 
 public class FragmentMap extends FragmentBase{
+    private MapController mapController;
+    private SupportMapFragment mapFragment;
+
     public static FragmentHome newInstance(){
         return new FragmentHome();
     }
@@ -22,12 +25,22 @@ public class FragmentMap extends FragmentBase{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mapController = new MapController();
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
+        mapFragment = SupportMapFragment.newInstance();
+        getChildFragmentManager()
+                .beginTransaction()
+                .add(R.id.map_main_layout, mapFragment)
+                .commit();
+        mapFragment.getMapAsync(mapController);
+
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
 
