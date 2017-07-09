@@ -1,6 +1,5 @@
 package com.swerly.wifiheatmap;
 
-import android.graphics.drawable.Drawable;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.View;
