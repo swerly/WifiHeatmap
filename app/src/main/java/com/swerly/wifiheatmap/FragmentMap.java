@@ -1,9 +1,14 @@
 package com.swerly.wifiheatmap;
 
 import android.os.Bundle;
+import android.support.transition.TransitionManager;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
 
@@ -48,5 +53,29 @@ public class FragmentMap extends FragmentBase{
     public void onResume(){
         super.onResume();
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                TransitionManager.beginDelayedTransition((ViewGroup) getActivity().findViewById(R.id.toolbar));
+                MenuItemCompat.expandActionView(item);
+                Toast.makeText(activityMain, "Search Pressed", Toast.LENGTH_SHORT)
+                        .show();
+                break;
+            case R.id.action_location:
+                Toast.makeText(activityMain, "Location Pressed", Toast.LENGTH_SHORT)
+                        .show();
+                break;
+            case R.id.action_help:
+                Toast.makeText(activityMain, "Help Pressed", Toast.LENGTH_SHORT)
+                        .show();
+                break;
+            default:
+                break;
+        }
+
+        return true;
     }
 }
