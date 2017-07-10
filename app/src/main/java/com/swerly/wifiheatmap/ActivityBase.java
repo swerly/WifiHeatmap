@@ -42,4 +42,6 @@ public class ActivityBase extends AppCompatActivity {
         }
         return true;
     }
+
+
 }

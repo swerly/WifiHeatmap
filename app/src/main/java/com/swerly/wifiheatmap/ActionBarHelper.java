@@ -1,9 +1,16 @@
 package com.swerly.wifiheatmap;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.content.Context;
+import android.content.res.Resources;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewAnimationUtils;
 
 /**
  * Created by Seth on 7/9/2017.
@@ -16,9 +23,12 @@ public class ActionBarHelper {
     public static final int SEARCH = R.id.action_search;
     public static final int FILTER = R.id.action_filter;
     public static final int HELP = R.id.action_help;
+    
+    private Context context;
 
     public void setupForFragment(Fragment frag, Menu menu){
-
+        context = frag.getActivity();
+        
         if (frag instanceof FragmentHome){
             hideIcon(menu, UNDO);
             hideIcon(menu, REDO);
@@ -51,4 +61,5 @@ public class ActionBarHelper {
         MenuItem itemToHide = menu.findItem(toHide);
         itemToHide.setVisible(false);
     }
+
 }
