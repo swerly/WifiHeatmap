@@ -36,8 +36,8 @@ public abstract class FragmentBase extends Fragment {
         return null;
     }
 
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-        getActivity().invalidateOptionsMenu();
-        actionBarHelper.setupForFragment(this, menu);
+        actionBarHelper.setupForFragment(this, menu, inflater);
     }
 }

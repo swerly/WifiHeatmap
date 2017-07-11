@@ -1,8 +1,11 @@
 package com.swerly.wifiheatmap;
 
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 /**
@@ -17,38 +20,44 @@ public class ActionBarHelper {
     public static final int FILTER = R.id.action_filter;
     public static final int HELP = R.id.action_help;
 
-    public void setupForFragment(Fragment frag, Menu menu){
+    private Fragment fragment;
+    private Menu menu;
 
-        if (frag instanceof FragmentHome){
-            hideIcon(menu, UNDO);
-            hideIcon(menu, REDO);
-            hideIcon(menu, LOCATION);
-            hideIcon(menu, SEARCH);
-        } else if (frag instanceof FragmentMap){
-            hideIcon(menu, UNDO);
-            hideIcon(menu, REDO);
-            hideIcon(menu, FILTER);
-        } else if (frag instanceof FragmentBoundry){
-            hideIcon(menu, LOCATION);
-            hideIcon(menu, SEARCH);
-            hideIcon(menu, FILTER);
-        } else if (frag instanceof FragmentHeatmap){
-            hideIcon(menu, LOCATION);
-            hideIcon(menu, SEARCH);
-            hideIcon(menu, FILTER);
-        } else if (frag instanceof FragmentName){
-            hideIcon(menu, UNDO);
-            hideIcon(menu, REDO);
-            hideIcon(menu, LOCATION);
-            hideIcon(menu, SEARCH);
-            hideIcon(menu, FILTER);
+    public void setupForFragment(Fragment fragment, Menu menu, MenuInflater inflater){
+        this.menu = menu;
+        this.fragment = fragment;
+
+        int idToInflate;
+
+        if (fragment instanceof FragmentHome){
+            idToInflate = R.menu.toolbar_home;
+        } else if (fragment instanceof FragmentMap){
+            idToInflate = R.menu.toolbar_map;
+        } else if (fragment instanceof FragmentBoundry || fragment instanceof FragmentHeatmap){
+            idToInflate = R.menu.toolbar_boundry_heatmap;
+        } else if (fragment instanceof FragmentName){
+            idToInflate = R.menu.toolbar_name;
         } else {
+            idToInflate = 0;
             Log.d(BaseApplication.DEBUG_MESSAGE, "action bar helper fragment type unknown");
         }
+
+        inflater.inflate(idToInflate, menu);
+
+        setColorWhite(menu);
     }
 
-    private void hideIcon(Menu menu, int toHide){
-        MenuItem itemToHide = menu.findItem(toHide);
-        itemToHide.setVisible(false);
+    private void setColorWhite(Menu menu){
+        int menLen = menu.size();
+        for(int i = 0; i < menLen; i++){
+            MenuItem item = menu.getItem(i);
+            Drawable drawable = item.getIcon();
+            if (drawable != null) {
+                final Drawable wrapped = DrawableCompat.wrap(drawable);
+                drawable.mutate();
+                DrawableCompat.setTint(wrapped, fragment.getResources().getColor(R.color.white));
+                item.setIcon(drawable);
+            }
+        }
     }
 }
