@@ -19,29 +19,19 @@ public abstract class FragmentBase extends Fragment {
 
     public static final String SEQUENCE_ENDING_FRAGMENT = NAME_FRAGMENT;
 
-
-    protected FloatingActionButton mainFab;
     protected ActivityMain activityMain;
     protected ActionBarHelper actionBarHelper;
-
-    private FabHelper fabHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityMain = (ActivityMain) getActivity();
-        mainFab = activityMain.findViewById(R.id.fab);
-        fabHelper = new FabHelper(activityMain, mainFab);
         actionBarHelper = new ActionBarHelper();
-
-        android.support.v7.app.ActionBar ab = ((ActivityMain) getActivity()).getSupportActionBar();
-
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        fabHelper.setupFab(this);
         setHasOptionsMenu(true);
         return null;
     }

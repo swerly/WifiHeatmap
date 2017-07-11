@@ -23,23 +23,4 @@ public class ActivityBase extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         app = (BaseApplication) getApplication();
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.actionbar_menu, menu);
-
-        int menLen = menu.size();
-        for(int i = 0; i < menLen; i++){
-            MenuItem item = menu.getItem(i);
-            Drawable drawable = item.getIcon();
-            if (drawable != null) {
-                final Drawable wrapped = DrawableCompat.wrap(drawable);
-                drawable.mutate();
-                DrawableCompat.setTint(wrapped, getResources().getColor(R.color.white));
-                item.setIcon(drawable);
-            }
-        }
-        return true;
-    }
 }
