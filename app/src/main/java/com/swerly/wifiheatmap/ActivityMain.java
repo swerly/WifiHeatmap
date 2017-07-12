@@ -52,7 +52,7 @@ public class ActivityMain extends ActivityBase {
         return true;
     }
 
-    private void backNavigation(){
+    public void backNavigation(){
         boolean popped = getSupportFragmentManager().popBackStackImmediate();
         if (popped){
             FragmentBase curFrag = (FragmentBase) fragmentManager.findFragmentById(R.id.fragment_container);

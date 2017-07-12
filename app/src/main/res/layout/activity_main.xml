@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     tools:context="com.swerly.wifiheatmap.ActivityMain">
 
-    <include layout="@layout/toolbar_main"/>
-
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"></FrameLayout>
+
+    <include layout="@layout/toolbar_main"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

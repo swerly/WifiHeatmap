@@ -59,8 +59,6 @@ public class FragmentMap extends FragmentBase{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                TransitionManager.beginDelayedTransition((ViewGroup) getActivity().findViewById(R.id.toolbar));
-                MenuItemCompat.expandActionView(item);
                 Toast.makeText(activityMain, "Search Pressed", Toast.LENGTH_SHORT)
                         .show();
                 break;
@@ -76,6 +74,6 @@ public class FragmentMap extends FragmentBase{
                 break;
         }
 
-        return true;
+        return false;
     }
 }
