@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -13,7 +14,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
  */
 
 public class MapController implements OnMapReadyCallback {
-    GoogleMap mMap;
+    private static final int MAX_ZOOM = 17;
+    private GoogleMap mMap;
 
     /**
      * Manipulates the map once available.
@@ -28,9 +30,31 @@ public class MapController implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        initializeMap();
+    }
+
+    private void initializeMap(){
+        LatLng usa = new LatLng(37, -100);
+        moveCameraTo(usa);
+    }
+
+    public void setUserLocation(LatLng latlng){
+        moveCameraTo(latlng);
+        setZoomLevel(MAX_ZOOM);
+    }
+
+    private void setZoomLevel(float zoom){
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(zoom));
+    }
+
+    private void moveCameraTo(LatLng latlng){
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
+    }
+
+    public static GoogleMapOptions getMapOptions(){
+        GoogleMapOptions options = new GoogleMapOptions();
+        options.mapType(GoogleMap.MAP_TYPE_SATELLITE)
+                .tiltGesturesEnabled(false);
+        return options;
     }
 }

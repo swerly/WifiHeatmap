@@ -6,4 +6,13 @@
     <string name="location">Location</string>
     <string name="search">Search</string>
     <string name="filter">Filter</string>
+    <string name="location_rationale">You must grant this app access to your location before we can
+        easily find you on the map!\n\n Hit "OK" to grant this app permission.</string>
+    <string name="location_granted">Location permissions granted.</string>
+    <string name="location_denied">Location permissions denied.</string>
+    <string name="location_finding">Finding your location now...</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="no_location">Unable to obtain location. Make sure Location is enabled in Settings.</string>
+    <string name="location_appx">Approximate location found.</string>
 </resources>

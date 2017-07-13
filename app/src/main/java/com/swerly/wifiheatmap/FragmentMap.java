@@ -1,9 +1,10 @@
 package com.swerly.wifiheatmap;
 
+import android.Manifest;
+import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
-import android.support.transition.TransitionManager;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.SearchView;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,6 +12,12 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.List;
+
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
 
 /**
  * Created by Seth on 7/6/2017.
@@ -19,9 +26,14 @@ import com.google.android.gms.maps.SupportMapFragment;
  * create a wifi heatmap in
  */
 
-public class FragmentMap extends FragmentBase{
+public class FragmentMap extends FragmentBase
+        implements EasyPermissions.PermissionCallbacks, LocationHelperCallback{
+
     private MapController mapController;
+    private LocationHelper locationHelper;
     private SupportMapFragment mapFragment;
+
+    private String[] perms = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
 
     public static FragmentHome newInstance(){
         return new FragmentHome();
@@ -32,19 +44,21 @@ public class FragmentMap extends FragmentBase{
         super.onCreate(savedInstanceState);
 
         mapController = new MapController();
-        activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        locationHelper = new LocationHelper();
+
+        mapFragment = SupportMapFragment.newInstance(MapController.getMapOptions());
+        getChildFragmentManager()
+                .beginTransaction()
+                .add(R.id.map_main_layout, mapFragment)
+                .commit();
+        mapFragment.getMapAsync(mapController);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        mapFragment = SupportMapFragment.newInstance();
-        getChildFragmentManager()
-                .beginTransaction()
-                .add(R.id.map_main_layout, mapFragment)
-                .commit();
-        mapFragment.getMapAsync(mapController);
+        activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
@@ -63,8 +77,13 @@ public class FragmentMap extends FragmentBase{
                         .show();
                 break;
             case R.id.action_location:
-                Toast.makeText(activityMain, "Location Pressed", Toast.LENGTH_SHORT)
-                        .show();
+                if(EasyPermissions.hasPermissions(this.getActivity(), perms)){
+                    //has permissions, start trying to find location
+                    startLocationRequest();
+                } else {
+                    // Do not have permissions, request them now
+                    EasyPermissions.requestPermissions(this, getString(R.string.location_rationale), 0, perms);
+                }
                 break;
             case R.id.action_help:
                 Toast.makeText(activityMain, "Help Pressed", Toast.LENGTH_SHORT)
@@ -74,6 +93,56 @@ public class FragmentMap extends FragmentBase{
                 break;
         }
 
+        //return false so main activity can consume the up arrow event
         return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        //let user know location permission was granted
+        Toast.makeText(activityMain, getString(R.string.location_granted), Toast.LENGTH_SHORT)
+                .show();
+        //start the location request
+        //has permissions, start trying to find location
+        startLocationRequest();
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            //if permission is permanently denied, let user know and prompt to open settings
+            new AppSettingsDialog.Builder(this).build().show();
+        }
+        else {
+            //else just display a toast letting them know it was denied
+            Toast.makeText(activityMain, getString(R.string.location_denied), Toast.LENGTH_SHORT)
+                    .show();
+        }
+    }
+
+    @Override
+    public void gotLocation(Location location) {
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        Toast.makeText(getActivity(), getString(R.string.location_appx), Toast.LENGTH_LONG)
+                .show();
+        mapController.setUserLocation(latLng);
+    }
+
+    private void startLocationRequest(){
+        if(!locationHelper.getLocation(getActivity(), this)){
+            Toast.makeText(getActivity(), getString(R.string.no_location), Toast.LENGTH_LONG)
+                    .show();
+        } else {
+            Toast.makeText(getActivity(), getString(R.string.location_finding), Toast.LENGTH_LONG)
+                    .show();
+        }
     }
 }

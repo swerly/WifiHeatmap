@@ -42,13 +42,13 @@ public class FabHelper{
             iconResId = reverse ? R.drawable.arrow_to_plus_avd : R.drawable.check_to_plus_avd;
         } else if (frag instanceof FragmentMap){
             toSet = new FragmentBoundry();
-            iconResId = reverse ? R.drawable.ic_navigate_double_next_black_24px : R.drawable.plus_to_arrow_avd;
+            iconResId = reverse ? R.drawable.arrow_back : R.drawable.plus_to_arrow_avd;
         } else if (frag instanceof FragmentBoundry){
             toSet = new FragmentHeatmap();
-            iconResId = R.drawable.ic_navigate_double_next_black_24px;
+            iconResId = reverse ? R.drawable.arrow_back : R.drawable.arrow_forward;
         } else if (frag instanceof FragmentHeatmap){
             toSet = new FragmentName();
-            iconResId = reverse ? R.drawable.check_to_arrow_avd : R.drawable.ic_navigate_double_next_black_24px;
+            iconResId = reverse ? R.drawable.check_to_arrow_avd : R.drawable.arrow_forward;
         } else if (frag instanceof FragmentName){
             toSet = new FragmentHome();
             iconResId = R.drawable.arrow_to_check_avd;
