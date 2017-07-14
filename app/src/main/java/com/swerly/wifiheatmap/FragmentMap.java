@@ -1,10 +1,8 @@
 package com.swerly.wifiheatmap;
 
 import android.Manifest;
-import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,7 +42,7 @@ public class FragmentMap extends FragmentBase
         super.onCreate(savedInstanceState);
 
         mapController = new MapController();
-        locationHelper = new LocationHelper();
+        locationHelper = new LocationHelper(getActivity());
 
         mapFragment = SupportMapFragment.newInstance(MapController.getMapOptions());
         getChildFragmentManager()
@@ -67,6 +65,12 @@ public class FragmentMap extends FragmentBase
     public void onResume(){
         super.onResume();
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        locationHelper.stopLocationUpdates();
     }
 
     @Override
@@ -131,13 +135,16 @@ public class FragmentMap extends FragmentBase
     @Override
     public void gotLocation(Location location) {
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        Toast.makeText(getActivity(), getString(R.string.location_appx), Toast.LENGTH_LONG)
-                .show();
         mapController.setUserLocation(latLng);
     }
 
+    @Override
+    public void returnFromSettings() {
+        locationHelper.returnFromSettings();
+    }
+
     private void startLocationRequest(){
-        if(!locationHelper.getLocation(getActivity(), this)){
+        if(!locationHelper.requestLocation(this)){
             Toast.makeText(getActivity(), getString(R.string.no_location), Toast.LENGTH_LONG)
                     .show();
         } else {

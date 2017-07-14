@@ -1,106 +1,260 @@
 package com.swerly.wifiheatmap;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.IntentSender;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 /**
- * Taken and modified from
- * https://stackoverflow.com/questions/3145089/what-is-the-simplest-and-most-robust-way-to-get-the-users-current-location-on-a
+ * Created by Seth on 7/13/2017.
  */
-public class LocationHelper {
-    Timer timer1;
-    LocationManager lm;
-    LocationHelperCallback locationResult;
-    boolean gps_enabled=false;
-    boolean network_enabled=false;
 
-    @SuppressLint("MissingPermission")
-    public boolean getLocation(Context context, LocationHelperCallback result)
-    {
-        //I use LocationResult callback class to pass location value from LocationHelper to user code.
-        locationResult=result;
-        if(lm==null)
-            lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+public class LocationHelper implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener,
+        ResultCallback<LocationSettingsResult> {
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    public static final int LOCATION_ENABLER_ID = 9100;
+    private static final int MAX_SAMPLES = 5;
+    private static final int EXPIRATION_DURATION = 10000;
 
-        //exceptions will be thrown if provider is not permitted.
-        try{gps_enabled=lm.isProviderEnabled(LocationManager.GPS_PROVIDER);}catch(Exception ex){}
-        try{network_enabled=lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);}catch(Exception ex){}
+    public static final int STATUS_OK = 0;
+    public static final int STATUS_INACCURATE = 1;
+    public static final int STATUS_API_ERROR = 2;
+    public static final int STATUS_TIMEOUT = 3;
 
-        //don't start listeners if no provider is enabled
-        if(!gps_enabled && !network_enabled)
+    private LocationRequest locationRequest;
+    private GoogleApiClient googleApiClient;
+    private Activity context;
+    private LocationHelperCallback callback;
+    private Location bestAccuracy;
+    private Handler expirationTimer;
+    private boolean started;
+
+    private int sampleCount = 0;
+
+    public LocationHelper(Activity context){
+        this.context = context;
+        reset();
+    }
+
+    public boolean requestLocation(LocationHelperCallback callback){
+        this.callback = callback;
+
+        if (!checkPlayServices()){
+            Toast.makeText(context, context.getString(R.string.play_services_unavailable), Toast.LENGTH_SHORT)
+                    .show();
             return false;
+        }
 
-        if(gps_enabled)
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListenerGps);
-        if(network_enabled)
-            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNetwork);
-        timer1=new Timer();
-        timer1.schedule(new GetLastLocation(), 15000);
+        //setup the google api client
+        googleApiClient = new GoogleApiClient.Builder(context)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+        googleApiClient.connect();
+
+        //setup the location request
+        locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setNumUpdates(MAX_SAMPLES)
+                .setInterval(200);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest)
+                .setAlwaysShow(true);
+
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
+        result.setResultCallback(this);
+        return true;
+    }
+    private boolean gpsEnabled(){
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps, network;
+        gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        network = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        return gps && network;
+    }
+
+    private boolean checkPlayServices() {
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        int result = googleAPI.isGooglePlayServicesAvailable(context);
+        if(result != ConnectionResult.SUCCESS) {
+            if(googleAPI.isUserResolvableError(result)) {
+                googleAPI.getErrorDialog(context, result,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            }
+
+            return false;
+        }
+
         return true;
     }
 
-    LocationListener locationListenerGps = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            timer1.cancel();
-            locationResult.gotLocation(location);
-            lm.removeUpdates(this);
-            lm.removeUpdates(locationListenerNetwork);
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.d(BaseApplication.DEBUG_MESSAGE, "google services connected");
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        sampleCount++;
+        if (bestAccuracy == null || location.getAccuracy() < bestAccuracy.getAccuracy()){
+            bestAccuracy = location;
         }
-        public void onProviderDisabled(String provider) {}
-        public void onProviderEnabled(String provider) {}
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
-    };
 
-    LocationListener locationListenerNetwork = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            timer1.cancel();
-            locationResult.gotLocation(location);
-            lm.removeUpdates(this);
-            lm.removeUpdates(locationListenerGps);
+        if (bestAccuracy.getAccuracy() < 10){
+            sendBest(STATUS_OK);
         }
-        public void onProviderDisabled(String provider) {}
-        public void onProviderEnabled(String provider) {}
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
-    };
 
-    class GetLastLocation extends TimerTask {
-        @SuppressLint("MissingPermission")
-        @Override
-        public void run() {
-            lm.removeUpdates(locationListenerGps);
-            lm.removeUpdates(locationListenerNetwork);
+        if (sampleCount >= MAX_SAMPLES){
+            sendBest(STATUS_INACCURATE);
+        }
+    }
 
-            Location net_loc=null, gps_loc=null;
-            if(gps_enabled)
-                gps_loc=lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if(network_enabled)
-                net_loc=lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i(BaseApplication.DEBUG_MESSAGE, "GoogleApiClient connection has been suspended");
+        displayStatus(STATUS_API_ERROR);
+    }
 
-            //if there are both values use the latest one
-            if(gps_loc!=null && net_loc!=null){
-                if(gps_loc.getTime()>net_loc.getTime())
-                    locationResult.gotLocation(gps_loc);
-                else
-                    locationResult.gotLocation(net_loc);
-                return;
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.i(BaseApplication.DEBUG_MESSAGE, "GoogleApiClient connection failed");
+        displayStatus(STATUS_API_ERROR);
+    }
+
+    /**
+     * Callback when done checking to see if location settings are enabled
+     * @param locationSettingsResult
+     */
+    @Override
+    public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
+        final Status status = locationSettingsResult.getStatus();
+        final LocationSettingsStates state = locationSettingsResult.getLocationSettingsStates();
+        switch (status.getStatusCode()) {
+            case LocationSettingsStatusCodes.SUCCESS:
+                // All location settings are satisfied. The client can initialize location
+                startRequestingUpdates();
+                break;
+            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                // Location settings are not satisfied. But could be fixed by showing the user
+                // a dialog.
+                try {
+                    // Show the dialog by calling startResolutionForResult(),
+                    // and check the result in onActivityResult().
+                    status.startResolutionForResult(
+                            context, LOCATION_ENABLER_ID);
+                } catch (IntentSender.SendIntentException e) {
+                    // Ignore the error.
+                }
+                break;
+            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                Toast.makeText(context, context.getString(R.string.change_location_settings), Toast.LENGTH_SHORT)
+                        .show();
+                reset();
+                break;
+        }
+    }
+
+    private void sendBest(int status){
+        callback.gotLocation(bestAccuracy);
+        displayStatus(status);
+    }
+
+    public void returnFromSettings(){
+        if (gpsEnabled()){
+            startRequestingUpdates();
+        } else {
+            Toast.makeText(context, context.getString(R.string.location_not_enabled), Toast.LENGTH_SHORT)
+                    .show();
+            reset();
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void startRequestingUpdates(){
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+        startExpirationTimer();
+        started = true;
+    }
+
+    private void startExpirationTimer(){
+        expirationTimer = new Handler();
+        expirationTimer.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                timerExpired();
             }
+        }, EXPIRATION_DURATION);
+    }
 
-            if(gps_loc!=null){
-                locationResult.gotLocation(gps_loc);
-                return;
-            }
-            if(net_loc!=null){
-                locationResult.gotLocation(net_loc);
-                return;
-            }
-            locationResult.gotLocation(null);
+    private void timerExpired(){
+        if (bestAccuracy == null){
+            displayStatus(STATUS_TIMEOUT);
+        } else {
+            sendBest(STATUS_INACCURATE);
+        }
+    }
+
+    public void stopLocationUpdates(){
+        if (started) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+            expirationTimer.removeCallbacksAndMessages(null);
+            reset();
+        }
+    }
+
+    private void reset(){
+        bestAccuracy = null;
+        sampleCount = 0;
+        started = false;
+    }
+
+    private void displayStatus(int status){
+        stopLocationUpdates();
+        switch(status){
+            case STATUS_OK:
+                Toast.makeText(context, context.getString(R.string.location_status_ok), Toast.LENGTH_LONG)
+                        .show();
+                break;
+            case STATUS_API_ERROR:
+                Toast.makeText(context, context.getString(R.string.location_status_api_error), Toast.LENGTH_LONG)
+                        .show();
+                break;
+            case STATUS_INACCURATE:
+                Toast.makeText(context, context.getString(R.string.location_status_inaccurate), Toast.LENGTH_LONG)
+                        .show();
+                break;
+            case STATUS_TIMEOUT:
+                Toast.makeText(context, context.getString(R.string.location_status_timeout), Toast.LENGTH_LONG)
+                        .show();
+                break;
         }
     }
 }

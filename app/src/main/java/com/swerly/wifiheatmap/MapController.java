@@ -1,20 +1,17 @@
 package com.swerly.wifiheatmap;
 
-import android.util.Log;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Created by Seth on 7/9/2017.
  */
 
 public class MapController implements OnMapReadyCallback {
-    private static final int MAX_ZOOM = 17;
+    private static final int MAX_ZOOM = 19;
     private GoogleMap mMap;
 
     /**

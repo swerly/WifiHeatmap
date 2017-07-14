@@ -14,5 +14,11 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="no_location">Unable to obtain location. Make sure Location is enabled in Settings.</string>
-    <string name="location_appx">Approximate location found.</string>
+    <string name="play_services_unavailable">Required Google Play Location services unavailable.</string>
+    <string name="location_not_enabled">Location is not enabled. Cancelling request...</string>
+    <string name="change_location_settings">Unable to start request for location. Please open settings and enable location services.</string>
+    <string name="location_status_ok">Location found.</string>
+    <string name="location_status_api_error">There was an error connecting to Google Play Services.</string>
+    <string name="location_status_inaccurate">Location found, but may not be very accurate.</string>
+    <string name="location_status_timeout">Location service time-out after 10 seconds. Could not get a location lock!</string>
 </resources>
