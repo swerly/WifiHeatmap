@@ -21,4 +21,6 @@
     <string name="location_status_api_error">There was an error connecting to Google Play Services.</string>
     <string name="location_status_inaccurate">Location found, but may not be very accurate.</string>
     <string name="location_status_timeout">Location service time-out after 10 seconds. Could not get a location lock!</string>
+    <string name="address_hint">Type address</string>
+    <string name="empty_search_string">Please enter a location to search.</string>
 </resources>

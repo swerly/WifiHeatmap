@@ -3,6 +3,7 @@ package com.swerly.wifiheatmap;
 import android.Manifest;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,14 +25,16 @@ import pub.devrel.easypermissions.EasyPermissions;
  * create a wifi heatmap in
  */
 
-public class FragmentMap extends FragmentBase
-        implements EasyPermissions.PermissionCallbacks, LocationHelperCallback{
+public class FragmentMap extends FragmentBase implements
+        EasyPermissions.PermissionCallbacks,
+        LocationHelperCallback,
+        SearchBarView.SearchBarCallback{
+    private String[] perms = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
 
     private MapController mapController;
     private LocationHelper locationHelper;
     private SupportMapFragment mapFragment;
-
-    private String[] perms = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+    private SearchBarView searchBarView;
 
     public static FragmentHome newInstance(){
         return new FragmentHome();
@@ -41,8 +44,11 @@ public class FragmentMap extends FragmentBase
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mapController = new MapController();
+        mapController = new MapController(getActivity());
         locationHelper = new LocationHelper(getActivity());
+        searchBarView = getActivity().findViewById(R.id.map_searchbar);
+        searchBarView.setSearchBarCallback(this);
+        searchBarView.setToolbarId(R.id.main_toolbar);
 
         mapFragment = SupportMapFragment.newInstance(MapController.getMapOptions());
         getChildFragmentManager()
@@ -77,8 +83,7 @@ public class FragmentMap extends FragmentBase
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                Toast.makeText(activityMain, "Search Pressed", Toast.LENGTH_SHORT)
-                        .show();
+                searchBarView.animateOpenFrom(searchBarView);
                 break;
             case R.id.action_location:
                 if(EasyPermissions.hasPermissions(this.getActivity(), perms)){
@@ -135,7 +140,13 @@ public class FragmentMap extends FragmentBase
     @Override
     public void gotLocation(Location location) {
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        Log.d(BaseApplication.DEBUG_MESSAGE, latLng.toString());
         mapController.setUserLocation(latLng);
+    }
+
+    @Override
+    public void performSearch(String searchText) {
+        mapController.performSearch(searchText);
     }
 
     @Override
@@ -152,4 +163,6 @@ public class FragmentMap extends FragmentBase
                     .show();
         }
     }
+
+
 }

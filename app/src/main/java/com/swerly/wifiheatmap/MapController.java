@@ -1,10 +1,19 @@
 package com.swerly.wifiheatmap;
 
+import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
+import android.widget.Toast;
+
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by Seth on 7/9/2017.
@@ -13,6 +22,11 @@ import com.google.android.gms.maps.model.LatLng;
 public class MapController implements OnMapReadyCallback {
     private static final int MAX_ZOOM = 19;
     private GoogleMap mMap;
+    private Context context;
+
+    public MapController(Context context){
+        this.context = context;
+    }
 
     /**
      * Manipulates the map once available.
@@ -36,16 +50,36 @@ public class MapController implements OnMapReadyCallback {
     }
 
     public void setUserLocation(LatLng latlng){
-        moveCameraTo(latlng);
-        setZoomLevel(MAX_ZOOM);
+        CameraUpdate location = CameraUpdateFactory.newLatLngZoom(
+                latlng, MAX_ZOOM);
+        mMap.animateCamera(location);
     }
 
     private void setZoomLevel(float zoom){
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(zoom));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
     }
 
     private void moveCameraTo(LatLng latlng){
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(latlng));
+    }
+
+    public void performSearch(String searchString){
+        List<Address> addressList = null;
+        if (searchString != null || !searchString.equals("")) {
+            Geocoder geocoder = new Geocoder(context);
+            try {
+                addressList = geocoder.getFromLocationName(searchString, 1);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Address address = addressList.get(0);
+            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+            setUserLocation(latLng);
+        } else {
+            Toast.makeText(context, context.getString(R.string.empty_search_string), Toast.LENGTH_SHORT)
+                    .show();
+        }
     }
 
     public static GoogleMapOptions getMapOptions(){
