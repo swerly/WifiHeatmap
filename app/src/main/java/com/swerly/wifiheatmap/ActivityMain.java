@@ -40,7 +40,11 @@ public class ActivityMain extends ActivityBase {
 
     @Override
     public void onBackPressed() {
-        backNavigation();
+        if(notifyFragmentBackPressed()){
+            return;
+        }else {
+            backNavigation();
+        }
     }
 
     @Override
@@ -71,6 +75,11 @@ public class ActivityMain extends ActivityBase {
         }
     }
 
+    private boolean notifyFragmentBackPressed(){
+        FragmentBase curFrag = (FragmentBase) fragmentManager.findFragmentById(R.id.fragment_container);
+        return curFrag.onBackPressed();
+    }
+
     /**
      * Replaces the current fragment in the main activity with the new fragment
      * @param frag fragment to replace the old fragment
@@ -92,6 +101,12 @@ public class ActivityMain extends ActivityBase {
 
             fabHelper.setupFab(frag, false);
         }
+    }
+
+    public boolean notifyFragmentFabClick(){
+        FragmentBase curFrag = (FragmentBase) fragmentManager.findFragmentById(R.id.fragment_container);
+        curFrag.onFabPressed();
+        return false;
     }
 
     /**

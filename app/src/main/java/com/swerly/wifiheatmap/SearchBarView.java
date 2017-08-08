@@ -1,21 +1,26 @@
 package com.swerly.wifiheatmap;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by Seth on 7/13/2017.
@@ -27,8 +32,8 @@ public class SearchBarView extends LinearLayout {
     private ImageButton backArrow;
     private ImageButton clearText;
     private EditText searchText;
-
-    private int toolbarId, thisId;
+    private int radius, cx, cy;
+    private View toolbar;
 
     private SearchBarCallback searchBarCallback;
 
@@ -50,7 +55,6 @@ public class SearchBarView extends LinearLayout {
         backArrow = rootView.findViewById(R.id.back_arrow);
         clearText = rootView.findViewById(R.id.clear_text);
         searchText = rootView.findViewById(R.id.search_edittext);
-        thisId = this.getId();
 
         initButtons();
         initEditText();
@@ -78,9 +82,15 @@ public class SearchBarView extends LinearLayout {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    searchBarCallback.performSearch(searchText.getText().toString());
-                    hideKeyboard();
-                    return true;
+                    String text = searchText.getText().toString();
+                    if (!text.equals("")) {
+                        searchBarCallback.performSearch(text);
+                        hideKeyboard();
+                        return true;
+                    } else {
+                        Toast.makeText(context, context.getString(R.string.empty_search_string), Toast.LENGTH_SHORT)
+                                .show();
+                    }
                 }
                 return false;
             }
@@ -109,22 +119,67 @@ public class SearchBarView extends LinearLayout {
     }
 
     public void setToolbarId(int id){
-        this.toolbarId = id;
+        toolbar = ((Activity)context).findViewById(id);
+        setRadius();
     }
 
     public void animateOpenFrom(View v){
-        setViewVisibile(thisId);
-        //TODO: animate open
-        setViewGone(toolbarId);
+        rootView.setVisibility(INVISIBLE);
+        int[] revealLocation = new int[2];
+        v.getLocationOnScreen(revealLocation);
+        // get the center for the clipping circle
+        cx = revealLocation[0] + v.getWidth()/2;
+        cy = revealLocation[1];
+
+        // create the animator for this view (the start radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(rootView, cx, cy, 0, radius);
+
+        anim.addListener(new AnimatorListenerAdapter(){
+            @Override
+            public void onAnimationEnd(Animator animator){
+                super.onAnimationEnd(animator);
+                toolbar.setVisibility(GONE);
+            }
+        });
+
+        // make the view visible and start the animation
+        rootView.setVisibility(VISIBLE);
+        anim.start();
+
         if(searchText.requestFocus()){
             showKeyboard();
         }
     }
 
-    public void animateClose(){
+    public boolean animateClose(){
         if(rootView.getVisibility() == View.VISIBLE){
-            setViewGone(thisId);
-            setViewVisibile(toolbarId);
+            // create the animation (the final radius is zero)
+            Animator anim =
+                    ViewAnimationUtils.createCircularReveal(rootView, cx, cy, radius, 0);
+
+            // make the view invisible when the animation is done
+            anim.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animator){
+                    super.onAnimationStart(animator);
+                    hideKeyboard();
+                    toolbar.setVisibility(VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    rootView.setVisibility(GONE);
+                }
+            });
+
+            // start the animation
+            anim.start();
+
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -139,12 +194,8 @@ public class SearchBarView extends LinearLayout {
         imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
     }
 
-    private void setViewGone(int id){
-        ((Activity)context).findViewById(id).setVisibility(View.GONE);
-    }
-
-    private void setViewVisibile(int id){
-        ((Activity)context).findViewById(id).setVisibility(View.VISIBLE);
+    private void setRadius(){
+        radius = (int) Math.hypot(toolbar.getWidth(), toolbar.getHeight());
     }
 
     public interface SearchBarCallback {

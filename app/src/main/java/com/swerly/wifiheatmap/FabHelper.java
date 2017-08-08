@@ -86,7 +86,9 @@ public class FabHelper{
         @Override
         public void onClick(View view) {
             if (toSet != null) {
-                context.goToFragment(toSet);
+                if(!context.notifyFragmentFabClick()) {
+                    context.goToFragment(toSet);
+                }
             }
 
         }

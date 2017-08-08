@@ -11,7 +11,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -19,10 +18,11 @@ import java.util.List;
  * Created by Seth on 7/9/2017.
  */
 
-public class MapController implements OnMapReadyCallback {
+public class MapController implements OnMapReadyCallback, GeocodingHelper.GeocodingResultCallback {
     private static final int MAX_ZOOM = 19;
     private GoogleMap mMap;
     private Context context;
+
 
     public MapController(Context context){
         this.context = context;
@@ -64,21 +64,10 @@ public class MapController implements OnMapReadyCallback {
     }
 
     public void performSearch(String searchString){
-        List<Address> addressList = null;
-        if (searchString != null || !searchString.equals("")) {
-            Geocoder geocoder = new Geocoder(context);
-            try {
-                addressList = geocoder.getFromLocationName(searchString, 1);
+        if (searchString != null && !searchString.equals("")) {
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Address address = addressList.get(0);
-            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-            setUserLocation(latLng);
-        } else {
-            Toast.makeText(context, context.getString(R.string.empty_search_string), Toast.LENGTH_SHORT)
-                    .show();
+            GeocodingHelper gh = new GeocodingHelper(this, context);
+            gh.requestLatlngFromSearch(searchString);
         }
     }
 
@@ -87,5 +76,14 @@ public class MapController implements OnMapReadyCallback {
         options.mapType(GoogleMap.MAP_TYPE_SATELLITE)
                 .tiltGesturesEnabled(false);
         return options;
+    }
+
+    @Override
+    public void gotLatlng(LatLng latLng, String resultMsg) {
+        Toast.makeText(context, resultMsg, Toast.LENGTH_SHORT)
+                .show();
+        if (latLng != null) {
+            setUserLocation(latLng);
+        }
     }
 }

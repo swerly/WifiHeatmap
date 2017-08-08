@@ -37,10 +37,10 @@ public abstract class FragmentBase extends Fragment {
         return null;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-        actionBarHelper.setupForFragment(this, menu, inflater);
-    }
 
+    public abstract void onCreateOptionsMenu(Menu menu, MenuInflater inflater);
     public abstract boolean onOptionsItemSelected(MenuItem item);
+    public abstract boolean onBackPressed();
+    public abstract boolean onFabPressed();
+
 }

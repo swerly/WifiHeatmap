@@ -1,13 +1,19 @@
 package com.swerly.wifiheatmap;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.location.Location;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
@@ -27,7 +33,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class FragmentMap extends FragmentBase implements
         EasyPermissions.PermissionCallbacks,
-        LocationHelperCallback,
+        LocationHelper.LocationHelperCallback,
         SearchBarView.SearchBarCallback{
     private String[] perms = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
 
@@ -35,6 +41,7 @@ public class FragmentMap extends FragmentBase implements
     private LocationHelper locationHelper;
     private SupportMapFragment mapFragment;
     private SearchBarView searchBarView;
+    private View searchButtonView;
 
     public static FragmentHome newInstance(){
         return new FragmentHome();
@@ -50,12 +57,27 @@ public class FragmentMap extends FragmentBase implements
         searchBarView.setSearchBarCallback(this);
         searchBarView.setToolbarId(R.id.main_toolbar);
 
+
         mapFragment = SupportMapFragment.newInstance(MapController.getMapOptions());
         getChildFragmentManager()
                 .beginTransaction()
                 .add(R.id.map_main_layout, mapFragment)
                 .commit();
         mapFragment.getMapAsync(mapController);
+
+        if (!StaticUtils.isConnectedToNetwork(getActivity())){
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(R.string.no_internet_title);
+            builder.setMessage(R.string.no_internet_content);
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                    getActivity().onBackPressed();
+                }
+            });
+            builder.show();
+        }
     }
 
     @Override
@@ -80,10 +102,31 @@ public class FragmentMap extends FragmentBase implements
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        actionBarHelper.setupForFragment(this, menu, inflater);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                searchBarView.animateOpenFrom(searchBarView);
+                if (searchButtonView == null){
+                    searchButtonView = getActivity().findViewById(R.id.action_search);
+                }
+                if (!StaticUtils.isConnectedToNetwork(getActivity())){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle(R.string.no_internet_title);
+                    builder.setMessage(R.string.no_internet_search);
+                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+                    builder.show();
+                } else {
+                    searchBarView.animateOpenFrom(searchButtonView);
+                }
                 break;
             case R.id.action_location:
                 if(EasyPermissions.hasPermissions(this.getActivity(), perms)){
@@ -103,6 +146,17 @@ public class FragmentMap extends FragmentBase implements
         }
 
         //return false so main activity can consume the up arrow event
+        return false;
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return searchBarView.animateClose();
+    }
+
+    @Override
+    public boolean onFabPressed() {
+        searchBarView.animateClose();
         return false;
     }
 
@@ -140,7 +194,6 @@ public class FragmentMap extends FragmentBase implements
     @Override
     public void gotLocation(Location location) {
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        Log.d(BaseApplication.DEBUG_MESSAGE, latLng.toString());
         mapController.setUserLocation(latLng);
     }
 

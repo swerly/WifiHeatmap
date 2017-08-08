@@ -257,4 +257,9 @@ public class LocationHelper implements
                 break;
         }
     }
+
+    public interface LocationHelperCallback {
+        void gotLocation(Location location);
+        void returnFromSettings();
+    }
 }

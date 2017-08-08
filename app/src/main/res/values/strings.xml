@@ -22,5 +22,12 @@
     <string name="location_status_inaccurate">Location found, but may not be very accurate.</string>
     <string name="location_status_timeout">Location service time-out after 10 seconds. Could not get a location lock!</string>
     <string name="address_hint">Type address</string>
-    <string name="empty_search_string">Please enter a location to search.</string>
+    <string name="empty_search_string">Please enter an address to search.</string>
+    <string name="no_search_results">No search results found.</string>
+    <string name="search_result_ok">Search result found. Zooming to address.</string>
+    <string name="unknown_search_error">Error using Google services. Please try again later.</string>
+    <string name="geocode_other_error">Application error. Please contact developer.</string>
+    <string name="no_internet_title">No Internet Connection</string>
+    <string name="no_internet_content">You must be connected to the internet to use this application.</string>
+    <string name="no_internet_search">Please connect to the internet to use search.</string>
 </resources>
