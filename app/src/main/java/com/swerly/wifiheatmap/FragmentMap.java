@@ -157,6 +157,7 @@ public class FragmentMap extends FragmentBase implements
     @Override
     public boolean onFabPressed() {
         searchBarView.animateClose();
+        //TODO: save image to current app data so can set as background for zoom/boundry
         return false;
     }
 

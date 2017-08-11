@@ -1,5 +1,7 @@
 package com.swerly.wifiheatmap;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.FloatingActionButton;
@@ -14,6 +16,7 @@ public class FabHelper{
     private ActivityMain context;
     private FloatingActionButton fab;
     private int prevFabIcon;
+    private FragmentBase curFrag;
 
     public FabHelper(ActivityMain context, FloatingActionButton fab){
         this.context = context;
@@ -33,6 +36,7 @@ public class FabHelper{
     }
 
     public void setupFab(FragmentBase frag, boolean reverse){
+        curFrag = frag;
         FragmentBase toSet = null;
         String tag = null;
         int iconResId = 0;
@@ -52,6 +56,9 @@ public class FabHelper{
         } else if (frag instanceof FragmentName){
             toSet = new FragmentHome();
             iconResId = R.drawable.arrow_to_check_avd;
+        } else if (frag instanceof  FragmentZoom){
+            toSet = new FragmentBoundry();
+            iconResId = reverse ? R.drawable.arrow_back : R.drawable.arrow_forward;
         }
 
         tag = frag.getClass().getSimpleName();
@@ -85,12 +92,39 @@ public class FabHelper{
 
         @Override
         public void onClick(View view) {
+            if (curFrag instanceof FragmentMap){
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle(R.string.zoom_dialog_title);
+                builder.setMessage(R.string.zoom_dialog_content);
+                builder.setPositiveButton(R.string.zoom, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        toSet = new FragmentZoom();
+                        dialogInterface.dismiss();
+                        set();
+                    }
+                });
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        toSet = new FragmentBoundry();
+                        dialogInterface.dismiss();
+                        set();
+                    }
+                });
+                builder.show();
+            } else {
+                set();
+            }
+        }
+        private void set(){
             if (toSet != null) {
-                if(!context.notifyFragmentFabClick()) {
+                if (!context.notifyFragmentFabClick()) {
                     context.goToFragment(toSet);
                 }
             }
-
         }
     }
+
+
 }

@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 
 public class ActivityMain extends ActivityBase {
 
-    private boolean isFirstScreen;
     private FabHelper fabHelper;
     private FloatingActionButton mainFab;
 
@@ -80,6 +79,12 @@ public class ActivityMain extends ActivityBase {
         return curFrag.onBackPressed();
     }
 
+    public boolean notifyFragmentFabClick(){
+        FragmentBase curFrag = (FragmentBase) fragmentManager.findFragmentById(R.id.fragment_container);
+        curFrag.onFabPressed();
+        return false;
+    }
+
     /**
      * Replaces the current fragment in the main activity with the new fragment
      * @param frag fragment to replace the old fragment
@@ -101,12 +106,6 @@ public class ActivityMain extends ActivityBase {
 
             fabHelper.setupFab(frag, false);
         }
-    }
-
-    public boolean notifyFragmentFabClick(){
-        FragmentBase curFrag = (FragmentBase) fragmentManager.findFragmentById(R.id.fragment_container);
-        curFrag.onFabPressed();
-        return false;
     }
 
     /**
