@@ -1,5 +1,7 @@
 package com.swerly.wifiheatmap;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.FloatingActionButton;
@@ -14,6 +16,7 @@ public class FabHelper{
     private ActivityMain context;
     private FloatingActionButton fab;
     private int prevFabIcon;
+    private FragmentBase curFrag;
 
     public FabHelper(ActivityMain context, FloatingActionButton fab){
         this.context = context;
@@ -33,6 +36,7 @@ public class FabHelper{
     }
 
     public void setupFab(FragmentBase frag, boolean reverse){
+        curFrag = frag;
         FragmentBase toSet = null;
         String tag = null;
         int iconResId = 0;
@@ -42,16 +46,19 @@ public class FabHelper{
             iconResId = reverse ? R.drawable.arrow_to_plus_avd : R.drawable.check_to_plus_avd;
         } else if (frag instanceof FragmentMap){
             toSet = new FragmentBoundry();
-            iconResId = reverse ? R.drawable.ic_navigate_double_next_black_24px : R.drawable.plus_to_arrow_avd;
+            iconResId = reverse ? R.drawable.arrow_back : R.drawable.plus_to_arrow_avd;
         } else if (frag instanceof FragmentBoundry){
             toSet = new FragmentHeatmap();
-            iconResId = R.drawable.ic_navigate_double_next_black_24px;
+            iconResId = reverse ? R.drawable.arrow_back : R.drawable.arrow_forward;
         } else if (frag instanceof FragmentHeatmap){
             toSet = new FragmentName();
-            iconResId = reverse ? R.drawable.check_to_arrow_avd : R.drawable.ic_navigate_double_next_black_24px;
+            iconResId = reverse ? R.drawable.check_to_arrow_avd : R.drawable.arrow_forward;
         } else if (frag instanceof FragmentName){
             toSet = new FragmentHome();
             iconResId = R.drawable.arrow_to_check_avd;
+        } else if (frag instanceof  FragmentZoom){
+            toSet = new FragmentBoundry();
+            iconResId = reverse ? R.drawable.arrow_back : R.drawable.arrow_forward;
         }
 
         tag = frag.getClass().getSimpleName();
@@ -85,10 +92,39 @@ public class FabHelper{
 
         @Override
         public void onClick(View view) {
-            if (toSet != null) {
-                context.goToFragment(toSet);
+            if (curFrag instanceof FragmentMap){
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle(R.string.zoom_dialog_title);
+                builder.setMessage(R.string.zoom_dialog_content);
+                builder.setPositiveButton(R.string.zoom, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        toSet = new FragmentZoom();
+                        dialogInterface.dismiss();
+                        set();
+                    }
+                });
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        toSet = new FragmentBoundry();
+                        dialogInterface.dismiss();
+                        set();
+                    }
+                });
+                builder.show();
+            } else {
+                set();
             }
-
+        }
+        private void set(){
+            if (toSet != null) {
+                if (!context.notifyFragmentFabClick()) {
+                    context.goToFragment(toSet);
+                }
+            }
         }
     }
+
+
 }

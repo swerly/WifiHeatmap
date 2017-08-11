@@ -9,15 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Created by Seth on 7/6/2017.
+ * Created by Seth on 8/10/2017.
  */
 
-public class FragmentHome extends FragmentBase {
-
-    public static FragmentHome newInstance(){
-        return new FragmentHome();
-    }
-
+public class FragmentZoom extends FragmentBase {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +21,7 @@ public class FragmentHome extends FragmentBase {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        return inflater.inflate(R.layout.fragment_zoom, container, false);
     }
 
     @Override
@@ -36,7 +31,7 @@ public class FragmentHome extends FragmentBase {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return true;
+        return false;
     }
 
     @Override
@@ -52,6 +47,6 @@ public class FragmentHome extends FragmentBase {
     @Override
     public void onResume(){
         super.onResume();
-        activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 }

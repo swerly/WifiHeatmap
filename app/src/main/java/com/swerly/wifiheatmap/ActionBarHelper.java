@@ -37,6 +37,8 @@ public class ActionBarHelper {
             idToInflate = R.menu.toolbar_boundry_heatmap;
         } else if (fragment instanceof FragmentName){
             idToInflate = R.menu.toolbar_name;
+        } else if (fragment instanceof FragmentZoom){
+            idToInflate = R.menu.toolbar_zoom;
         } else {
             idToInflate = 0;
             Log.d(BaseApplication.DEBUG_MESSAGE, "action bar helper fragment type unknown");

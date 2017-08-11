@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -36,8 +37,10 @@ public abstract class FragmentBase extends Fragment {
         return null;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-        actionBarHelper.setupForFragment(this, menu, inflater);
-    }
+
+    public abstract void onCreateOptionsMenu(Menu menu, MenuInflater inflater);
+    public abstract boolean onOptionsItemSelected(MenuItem item);
+    public abstract boolean onBackPressed();
+    public abstract boolean onFabPressed();
+
 }

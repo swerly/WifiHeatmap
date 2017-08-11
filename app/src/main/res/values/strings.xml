@@ -6,4 +6,33 @@
     <string name="location">Location</string>
     <string name="search">Search</string>
     <string name="filter">Filter</string>
+    <string name="location_rationale">You must grant this app access to your location before we can
+        easily find you on the map!\n\n Hit "OK" to grant this app permission.</string>
+    <string name="location_granted">Location permissions granted.</string>
+    <string name="location_denied">Location permissions denied.</string>
+    <string name="location_finding">Finding your location now...</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="no">No</string>
+    <string name="no_location">Unable to obtain location. Make sure Location is enabled in Settings.</string>
+    <string name="play_services_unavailable">Required Google Play Location services unavailable.</string>
+    <string name="location_not_enabled">Location is not enabled. Cancelling request...</string>
+    <string name="change_location_settings">Unable to start request for location. Please open settings and enable location services.</string>
+    <string name="location_status_ok">Location found.</string>
+    <string name="location_status_api_error">There was an error connecting to Google Play Services.</string>
+    <string name="location_status_inaccurate">Location found, but may not be very accurate.</string>
+    <string name="location_status_timeout">Location service time-out after 10 seconds. Could not get a location lock!</string>
+    <string name="address_hint">Type address</string>
+    <string name="empty_search_string">Please enter an address to search.</string>
+    <string name="no_search_results">No search results found.</string>
+    <string name="search_result_ok">Search result found. Zooming to address.</string>
+    <string name="unknown_search_error">Error using Google services. Please try again later.</string>
+    <string name="geocode_other_error">Application error. Please contact developer.</string>
+    <string name="no_internet_title">No Internet Connection</string>
+    <string name="no_internet_content">You must be connected to the internet to use this application.</string>
+    <string name="no_internet_search">Please connect to the internet to use search.</string>
+    <string name="zoom_dialog_title">Room to Zoom?</string>
+    <string name="zoom_dialog_content">Due to limitations with Google Maps, you may want to zoom more
+            to fill the screen with the building of interest.\n\nWould you like to zoom more?</string>
+    <string name="zoom">Zoom</string>
 </resources>

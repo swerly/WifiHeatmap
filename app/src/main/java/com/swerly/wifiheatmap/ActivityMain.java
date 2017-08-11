@@ -1,18 +1,13 @@
 package com.swerly.wifiheatmap;
 
-import android.graphics.drawable.Drawable;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
 public class ActivityMain extends ActivityBase {
-    private boolean isFirstScreen;
+
     private FabHelper fabHelper;
     private FloatingActionButton mainFab;
 
@@ -29,6 +24,7 @@ public class ActivityMain extends ActivityBase {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(getTitle());
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         fragmentManager = getSupportFragmentManager();
 
@@ -43,7 +39,11 @@ public class ActivityMain extends ActivityBase {
 
     @Override
     public void onBackPressed() {
-        backNavigation();
+        if(notifyFragmentBackPressed()){
+            return;
+        }else {
+            backNavigation();
+        }
     }
 
     @Override
@@ -52,7 +52,19 @@ public class ActivityMain extends ActivityBase {
         return true;
     }
 
-    private void backNavigation(){
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        switch (requestCode){
+            case LocationHelper.LOCATION_ENABLER_ID:
+                FragmentBase mapFrag = (FragmentBase) fragmentManager.findFragmentByTag(FragmentBase.MAP_FRAGMENT);
+                ((FragmentMap)mapFrag).returnFromSettings();
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    public void backNavigation(){
         boolean popped = getSupportFragmentManager().popBackStackImmediate();
         if (popped){
             FragmentBase curFrag = (FragmentBase) fragmentManager.findFragmentById(R.id.fragment_container);
@@ -60,6 +72,17 @@ public class ActivityMain extends ActivityBase {
         } else {
             finish();
         }
+    }
+
+    private boolean notifyFragmentBackPressed(){
+        FragmentBase curFrag = (FragmentBase) fragmentManager.findFragmentById(R.id.fragment_container);
+        return curFrag.onBackPressed();
+    }
+
+    public boolean notifyFragmentFabClick(){
+        FragmentBase curFrag = (FragmentBase) fragmentManager.findFragmentById(R.id.fragment_container);
+        curFrag.onFabPressed();
+        return false;
     }
 
     /**
