@@ -158,6 +158,7 @@ public class FragmentMap extends FragmentBase implements
     public boolean onFabPressed() {
         searchBarView.animateClose();
         //TODO: save image to current app data so can set as background for zoom/boundry
+        getActivity().getWindow().getDecorView().findViewById(android.R.id.content);
         return false;
     }
 
