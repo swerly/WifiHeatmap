@@ -6,20 +6,26 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 
+import okhttp3.Cache;
+
 public class ActivityMain extends ActivityBase {
 
     private FabHelper fabHelper;
     private FloatingActionButton mainFab;
-
     private FragmentManager fragmentManager;
+    private HeatmapData currentData;
+    private CacheHelper cacheHelper;
+    private int count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        count = 0;
 
         mainFab = findViewById(R.id.fab);
         fabHelper = new FabHelper(this, mainFab);
+        cacheHelper = new CacheHelper(this, null);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(getTitle());
@@ -117,5 +123,10 @@ public class ActivityMain extends ActivityBase {
             fragmentManager.popBackStack(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
             fabHelper.goHome();
         }
+    }
+
+    public void storeCount(){
+        count++;
+        cacheHelper.saveCount(count);
     }
 }

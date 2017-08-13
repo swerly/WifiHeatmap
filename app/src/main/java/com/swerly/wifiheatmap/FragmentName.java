@@ -41,6 +41,7 @@ public class FragmentName extends FragmentBase {
 
     @Override
     public boolean onFabPressed() {
+        activityMain.storeCount();
         return false;
     }
 

@@ -23,4 +23,8 @@ public class ActivityBase extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         app = (BaseApplication) getApplication();
     }
+
+    public BaseApplication getApp(){
+        return app;
+    }
 }

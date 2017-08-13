@@ -7,12 +7,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 
 /**
  * Created by Seth on 7/6/2017.
  */
 
-public class FragmentHome extends FragmentBase {
+public class FragmentHome extends FragmentBase implements
+        CacheHelper.CacheLoadCallbacks{
+
+    private CacheHelper cacheHelper;
 
     public static FragmentHome newInstance(){
         return new FragmentHome();
@@ -21,6 +29,7 @@ public class FragmentHome extends FragmentBase {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        cacheHelper = new CacheHelper(getActivity(), this);
     }
 
     @Override
@@ -52,6 +61,22 @@ public class FragmentHome extends FragmentBase {
     @Override
     public void onResume(){
         super.onResume();
+        cacheHelper.startCountLoad();
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
+
+    @Override
+    public void heatmapListLoaded(ArrayList<HeatmapData> data) {
+
+    }
+
+    @Override
+    public void heatmapCountLoaded(int count) {
+        ((TextView)getActivity().findViewById(R.id.home_text)).setText(count);
+    }
+
+    @Override
+    public void heatmapInProgressLoaded(HeatmapData inProgress) {
+
     }
 }

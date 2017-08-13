@@ -18,15 +18,15 @@ public abstract class FragmentBase extends Fragment {
     public static final String HEATMAP_FRAGMENT = "FragmentHeatmap";
     public static final String NAME_FRAGMENT = "FragmentName";
 
-    public static final String SEQUENCE_ENDING_FRAGMENT = NAME_FRAGMENT;
-
     protected ActivityMain activityMain;
     protected ActionBarHelper actionBarHelper;
+    protected BaseApplication app;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityMain = (ActivityMain) getActivity();
+        app = activityMain.getApp();
         actionBarHelper = new ActionBarHelper();
     }
 
@@ -36,7 +36,6 @@ public abstract class FragmentBase extends Fragment {
         setHasOptionsMenu(true);
         return null;
     }
-
 
     public abstract void onCreateOptionsMenu(Menu menu, MenuInflater inflater);
     public abstract boolean onOptionsItemSelected(MenuItem item);
