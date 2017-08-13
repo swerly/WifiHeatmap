@@ -101,7 +101,13 @@ public class CacheHelper {
                 return;
             }
             if (cacheToLoad.equals(HEATMAP_COUNT)){
-                loadCallbacks.heatmapCountLoaded((int) result);
+                int count;
+                if (result == null){
+                    count = 0;
+                } else {
+                    count = (int) result;
+                }
+                loadCallbacks.heatmapCountLoaded(count);
             } else if (cacheToLoad.equals(HEATMAP_IN_PROGRESS)){
                 loadCallbacks.heatmapInProgressLoaded((HeatmapData) result);
             } else {
