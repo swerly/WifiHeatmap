@@ -2,8 +2,6 @@ package com.swerly.wifiheatmap;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 

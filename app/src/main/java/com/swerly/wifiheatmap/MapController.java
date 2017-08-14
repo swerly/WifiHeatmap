@@ -1,8 +1,6 @@
 package com.swerly.wifiheatmap;
 
 import android.content.Context;
-import android.location.Address;
-import android.location.Geocoder;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -11,8 +9,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by Seth on 7/9/2017.
