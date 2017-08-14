@@ -7,6 +7,8 @@ import java.io.Serializable;
 /**
  * Created by Seth on 8/13/2017.
  *
+ * Regular bitmaps aren't serializable, so this class was created to store bitmaps
+ *
  * http://xperience57.blogspot.com/2015/09/android-saving-bitmap-as-serializable.html
  */
 

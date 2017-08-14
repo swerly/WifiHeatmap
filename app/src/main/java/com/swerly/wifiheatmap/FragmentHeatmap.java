@@ -40,8 +40,8 @@ public class FragmentHeatmap extends FragmentBase {
     }
 
     @Override
-    public boolean onFabPressed() {
-        return false;
+    public void onFabPressed() {
+
     }
 
     @Override

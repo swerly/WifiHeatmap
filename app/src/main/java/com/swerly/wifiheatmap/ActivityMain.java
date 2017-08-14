@@ -1,10 +1,13 @@
 package com.swerly.wifiheatmap;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
+
+import com.google.android.gms.maps.GoogleMap;
 
 import java.util.ArrayList;
 
@@ -15,20 +18,14 @@ public class ActivityMain extends ActivityBase{
     private FabHelper fabHelper;
     private FloatingActionButton mainFab;
     private FragmentManager fragmentManager;
-    private HeatmapData currentInProgress;
-    private int currentCount;
-    private CacheHelper cacheHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        currentCount = 0;
 
         mainFab = findViewById(R.id.fab);
         fabHelper = new FabHelper(this, mainFab);
-        cacheHelper = new CacheHelper(this, null);
-        cacheHelper.startupLoad();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(getTitle());
@@ -77,6 +74,9 @@ public class ActivityMain extends ActivityBase{
         boolean popped = getSupportFragmentManager().popBackStackImmediate();
         if (popped){
             FragmentBase curFrag = (FragmentBase) fragmentManager.findFragmentById(R.id.fragment_container);
+            if (curFrag instanceof FragmentMap){
+                app.resetCurrent();
+            }
             fabHelper.setupFab(curFrag, true);
         } else {
             finish();
@@ -126,13 +126,5 @@ public class ActivityMain extends ActivityBase{
             fragmentManager.popBackStack(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
             fabHelper.goHome();
         }
-    }
-
-    public void storeCount(){
-        currentCount++;
-        app.setCurrentCount(currentCount);
-
-        //TODO: maybe move this to base application class?
-        cacheHelper.saveCount(currentCount);
     }
 }

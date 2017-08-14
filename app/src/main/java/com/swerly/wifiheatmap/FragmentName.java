@@ -40,9 +40,9 @@ public class FragmentName extends FragmentBase {
     }
 
     @Override
-    public boolean onFabPressed() {
-        activityMain.storeCount();
-        return false;
+    public void onFabPressed() {
+        //TODO: add current data to cache
+        app.resetCurrent();
     }
 
     @Override

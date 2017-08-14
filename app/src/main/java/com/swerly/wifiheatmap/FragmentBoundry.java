@@ -1,5 +1,6 @@
 package com.swerly.wifiheatmap;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -7,12 +8,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 /**
  * Created by Seth on 7/6/2017.
  */
 
-public class FragmentBoundry extends FragmentBase {
+public class FragmentBoundry extends FragmentBase implements
+        SnapshotWaiter.SnapshotReadyCallback{
+    private ImageView bkgView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,7 +26,16 @@ public class FragmentBoundry extends FragmentBase {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        return inflater.inflate(R.layout.fragment_boundry, container, false);
+        View view = inflater.inflate(R.layout.fragment_boundry, container, false);
+        bkgView = view.findViewById(R.id.boundry_bkg_view);
+
+        if (app.isBackgroundReady()){
+            setBackground();
+        } else {
+            new SnapshotWaiter(app, this).startWaiting();
+        }
+
+        return view;
     }
 
     @Override
@@ -40,13 +54,24 @@ public class FragmentBoundry extends FragmentBase {
     }
 
     @Override
-    public boolean onFabPressed() {
-        return false;
+    public void onFabPressed() {
+        //TODO: get screenshot of view, set current bkg in appdata
+        //TODO:
     }
 
     @Override
     public void onResume(){
         super.onResume();
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public void snapshotReady() {
+        setBackground();
+    }
+
+    private void setBackground(){
+        Bitmap bkgToSet = app.getCurrentInProgress().getBackgroundImage();
+        bkgView.setImageBitmap(bkgToSet);
     }
 }

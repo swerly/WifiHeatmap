@@ -54,14 +54,16 @@ public class FragmentHome extends FragmentBase{
     }
 
     @Override
-    public boolean onFabPressed() {
-        return false;
+    public void onFabPressed() {
+
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        homeText.setText(Integer.toString(activityMain.app.getCurrentCount()));
+
+        //TODO: display list of heatmaps
+
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
 }

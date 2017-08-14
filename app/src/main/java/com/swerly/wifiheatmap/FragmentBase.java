@@ -20,11 +20,13 @@ public abstract class FragmentBase extends Fragment {
 
     protected ActivityMain activityMain;
     protected ActionBarHelper actionBarHelper;
+    protected BaseApplication app;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityMain = (ActivityMain) getActivity();
+        app = activityMain.app;
         actionBarHelper = new ActionBarHelper();
     }
 
@@ -38,6 +40,6 @@ public abstract class FragmentBase extends Fragment {
     public abstract void onCreateOptionsMenu(Menu menu, MenuInflater inflater);
     public abstract boolean onOptionsItemSelected(MenuItem item);
     public abstract boolean onBackPressed();
-    public abstract boolean onFabPressed();
+    public abstract void onFabPressed();
 
 }

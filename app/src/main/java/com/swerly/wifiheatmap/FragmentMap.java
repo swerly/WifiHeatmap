@@ -3,6 +3,7 @@ package com.swerly.wifiheatmap;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.media.Image;
 import android.os.Bundle;
@@ -155,11 +156,9 @@ public class FragmentMap extends FragmentBase implements
     }
 
     @Override
-    public boolean onFabPressed() {
+    public void onFabPressed() {
         searchBarView.animateClose();
-        //TODO: save image to current app data so can set as background for zoom/boundry
-        getActivity().getWindow().getDecorView().findViewById(android.R.id.content);
-        return false;
+        mapController.requestSnapshot(app);
     }
 
     @Override
