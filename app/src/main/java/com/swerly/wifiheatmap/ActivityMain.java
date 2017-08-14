@@ -6,26 +6,29 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 
+import java.util.ArrayList;
+
 import okhttp3.Cache;
 
-public class ActivityMain extends ActivityBase {
+public class ActivityMain extends ActivityBase{
 
     private FabHelper fabHelper;
     private FloatingActionButton mainFab;
     private FragmentManager fragmentManager;
-    private HeatmapData currentData;
+    private HeatmapData currentInProgress;
+    private int currentCount;
     private CacheHelper cacheHelper;
-    private int count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        count = 0;
+        currentCount = 0;
 
         mainFab = findViewById(R.id.fab);
         fabHelper = new FabHelper(this, mainFab);
         cacheHelper = new CacheHelper(this, null);
+        cacheHelper.startupLoad();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(getTitle());
@@ -126,7 +129,10 @@ public class ActivityMain extends ActivityBase {
     }
 
     public void storeCount(){
-        count++;
-        cacheHelper.saveCount(count);
+        currentCount++;
+        app.setCurrentCount(currentCount);
+
+        //TODO: maybe move this to base application class?
+        cacheHelper.saveCount(currentCount);
     }
 }

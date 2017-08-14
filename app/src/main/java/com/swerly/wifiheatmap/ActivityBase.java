@@ -16,15 +16,11 @@ import android.view.MenuItem;
  */
 
 public class ActivityBase extends AppCompatActivity {
-    private BaseApplication app;
+    protected BaseApplication app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         app = (BaseApplication) getApplication();
-    }
-
-    public BaseApplication getApp(){
-        return app;
     }
 }

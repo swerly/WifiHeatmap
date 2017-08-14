@@ -40,6 +40,11 @@ public class CacheHelper {
         new LoadCacheTask().execute(HEATMAP_COUNT);
     }
 
+    public void startupLoad(){
+        //perform all 3 cache loads
+        new LoadCacheTask().execute(HEATMAP_COUNT);
+    }
+
     private class SaveCacheTask extends AsyncTask<Object, Void, Void>{
 
         @Override

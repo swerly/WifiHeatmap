@@ -20,13 +20,11 @@ public abstract class FragmentBase extends Fragment {
 
     protected ActivityMain activityMain;
     protected ActionBarHelper actionBarHelper;
-    protected BaseApplication app;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityMain = (ActivityMain) getActivity();
-        app = activityMain.getApp();
         actionBarHelper = new ActionBarHelper();
     }
 

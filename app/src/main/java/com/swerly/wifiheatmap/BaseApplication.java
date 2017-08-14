@@ -10,6 +10,7 @@ import android.content.Context;
 public class BaseApplication extends Application {
     public final static String DEBUG_MESSAGE = "HeatmapDebug";
     private static Context context;
+    private int currentCount;
 
     @Override
     public void onCreate() {
@@ -19,5 +20,13 @@ public class BaseApplication extends Application {
 
     public static Context getContext(){
         return context;
+    }
+
+    public void setCurrentCount(int count){
+        this.currentCount = count;
+    }
+
+    public int getCurrentCount(){
+        return currentCount;
     }
 }
