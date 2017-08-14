@@ -63,7 +63,11 @@ public class CacheHelper {
             try {
                 fos = context.openFileOutput(outputFile, Context.MODE_PRIVATE);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
-                oos.writeObject(objToSave);
+                if (outputFile.equals(HEATMAP_COUNT)){
+                    oos.writeInt((int)objToSave);
+                } else {
+                    oos.writeObject(objToSave);
+                }
                 oos.flush();
                 fos.getFD().sync();
                 fos.close();
@@ -87,7 +91,12 @@ public class CacheHelper {
             try {
                 fos = context.openFileInput(cacheToLoad);
                 ObjectInputStream ois = new ObjectInputStream(fos);
-                Object toReturn = ois.read();
+                Object toReturn = null;
+                if (cacheToLoad.equals(HEATMAP_COUNT)){
+                    toReturn = ois.readInt();
+                } else {
+                    toReturn = ois.read();
+                }
                 ois.close();
                 fos.close();
                 return toReturn;
