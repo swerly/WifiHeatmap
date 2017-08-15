@@ -14,7 +14,6 @@ import android.widget.TextView;
  */
 
 public class FragmentHome extends FragmentBase{
-    private TextView homeText;
 
     public static FragmentHome newInstance(){
         return new FragmentHome();
@@ -28,9 +27,7 @@ public class FragmentHome extends FragmentBase{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        homeText = view.findViewById(R.id.home_text);
         return view;
     }
 
@@ -57,7 +54,7 @@ public class FragmentHome extends FragmentBase{
     @Override
     public void onResume(){
         super.onResume();
-
+        hideSubtitle();
         //TODO: display list of heatmaps
 
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(false);

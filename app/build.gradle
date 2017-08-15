@@ -40,4 +40,5 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:10.2.0'
     implementation 'pub.devrel:easypermissions:0.4.2'
     implementation 'com.squareup.okhttp3:okhttp:3.8.1'
+    implementation 'com.alexvasilkov:gesture-views:2.3.1'
 }

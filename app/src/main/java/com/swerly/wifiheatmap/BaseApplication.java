@@ -65,11 +65,15 @@ public class BaseApplication extends Application implements
     @Override
     public void onSnapshotReady(Bitmap bitmap) {
         addBackgroundInProgress(bitmap);
-        backgroundReady = true;
+        setBackgroundReady();
     }
 
     public boolean isBackgroundReady(){
         return backgroundReady;
+    }
+
+    public void setBackgroundReady(){
+        backgroundReady = true;
     }
 
     public void resetCurrent(){

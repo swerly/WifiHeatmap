@@ -90,6 +90,7 @@ public class FragmentMap extends FragmentBase implements
     public void onResume(){
         super.onResume();
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setSubTitle(R.string.map_subtitle);
     }
 
     @Override

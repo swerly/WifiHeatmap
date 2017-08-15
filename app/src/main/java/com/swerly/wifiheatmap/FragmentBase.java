@@ -3,12 +3,20 @@ package com.swerly.wifiheatmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.TextSwitcher;
+import android.widget.TextView;
+import android.widget.ViewSwitcher;
+
+import org.w3c.dom.Text;
 
 public abstract class FragmentBase extends Fragment {
     public static final String HOME_FRAGMENT = "FragmentHome";
@@ -21,12 +29,19 @@ public abstract class FragmentBase extends Fragment {
     protected ActionBarHelper actionBarHelper;
     protected BaseApplication app;
 
+    private String subTitleToSet;
+    private TextView subTitle;
+    private AlphaAnimation fadeIn;
+    private AlphaAnimation fadeOut;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityMain = (ActivityMain) getActivity();
         app = activityMain.app;
         actionBarHelper = new ActionBarHelper();
+
+        setupSubTitle();
     }
 
     @Nullable
@@ -34,6 +49,43 @@ public abstract class FragmentBase extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         return null;
+    }
+
+    private void setupSubTitle(){
+        subTitle = getActivity().findViewById(R.id.subtitle);
+        fadeIn = new AlphaAnimation(0.0f, 1.0f);
+        fadeOut = new AlphaAnimation(1.0f, 0.0f);
+        fadeOut.setDuration(300);
+        fadeIn.setDuration(300);
+
+        fadeOut.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                subTitle.setText(subTitleToSet);
+                subTitle.startAnimation(fadeIn);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    protected void hideSubtitle(){
+        subTitle.setText("");
+        subTitle.setVisibility(View.GONE);
+    }
+
+    protected void setSubTitle(int resId){
+        subTitleToSet = getString(resId);
+        subTitle.setVisibility(View.VISIBLE);
+        subTitle.startAnimation(fadeOut);
     }
 
     public abstract void onCreateOptionsMenu(Menu menu, MenuInflater inflater);

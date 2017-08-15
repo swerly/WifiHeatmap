@@ -49,5 +49,6 @@ public class FragmentName extends FragmentBase {
     public void onResume(){
         super.onResume();
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setSubTitle(R.string.name_subtitle);
     }
 }

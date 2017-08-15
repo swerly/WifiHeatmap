@@ -56,13 +56,13 @@ public class FragmentBoundry extends FragmentBase implements
     @Override
     public void onFabPressed() {
         //TODO: get screenshot of view, set current bkg in appdata
-        //TODO:
     }
 
     @Override
     public void onResume(){
         super.onResume();
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setSubTitle(R.string.boundry_subtitle);
     }
 
     @Override

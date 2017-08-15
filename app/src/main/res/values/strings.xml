@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">WifiHeatmap</string>
+    <string name="map_subtitle">Find Location</string>
+    <string name="zoom_subtitle">Zoom to Fit</string>
+    <string name="name_subtitle">Name Heatmap</string>
+    <string name="boundry_subtitle">Draw Boundry</string>
+    <string name="heatmap_subtitle">Draw Heatmap</string>
     <string name="help">Help</string>
     <string name="redo">Redo</string>
     <string name="undo">Undo</string>

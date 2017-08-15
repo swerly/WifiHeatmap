@@ -48,5 +48,6 @@ public class FragmentHeatmap extends FragmentBase {
     public void onResume(){
         super.onResume();
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setSubTitle(R.string.heatmap_subtitle);
     }
 }
