@@ -29,12 +29,13 @@ public class ActionBarHelper {
 
         int idToInflate;
 
+        //TODO: set fade animations for icons
         if (fragment instanceof FragmentHome){
             idToInflate = R.menu.toolbar_home;
         } else if (fragment instanceof FragmentMap){
             idToInflate = R.menu.toolbar_map;
-        } else if (fragment instanceof FragmentBoundry || fragment instanceof FragmentHeatmap){
-            idToInflate = R.menu.toolbar_boundry_heatmap;
+        } else if (fragment instanceof FragmentHeatmap){
+            idToInflate = R.menu.toolbar_heatmap;
         } else if (fragment instanceof FragmentName){
             idToInflate = R.menu.toolbar_name;
         } else if (fragment instanceof FragmentZoom){

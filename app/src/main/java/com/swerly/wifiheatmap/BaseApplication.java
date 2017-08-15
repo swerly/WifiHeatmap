@@ -50,7 +50,7 @@ public class BaseApplication extends Application implements
         return currentInProgress;
     }
 
-    public void addBackgroundInProgress(Bitmap bkg){
+    public void setBackgroundInProgress(Bitmap bkg){
         if (currentInProgress == null){
             currentInProgress = new HeatmapData();
         }
@@ -64,7 +64,7 @@ public class BaseApplication extends Application implements
 
     @Override
     public void onSnapshotReady(Bitmap bitmap) {
-        addBackgroundInProgress(bitmap);
+        setBackgroundInProgress(bitmap);
         setBackgroundReady();
     }
 

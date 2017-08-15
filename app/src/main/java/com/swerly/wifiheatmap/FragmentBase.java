@@ -21,7 +21,6 @@ import org.w3c.dom.Text;
 public abstract class FragmentBase extends Fragment {
     public static final String HOME_FRAGMENT = "FragmentHome";
     public static final String MAP_FRAGMENT = "FragmentMap";
-    public static final String BOUNDRY_FRAGMENT = "FragmentBoundry";
     public static final String HEATMAP_FRAGMENT = "FragmentHeatmap";
     public static final String NAME_FRAGMENT = "FragmentName";
 

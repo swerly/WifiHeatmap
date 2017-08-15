@@ -149,11 +149,13 @@ public class FragmentMap extends FragmentBase implements
 
     @Override
     public boolean onBackPressed() {
+        activityMain.setFragTransitionFade(true);
         return searchBarView.animateClose();
     }
 
     @Override
     public void onFabPressed() {
+        activityMain.setFragTransitionFade(true);
         searchBarView.animateClose();
         mapController.requestSnapshot(app);
     }

@@ -8,7 +8,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+
+import com.alexvasilkov.gestures.views.GestureImageView;
 
 /**
  * Created by Seth on 8/10/2017.
@@ -17,7 +18,8 @@ import android.widget.ImageView;
 public class FragmentZoom extends FragmentBase implements
         SnapshotWaiter.SnapshotReadyCallback{
 
-    private ImageView bkgView;
+    private GestureImageView bkgView;
+    private boolean bkgSet;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,7 +31,9 @@ public class FragmentZoom extends FragmentBase implements
         super.onCreateView(inflater, container, savedInstanceState);
 
         View view = inflater.inflate(R.layout.fragment_zoom, container, false);
-        bkgView = view.findViewById(R.id.zoom_bkg_view);
+        bkgView = view.findViewById(R.id.gesture_view);
+        bkgView.getController().getSettings()
+                .setRotationEnabled(true);
 
         if (app.isBackgroundReady()){
             setBackground();
@@ -52,12 +56,15 @@ public class FragmentZoom extends FragmentBase implements
 
     @Override
     public boolean onBackPressed() {
+        activityMain.setFragTransitionFade(false);
         return false;
     }
 
     @Override
     public void onFabPressed() {
-        //TODO: get screenshot of view, set current bkg in appdata
+        activityMain.setFragTransitionFade(false);
+        Bitmap bkg = StaticUtils.getScreenShot(bkgView);
+        app.setBackgroundInProgress(bkg);
         app.setBackgroundReady();
     }
 
@@ -74,7 +81,9 @@ public class FragmentZoom extends FragmentBase implements
     }
 
     private void setBackground(){
-        Bitmap bkgToSet = app.getCurrentInProgress().getBackgroundImage();
-        bkgView.setImageBitmap(bkgToSet);
+        if (!bkgSet) {
+            Bitmap bkgToSet = app.getCurrentInProgress().getBackgroundImage();
+            bkgView.setImageBitmap(bkgToSet);
+        }
     }
 }

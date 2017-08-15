@@ -1,16 +1,21 @@
 package com.swerly.wifiheatmap;
 
+import android.animation.LayoutTransition;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.FrameLayout;
 
 public class ActivityMain extends ActivityBase{
 
     private FabHelper fabHelper;
     private FloatingActionButton mainFab;
     private FragmentManager fragmentManager;
+    private FrameLayout fragContainer;
+    private LayoutTransition fragFadeTransition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +24,8 @@ public class ActivityMain extends ActivityBase{
 
         mainFab = findViewById(R.id.fab);
         fabHelper = new FabHelper(this, mainFab);
+        fragContainer = findViewById(R.id.fragment_container);
+        fragFadeTransition = new LayoutTransition();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(getTitle());
@@ -119,5 +126,9 @@ public class ActivityMain extends ActivityBase{
             fragmentManager.popBackStack(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
             fabHelper.goHome();
         }
+    }
+
+    public void setFragTransitionFade(boolean toFade){
+            fragContainer.setLayoutTransition(toFade ? fragFadeTransition : null);
     }
 }

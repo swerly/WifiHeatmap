@@ -45,9 +45,6 @@ public class FabHelper{
             toSet = new FragmentMap();
             iconResId = reverse ? R.drawable.arrow_to_plus_avd : R.drawable.check_to_plus_avd;
         } else if (frag instanceof FragmentMap){
-            toSet = new FragmentBoundry();
-            iconResId = reverse ? R.drawable.arrow_back : R.drawable.plus_to_arrow_avd;
-        } else if (frag instanceof FragmentBoundry){
             toSet = new FragmentHeatmap();
             iconResId = reverse ? R.drawable.arrow_back : R.drawable.arrow_forward;
         } else if (frag instanceof FragmentHeatmap){
@@ -56,8 +53,8 @@ public class FabHelper{
         } else if (frag instanceof FragmentName){
             toSet = new FragmentHome();
             iconResId = R.drawable.arrow_to_check_avd;
-        } else if (frag instanceof  FragmentZoom){
-            toSet = new FragmentBoundry();
+        } else if (frag instanceof FragmentZoom){
+            toSet = new FragmentHeatmap();
             iconResId = reverse ? R.drawable.arrow_back : R.drawable.arrow_forward;
         }
 
@@ -107,7 +104,7 @@ public class FabHelper{
                 builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        toSet = new FragmentBoundry();
+                        toSet = new FragmentHeatmap();
                         dialogInterface.dismiss();
                         set();
                     }

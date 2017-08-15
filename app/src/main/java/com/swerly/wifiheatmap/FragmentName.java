@@ -36,11 +36,13 @@ public class FragmentName extends FragmentBase {
 
     @Override
     public boolean onBackPressed() {
+        activityMain.setFragTransitionFade(true);
         return false;
     }
 
     @Override
     public void onFabPressed() {
+        activityMain.setFragTransitionFade(true);
         //TODO: add current data to cache
         app.resetCurrent();
     }
