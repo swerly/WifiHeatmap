@@ -71,13 +71,15 @@ public class ActivityMain extends ActivityBase{
     }
 
     public void backNavigation(){
+        FragmentBase toPop = (FragmentBase) fragmentManager.findFragmentById(R.id.fragment_container);
+        boolean fromHeatmap = toPop instanceof FragmentHeatmap;
         boolean popped = getSupportFragmentManager().popBackStackImmediate();
         if (popped){
             FragmentBase curFrag = (FragmentBase) fragmentManager.findFragmentById(R.id.fragment_container);
             if (curFrag instanceof FragmentMap){
                 app.resetCurrent();
             }
-            fabHelper.setupFab(curFrag, true);
+            fabHelper.setupFab(curFrag, true, fromHeatmap);
         } else {
             finish();
         }
@@ -113,7 +115,7 @@ public class ActivityMain extends ActivityBase{
                     .addToBackStack(null)
                     .commit();
 
-            fabHelper.setupFab(frag, false);
+            fabHelper.setupFab(frag, false, false);
         }
     }
 

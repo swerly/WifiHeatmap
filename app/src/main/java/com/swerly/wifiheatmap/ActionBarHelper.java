@@ -36,9 +36,7 @@ public class ActionBarHelper {
             idToInflate = R.menu.toolbar_map;
         } else if (fragment instanceof FragmentHeatmap){
             idToInflate = R.menu.toolbar_heatmap;
-        } else if (fragment instanceof FragmentName){
-            idToInflate = R.menu.toolbar_name;
-        } else if (fragment instanceof FragmentZoom){
+        }else if (fragment instanceof FragmentZoom){
             idToInflate = R.menu.toolbar_zoom;
         } else {
             idToInflate = 0;

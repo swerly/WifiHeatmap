@@ -3,7 +3,6 @@ package com.swerly.wifiheatmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,17 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.TextSwitcher;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
-
-import org.w3c.dom.Text;
 
 public abstract class FragmentBase extends Fragment {
     public static final String HOME_FRAGMENT = "FragmentHome";
     public static final String MAP_FRAGMENT = "FragmentMap";
     public static final String HEATMAP_FRAGMENT = "FragmentHeatmap";
-    public static final String NAME_FRAGMENT = "FragmentName";
 
     protected ActivityMain activityMain;
     protected ActionBarHelper actionBarHelper;

@@ -14,4 +14,5 @@
     <color name="primary_alpha60">#96009688</color>
     <color name="white_alpha80">#CCFFFFFF</color>
     <color name="transparent">#00000000</color>
+    <color name="dark_gray">#212121</color>
 </resources>

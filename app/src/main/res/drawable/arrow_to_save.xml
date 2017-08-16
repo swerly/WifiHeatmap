@@ -1,0 +1,62 @@
+<animated-vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+    <aapt:attr name="android:drawable">
+        <vector
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="24dp"
+            android:height="24dp"
+            android:viewportWidth="24"
+            android:viewportHeight="24">
+            <group
+                android:name="group"
+                android:pivotX="12"
+                android:pivotY="12">
+                <path
+                    android:name="path_2"
+                    android:pathData="M 17 3 L 5 3 C 3.89 3 3 3.9 3 5 L 3 19 C 3 20.1 3.89 21 5 21 L 19 21 C 20.1 21 21 20.1 21 19 L 21 7 L 17 3 Z M 12 19 C 10.34 19 9 17.66 9 16 C 9 14.34 10.34 13 12 13 C 13.66 13 15 14.34 15 16 C 15 17.66 13.66 19 12 19 Z M 15 9 L 5 9 L 5 5 L 15 5 L 15 9 Z"
+                    android:fillColor="#FF000000"/>
+                <path
+                    android:name="path_1"
+                    android:pathData="M 13 6 L 11.6 7.4 L 16.2 12 L 11.6 16.6 L 13 18 L 19 12 L 13 6"
+                    android:fillColor="#000000"/>
+            </group>
+        </vector>
+    </aapt:attr>
+    <target android:name="path_1">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:propertyName="pathData"
+                android:duration="250"
+                android:valueFrom="M 16.2 12 L 11.6 16.6 L 13 18 L 19 12 L 13 6 L 11.6 7.4 L 16.2 12"
+                android:valueTo="M 17 12 L 17 12 L 17 12 L 17 12 L 17 12 L 17 12 L 17 12"
+                android:valueType="pathType"
+                android:interpolator="@android:interpolator/fast_out_slow_in"/>
+        </aapt:attr>
+    </target>
+    <target android:name="path_2">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:propertyName="pathData"
+                android:duration="500"
+                android:valueFrom="M 7 6 L 5.6 7.4 C 7.133 8.933 8.667 10.467 10.2 12 L 5.6 16.6 C 6.067 17.067 6.533 17.533 7 18 C 7.667 17.333 8.333 16.667 9 16 C 9.667 15.333 10.333 14.667 11 14 C 11.667 13.333 12.333 12.667 13 12 L 11 10 C 10.333 9.333 9.667 8.667 9 8 L 7 6 M 8 16 C 8 16 8 16 8 16 C 8 16 8 16 8 16 C 8 16 8 16 8 16 L 8 16 C 8 16 8 16 8 16 M 8 8 L 8 8 L 8 8 L 8 8 L 8 8 L 8 8"
+                android:valueTo="M 17 3 L 5 3 C 3.89 3 3 3.9 3 5 L 3 12 C 3 14.333 3 16.667 3 19 C 3 20.1 3.89 21 5 21 C 9.667 21 14.333 21 19 21 C 20.1 21 21 20.1 21 19 L 21 7 C 19.667 5.667 18.333 4.333 17 3 L 17 3 M 9 16 C 9 14.34 10.34 13 12 13 C 13.66 13 15 14.34 15 16 C 15 17.66 13.66 19 12 19 L 12 19 C 10.34 19 9 17.66 9 16 M 5 9 L 5 5 L 15 5 L 15 9 L 15 9 L 5 9"
+                android:valueType="pathType"
+                android:interpolator="@android:interpolator/fast_out_slow_in"/>
+        </aapt:attr>
+    </target>
+    <target android:name="group">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:propertyName="rotation"
+                android:duration="500"
+                android:valueFrom="0"
+                android:valueTo="-360"
+                android:valueType="floatType"
+                android:interpolator="@android:interpolator/fast_out_slow_in"/>
+        </aapt:attr>
+    </target>
+</animated-vector>

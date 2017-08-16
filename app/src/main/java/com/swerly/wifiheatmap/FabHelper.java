@@ -4,9 +4,13 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.View;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 /**
  * Created by Seth on 7/6/2017.
@@ -32,10 +36,10 @@ public class FabHelper{
 
     public void goHome(){
         fab.setOnClickListener(new FabClickListener(new FragmentMap(), FragmentBase.HOME_FRAGMENT));
-        setAndPlay(R.drawable.check_to_plus_avd);
+        setAndPlay(R.drawable.save_to_plus);
     }
 
-    public void setupFab(FragmentBase frag, boolean reverse){
+    public void setupFab(FragmentBase frag, boolean reverse, boolean fromHeatmap){
         curFrag = frag;
         FragmentBase toSet = null;
         String tag = null;
@@ -43,19 +47,16 @@ public class FabHelper{
 
         if (frag instanceof FragmentHome){
             toSet = new FragmentMap();
-            iconResId = reverse ? R.drawable.arrow_to_plus_avd : R.drawable.check_to_plus_avd;
+            iconResId = reverse ? R.drawable.arrow_to_plus_avd : R.drawable.save_to_plus;
         } else if (frag instanceof FragmentMap){
             toSet = new FragmentHeatmap();
-            iconResId = reverse ? R.drawable.arrow_back : R.drawable.arrow_forward;
+            iconResId = reverse ? ( fromHeatmap ? R.drawable.save_to_arrow: R.drawable.arrow_back) : R.drawable.arrow_forward;
         } else if (frag instanceof FragmentHeatmap){
-            toSet = new FragmentName();
-            iconResId = reverse ? R.drawable.check_to_arrow_avd : R.drawable.arrow_forward;
-        } else if (frag instanceof FragmentName){
             toSet = new FragmentHome();
-            iconResId = R.drawable.arrow_to_check_avd;
+            iconResId = R.drawable.arrow_to_save;
         } else if (frag instanceof FragmentZoom){
             toSet = new FragmentHeatmap();
-            iconResId = reverse ? R.drawable.arrow_back : R.drawable.arrow_forward;
+            iconResId = reverse ? R.drawable.save_to_arrow: R.drawable.arrow_forward;
         }
 
         tag = frag.getClass().getSimpleName();
@@ -70,6 +71,7 @@ public class FabHelper{
     }
 
     public void setAndPlay(int iconResId){
+        Drawable db = context.getDrawable(iconResId);
         fab.setImageResource(iconResId);
 
         Drawable iconDrawable = fab.getDrawable();
@@ -89,27 +91,49 @@ public class FabHelper{
 
         @Override
         public void onClick(View view) {
-            if (curFrag instanceof FragmentMap){
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle(R.string.zoom_dialog_title);
-                builder.setMessage(R.string.zoom_dialog_content);
-                builder.setPositiveButton(R.string.zoom, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        toSet = new FragmentZoom();
-                        dialogInterface.dismiss();
-                        set();
-                    }
-                });
-                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        toSet = new FragmentHeatmap();
-                        dialogInterface.dismiss();
-                        set();
-                    }
-                });
-                builder.show();
+            if (tag.equals(FragmentBase.MAP_FRAGMENT)){
+                new MaterialDialog.Builder(context)
+                        .title(R.string.zoom_dialog_title)
+                        .content(R.string.zoom_dialog_content)
+                        .positiveText(R.string.zoom)
+                        .negativeText(R.string.no)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                toSet = new FragmentZoom();
+                                dialog.dismiss();
+                                set();
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                toSet = new FragmentHeatmap();
+                                dialog.dismiss();
+                                set();
+                            }
+                        })
+                        .show();
+            } else if (tag.equals(FragmentBase.HEATMAP_FRAGMENT)){
+                new MaterialDialog.Builder(context)
+                        .title(R.string.save_heatmap)
+                        .content(R.string.zoom_dialog_content)
+                        .positiveText(R.string.save)
+                        .negativeText(R.string.cancel)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                dialog.dismiss();
+                                set();
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
             } else {
                 set();
             }
