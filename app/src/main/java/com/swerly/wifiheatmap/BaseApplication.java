@@ -16,7 +16,6 @@ public class BaseApplication extends Application implements
     private static Context context;
 
     private CacheHelper cacheHelper;
-    private int currentCount;
     private HeatmapData currentInProgress;
     private boolean backgroundReady;
 
@@ -33,21 +32,12 @@ public class BaseApplication extends Application implements
         return context;
     }
 
-    public void setCurrentCount(int count){
-        this.currentCount = count;
-    }
-
-    public int getCurrentCount(){
-        return currentCount;
-    }
-
-    public void incrementCount(){
-        currentCount++;
-        cacheHelper.saveCount(currentCount);
-    }
-
     public HeatmapData getCurrentInProgress(){
         return currentInProgress;
+    }
+
+    public void setCurrentInProgress(HeatmapData inProgress){
+        this.currentInProgress = inProgress;
     }
 
     public void setBackgroundInProgress(Bitmap bkg){

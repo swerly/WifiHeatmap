@@ -56,7 +56,7 @@ public class FabHelper{
             iconResId = R.drawable.arrow_to_save;
         } else if (frag instanceof FragmentZoom){
             toSet = new FragmentHeatmap();
-            iconResId = reverse ? R.drawable.save_to_arrow: R.drawable.arrow_forward;
+            iconResId = reverse ? R.drawable.save_to_arrow : R.drawable.arrow_forward;
         }
 
         tag = frag.getClass().getSimpleName();
@@ -71,7 +71,6 @@ public class FabHelper{
     }
 
     public void setAndPlay(int iconResId){
-        Drawable db = context.getDrawable(iconResId);
         fab.setImageResource(iconResId);
 
         Drawable iconDrawable = fab.getDrawable();
@@ -117,7 +116,7 @@ public class FabHelper{
             } else if (tag.equals(FragmentBase.HEATMAP_FRAGMENT)){
                 new MaterialDialog.Builder(context)
                         .title(R.string.save_heatmap)
-                        .content(R.string.zoom_dialog_content)
+                        .content("This is where you would enter a name for the heatmap")
                         .positiveText(R.string.save)
                         .negativeText(R.string.cancel)
                         .onPositive(new MaterialDialog.SingleButtonCallback() {

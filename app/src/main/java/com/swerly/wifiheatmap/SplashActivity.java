@@ -34,7 +34,7 @@ public class SplashActivity extends ActivityBase implements CacheHelper.CacheLoa
     @Override
     public void heatmapCountLoaded(int count) {
         countLoaded = true;
-        app.setCurrentCount(count);
+        //TODO: save to appdata
         checkIfLoaded();
     }
 

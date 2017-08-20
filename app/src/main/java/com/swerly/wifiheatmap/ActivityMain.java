@@ -129,8 +129,4 @@ public class ActivityMain extends ActivityBase{
             fabHelper.goHome();
         }
     }
-
-    public void setFragTransitionFade(boolean toFade){
-            fragContainer.setLayoutTransition(toFade ? fragFadeTransition : null);
-    }
 }

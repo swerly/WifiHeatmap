@@ -48,7 +48,6 @@ public class FragmentHome extends FragmentBase{
 
     @Override
     public void onFabPressed() {
-        activityMain.setFragTransitionFade(true);
     }
 
     @Override

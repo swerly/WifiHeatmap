@@ -4,7 +4,9 @@ package com.swerly.wifiheatmap;
 import android.graphics.Bitmap;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+
 
 /**
  * Created by Seth on 8/11/2017.

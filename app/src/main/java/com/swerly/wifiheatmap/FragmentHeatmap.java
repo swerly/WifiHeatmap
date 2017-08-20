@@ -15,8 +15,12 @@ import android.widget.ImageView;
  */
 
 public class FragmentHeatmap extends FragmentBase implements
-        SnapshotWaiter.SnapshotReadyCallback{
+        SnapshotWaiter.SnapshotReadyCallback,
+        WifiHelper.WifiConnectionChangeCallback{
     private ImageView bkgView;
+    private HeatmapView heatmapView;
+    private WifiHelper wifiHelper;
+    private View noWifiView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,6 +32,10 @@ public class FragmentHeatmap extends FragmentBase implements
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_heatmap, container, false);
         bkgView = view.findViewById(R.id.heatmap_bkg_view);
+        heatmapView = view.findViewById(R.id.heatmap_view);
+        noWifiView = view.findViewById(R.id.no_wifi_view);
+
+        wifiHelper = new WifiHelper(getContext());
 
         if (app.isBackgroundReady()){
             setBackground();
@@ -50,13 +58,11 @@ public class FragmentHeatmap extends FragmentBase implements
 
     @Override
     public boolean onBackPressed() {
-        activityMain.setFragTransitionFade(false);
         return false;
     }
 
     @Override
     public void onFabPressed() {
-        activityMain.setFragTransitionFade(true);
     }
 
     @Override
@@ -64,6 +70,16 @@ public class FragmentHeatmap extends FragmentBase implements
         super.onResume();
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setSubTitle(R.string.heatmap_subtitle);
+        wifiHelper.startListeningForWifiChanges(this);
+        heatmapView.startListeningForLevelChanges();
+        doWifiCheck();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        wifiHelper.stopListeningForWifiChanges();
+        heatmapView.stopListeningForLevelChanges();
     }
 
     @Override
@@ -74,5 +90,35 @@ public class FragmentHeatmap extends FragmentBase implements
     private void setBackground(){
         Bitmap bkgToSet = app.getCurrentInProgress().getBackgroundImage();
         bkgView.setImageBitmap(bkgToSet);
+    }
+
+    @Override
+    public void wifiConnectionChange(boolean wifiStatus) {
+        if (wifiStatus){
+            hideNoWifiView();
+        } else {
+            showNoWifiView();
+        }
+    }
+
+    private void doWifiCheck(){
+        if (wifiHelper.wifiEnabledAndConnected()){
+            hideNoWifiView();
+        } else {
+            showNoWifiView();
+            wifiHelper.setupWifi();
+        }
+    }
+
+    private void hideNoWifiView(){
+        noWifiView.setVisibility(View.GONE);
+        bkgView.setVisibility(View.VISIBLE);
+        heatmapView.setVisibility(View.VISIBLE);
+    }
+
+    private void showNoWifiView(){
+        noWifiView.setVisibility(View.VISIBLE);
+        bkgView.setVisibility(View.GONE);
+        heatmapView.setVisibility(View.GONE);
     }
 }

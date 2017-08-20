@@ -56,13 +56,11 @@ public class FragmentZoom extends FragmentBase implements
 
     @Override
     public boolean onBackPressed() {
-        activityMain.setFragTransitionFade(false);
         return false;
     }
 
     @Override
     public void onFabPressed() {
-        activityMain.setFragTransitionFade(false);
         Bitmap bkg = StaticUtils.getScreenShot(bkgView);
         app.setBackgroundInProgress(bkg);
         app.setBackgroundReady();
@@ -84,6 +82,7 @@ public class FragmentZoom extends FragmentBase implements
         if (!bkgSet) {
             Bitmap bkgToSet = app.getCurrentInProgress().getBackgroundImage();
             bkgView.setImageBitmap(bkgToSet);
+            bkgSet = true;
         }
     }
 }
