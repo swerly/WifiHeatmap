@@ -4,16 +4,16 @@
 
     <item
         android:id="@+id/action_filter"
-        android:orderInCategory="100"
+        android:orderInCategory="101"
         app:showAsAction="always"
         android:icon="@drawable/ic_filter_list_black_24dp"
-        android:title="@string/filter"/>
+        android:title="@string/filter" />
 
     <item
-        android:id="@+id/action_help"
-        android:orderInCategory="100"
+        android:id="@+id/action_info"
+        android:orderInCategory="101"
         app:showAsAction="always"
-        android:icon="@drawable/ic_help_black_24dp"
-        android:title="@string/help"/>
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="@string/info"/>
 
 </menu>

@@ -10,7 +10,7 @@ import android.graphics.Paint;
 
 public class HeatmapPixelDrawer {
     private Context context;
-    private Canvas canvas;
+    private Canvas currentCanvas;
     private int width, height;
     private float density;
     private HeatmapPixel[][] pixelArray;
@@ -18,7 +18,7 @@ public class HeatmapPixelDrawer {
 
     public HeatmapPixelDrawer(Context context, Canvas canvas, int width, int height, float density){
         this.context = context;
-        this.canvas = canvas;
+        this.currentCanvas = canvas;
         this.width = width;
         this.height = height;
         this.density = density;
@@ -163,15 +163,18 @@ public class HeatmapPixelDrawer {
         float x = pixel.getX()*density;
         float y = pixel.getY()*density;
         if (assignedLevel == 0 || assignedLevel < ringLevel){
-            canvas.drawRect(x, y, x+density, y+density, getPaint(ringLevel));
+            currentCanvas.drawRect(x, y, x+density, y+density, getPaint(ringLevel));
             pixel.setLevel(ringLevel);
         } else if (assignedLevel > centerLevel && (ringLevel == 5)){
-            canvas.drawRect(x, y, x+density, y+density, getPaint(centerLevel));
+            currentCanvas.drawRect(x, y, x+density, y+density, getPaint(centerLevel));
             pixel.setLevel(ringLevel);
         } else if (assignedLevel < centerLevel && centerLevel == ringLevel){
-            canvas.drawRect(x, y, x+density, y+density, getPaint(ringLevel));
+            currentCanvas.drawRect(x, y, x+density, y+density, getPaint(ringLevel));
             pixel.setLevel(ringLevel);
         }
+    }
 
+    public HeatmapPixel[][] getPixelArray(){
+        return pixelArray;
     }
 }

@@ -17,6 +17,8 @@ public abstract class FragmentBase extends Fragment {
     public static final String HOME_FRAGMENT = "FragmentHome";
     public static final String MAP_FRAGMENT = "FragmentMap";
     public static final String HEATMAP_FRAGMENT = "FragmentHeatmap";
+    public static final String ZOOM_FRAGMENT = "FragmentZoom";
+    public static final String IFNO_FRAGMENT = "FragmentInfo";
 
     protected ActivityMain activityMain;
     protected ActionBarHelper actionBarHelper;

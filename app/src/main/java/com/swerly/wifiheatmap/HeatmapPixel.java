@@ -1,10 +1,12 @@
 package com.swerly.wifiheatmap;
 
+import java.io.Serializable;
+
 /**
  * Created by Seth on 8/17/2017.
  */
 
-public class HeatmapPixel {
+public class HeatmapPixel implements Serializable{
     private int level;
     private int x, y;
 

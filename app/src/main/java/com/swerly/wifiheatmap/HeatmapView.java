@@ -9,7 +9,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
 
 /**
  * Created by Seth on 8/17/2017.
@@ -25,8 +24,7 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
     private Canvas canvasBuffer;
     private Paint canvasPaint;
     private WifiHelper wifiHelper;
-
-    private TextView signalText;
+    private HeatmapCacherCallback cacherCallback;
 
     public HeatmapView(Context context) {
         this(context, null);
@@ -44,10 +42,6 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
         canvasPaint = new Paint(Paint.DITHER_FLAG);
         canvasPaint.setAlpha(175);
         drawnOn = false;
-    }
-
-    public void setLevelText(TextView lt){
-        this.signalText = lt;
     }
 
     @Override
@@ -89,6 +83,9 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
                 pixelDrawer.drawPixels(touchPoints[0], touchPoints[1], wifiSignalLevel);
                 invalidate();
                 break;
+            case MotionEvent.ACTION_UP:
+                cacherCallback.pointsChanged(pixelDrawer.getPixelArray());
+                break;
         }
         return true;
     }
@@ -105,17 +102,21 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
 
     @Override
     public void signalChanged(WifiHelper.WifiSignalLevel signalLevel) {
-        if (signalText != null) {
-            signalText.setText(Integer.toString(signalLevel.rssi));
-        }
         wifiSignalLevel = signalLevel.level;
     }
     public void startListeningForLevelChanges(){
         wifiHelper.listenForLevelChanges(this);
-
     }
 
     public void stopListeningForLevelChanges(){
         wifiHelper.stopListeningForLevelChanges();
+    }
+
+    public void setCacherCallback(HeatmapCacherCallback cacherCallback){
+        this.cacherCallback = cacherCallback;
+    }
+
+    public interface HeatmapCacherCallback{
+        void pointsChanged(HeatmapPixel[][] newPoints);
     }
 }

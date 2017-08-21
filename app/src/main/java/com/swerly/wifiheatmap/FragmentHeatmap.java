@@ -16,7 +16,8 @@ import android.widget.ImageView;
 
 public class FragmentHeatmap extends FragmentBase implements
         SnapshotWaiter.SnapshotReadyCallback,
-        WifiHelper.WifiConnectionChangeCallback{
+        WifiHelper.WifiConnectionChangeCallback,
+        HeatmapView.HeatmapCacherCallback{
     private ImageView bkgView;
     private HeatmapView heatmapView;
     private WifiHelper wifiHelper;
@@ -33,6 +34,7 @@ public class FragmentHeatmap extends FragmentBase implements
         View view = inflater.inflate(R.layout.fragment_heatmap, container, false);
         bkgView = view.findViewById(R.id.heatmap_bkg_view);
         heatmapView = view.findViewById(R.id.heatmap_view);
+        heatmapView.setCacherCallback(this);
         noWifiView = view.findViewById(R.id.no_wifi_view);
 
         wifiHelper = new WifiHelper(getContext());
@@ -63,6 +65,7 @@ public class FragmentHeatmap extends FragmentBase implements
 
     @Override
     public void onFabPressed() {
+        //dont need to do anything because fab helper takes care of it
     }
 
     @Override
@@ -120,5 +123,10 @@ public class FragmentHeatmap extends FragmentBase implements
         noWifiView.setVisibility(View.VISIBLE);
         bkgView.setVisibility(View.GONE);
         heatmapView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void pointsChanged(HeatmapPixel[][] newPoints) {
+        app.setCurrentInProgressPixels(newPoints);
     }
 }

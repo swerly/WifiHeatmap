@@ -3,20 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_undo"
-        android:orderInCategory="100"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_undo_black_24dp"
-        android:title="@string/undo"/>
-
-    <item
-        android:id="@+id/action_redo"
-        android:orderInCategory="100"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_redo_black_24dp"
-        android:title="@string/redo"/>
-
-    <item
         android:id="@+id/action_help"
         android:orderInCategory="100"
         app:showAsAction="always"

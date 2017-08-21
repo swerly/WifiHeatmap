@@ -3,6 +3,7 @@ package com.swerly.wifiheatmap;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
  */
 
 public class CacheHelper {
-    private static String HEATMAP_COUNT = "heatmap_count";
     private static String HEATMAP_LIST = "heatmap_list";
     private static String HEATMAP_IN_PROGRESS = "heatmap_in_progress";
 
@@ -32,42 +32,36 @@ public class CacheHelper {
         new SaveCacheTask().execute(inProgressData);
     }
 
-    public void saveCount(int count){
-        new SaveCacheTask().execute(count);
-    }
-
-    public void startCountLoad(){
-        new LoadCacheTask().execute(HEATMAP_COUNT);
+    public void saveHeatmapList(ArrayList<HeatmapData> heatmapList){
+        new SaveCacheTask().execute(heatmapList);
     }
 
     public void startupLoad(){
-        //perform all 3 cache loads
-        new LoadCacheTask().execute(HEATMAP_COUNT);
+        new LoadCacheTask().execute(HEATMAP_IN_PROGRESS);
+        new LoadCacheTask().execute(HEATMAP_LIST);
+    }
+
+    public void deleteInProgress(){
+        context.deleteFile(HEATMAP_IN_PROGRESS);
     }
 
     private class SaveCacheTask extends AsyncTask<Object, Void, Void>{
 
         @Override
         protected Void doInBackground(Object... inputObj) {
-            String outputFile;
+            String outputFile = "";
             Object objToSave = inputObj[0];
             //if the object we want to save is an arraylist then we are saving all heatmap data
             if (objToSave instanceof ArrayList<?>){
                 outputFile = HEATMAP_LIST;
             } else if (objToSave instanceof HeatmapData){
                 outputFile = HEATMAP_IN_PROGRESS;
-            } else {
-                outputFile = HEATMAP_COUNT;
             }
             FileOutputStream fos = null;
             try {
                 fos = context.openFileOutput(outputFile, Context.MODE_PRIVATE);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
-                if (outputFile.equals(HEATMAP_COUNT)){
-                    oos.writeInt((int)objToSave);
-                } else {
-                    oos.writeObject(objToSave);
-                }
+                oos.writeObject(objToSave);
                 oos.flush();
                 fos.getFD().sync();
                 fos.close();
@@ -92,11 +86,7 @@ public class CacheHelper {
                 fos = context.openFileInput(cacheToLoad);
                 ObjectInputStream ois = new ObjectInputStream(fos);
                 Object toReturn = null;
-                if (cacheToLoad.equals(HEATMAP_COUNT)){
-                    toReturn = ois.readInt();
-                } else {
-                    toReturn = ois.read();
-                }
+                toReturn = ois.readObject();
                 ois.close();
                 fos.close();
                 return toReturn;
@@ -104,6 +94,8 @@ public class CacheHelper {
                 //should have log message here? return null?
                 e.printStackTrace();
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
             return null;
@@ -114,15 +106,8 @@ public class CacheHelper {
             if (loadCallbacks == null){
                 return;
             }
-            if (cacheToLoad.equals(HEATMAP_COUNT)){
-                int count;
-                if (result == null){
-                    count = 0;
-                } else {
-                    count = (int) result;
-                }
-                loadCallbacks.heatmapCountLoaded(count);
-            } else if (cacheToLoad.equals(HEATMAP_IN_PROGRESS)){
+
+            if (cacheToLoad.equals(HEATMAP_IN_PROGRESS)){
                 loadCallbacks.heatmapInProgressLoaded((HeatmapData) result);
             } else {
                 loadCallbacks.heatmapListLoaded((ArrayList<HeatmapData>) result);
@@ -132,7 +117,6 @@ public class CacheHelper {
 
     public interface CacheLoadCallbacks{
         void heatmapListLoaded(ArrayList<HeatmapData> data);
-        void heatmapCountLoaded(int count);
         void heatmapInProgressLoaded(HeatmapData inProgress);
     }
 }

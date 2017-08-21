@@ -13,12 +13,6 @@ import android.view.MenuItem;
  */
 
 public class ActionBarHelper {
-    public static final int UNDO = R.id.action_undo;
-    public static final int REDO = R.id.action_redo;
-    public static final int LOCATION = R.id.action_location;
-    public static final int SEARCH = R.id.action_search;
-    public static final int FILTER = R.id.action_filter;
-    public static final int HELP = R.id.action_help;
 
     private Fragment fragment;
     private Menu menu;
@@ -36,8 +30,10 @@ public class ActionBarHelper {
             idToInflate = R.menu.toolbar_map;
         } else if (fragment instanceof FragmentHeatmap){
             idToInflate = R.menu.toolbar_heatmap;
-        }else if (fragment instanceof FragmentZoom){
+        } else if (fragment instanceof FragmentZoom){
             idToInflate = R.menu.toolbar_zoom;
+        } else if (fragment instanceof FragmentInfo){
+            idToInflate = R.menu.toolbar_info;
         } else {
             idToInflate = 0;
             Log.d(BaseApplication.DEBUG_MESSAGE, "action bar helper fragment type unknown");

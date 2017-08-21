@@ -14,6 +14,7 @@ import android.widget.TextView;
  */
 
 public class FragmentHome extends FragmentBase{
+    private TextView text;
 
     public static FragmentHome newInstance(){
         return new FragmentHome();
@@ -28,6 +29,7 @@ public class FragmentHome extends FragmentBase{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        text = view.findViewById(R.id.home_text);
         return view;
     }
 
@@ -38,6 +40,11 @@ public class FragmentHome extends FragmentBase{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.action_info:
+                activityMain.goToFragment(new FragmentInfo());
+                break;
+        }
         return true;
     }
 
@@ -54,6 +61,7 @@ public class FragmentHome extends FragmentBase{
     public void onResume(){
         super.onResume();
         hideSubtitle();
+        text.setText(Integer.toString(app.getHeatmaps().size()));
         //TODO: display list of heatmaps
 
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(false);

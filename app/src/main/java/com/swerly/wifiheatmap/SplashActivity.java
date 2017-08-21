@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 public class SplashActivity extends ActivityBase implements CacheHelper.CacheLoadCallbacks {
     private boolean listLoaded;
-    private boolean countLoaded;
     private boolean inProgressLoaded;
 
     private CacheHelper cacheHelper;
@@ -21,32 +20,25 @@ public class SplashActivity extends ActivityBase implements CacheHelper.CacheLoa
         super.onCreate(savedInstanceState);
 
         cacheHelper = new CacheHelper(this, this);
-        cacheHelper.startCountLoad();
+        cacheHelper.startupLoad();
     }
 
     @Override
     public void heatmapListLoaded(ArrayList<HeatmapData> data) {
         listLoaded = true;
-        //TODO: save to appdata
-        checkIfLoaded();
-    }
-
-    @Override
-    public void heatmapCountLoaded(int count) {
-        countLoaded = true;
-        //TODO: save to appdata
+        app.setLoadedList(data);
         checkIfLoaded();
     }
 
     @Override
     public void heatmapInProgressLoaded(HeatmapData inProgress) {
         inProgressLoaded = true;
-        //TODO: save to appdata
+        app.setLoadedInProgress(inProgress);
         checkIfLoaded();
     }
 
     private void checkIfLoaded(){
-        if (countLoaded){
+        if (listLoaded && inProgressLoaded){
             Intent intent = new Intent(this, ActivityMain.class);
             startActivity(intent);
             finish();

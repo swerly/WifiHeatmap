@@ -18,12 +18,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name="com.swerly.wifiheatmap.ActivityMain">
+        <!-- portrait mode because who doesn't love laziness :)-->
+        <activity
+            android:name="com.swerly.wifiheatmap.ActivityMain"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity
             android:name=".SplashActivity"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

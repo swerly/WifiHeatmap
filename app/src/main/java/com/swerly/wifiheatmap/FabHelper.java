@@ -1,13 +1,16 @@
 package com.swerly.wifiheatmap;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -39,8 +42,8 @@ public class FabHelper{
         setAndPlay(R.drawable.save_to_plus);
     }
 
-    public void setupFab(FragmentBase frag, boolean reverse, boolean fromHeatmap){
-        curFrag = frag;
+    public void setupFab(Fragment frag, boolean reverse, boolean fromHeatmap){
+        curFrag = (FragmentBase) frag;
         FragmentBase toSet = null;
         String tag = null;
         int iconResId = 0;
@@ -57,9 +60,13 @@ public class FabHelper{
         } else if (frag instanceof FragmentZoom){
             toSet = new FragmentHeatmap();
             iconResId = reverse ? R.drawable.save_to_arrow : R.drawable.arrow_forward;
+        } else if (frag instanceof FragmentInfo){
+            hideFab();
+            return;
         }
 
         tag = frag.getClass().getSimpleName();
+        showFab();
 
         if (toSet != null && iconResId != 0) {
             setAndPlay(iconResId);
@@ -114,16 +121,33 @@ public class FabHelper{
                         })
                         .show();
             } else if (tag.equals(FragmentBase.HEATMAP_FRAGMENT)){
+                final InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                //this is a little messy...
                 new MaterialDialog.Builder(context)
                         .title(R.string.save_heatmap)
-                        .content("This is where you would enter a name for the heatmap")
+                        .autoDismiss(false)
                         .positiveText(R.string.save)
                         .negativeText(R.string.cancel)
+                        .customView(R.layout.naming_view, false)
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                dialog.dismiss();
-                                set();
+                                View customView = dialog.getCustomView();
+                                EditText nameTextView = customView.findViewById(R.id.naming_edittext);
+                                String nameText = nameTextView.getText().toString();
+                                if ("".equals(nameText)){
+                                    Toast.makeText(context, context.getString(R.string.enter_name), Toast.LENGTH_SHORT)
+                                            .show();
+                                } else {
+                                    BaseApplication app = context.getApp();
+                                    View viewToScreenshot = context.findViewById(R.id.fragment_container);
+                                    app.setCurrentInProgressFinished(StaticUtils.getScreenShot(viewToScreenshot));
+                                    app.setCurrentInProgressName(nameText);
+                                    app.finishCurrentInProgress();
+                                    imm.hideSoftInputFromWindow(nameTextView.getWindowToken(), 0);
+                                    dialog.dismiss();
+                                    set();
+                                }
                             }
                         })
                         .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -133,7 +157,7 @@ public class FabHelper{
                             }
                         })
                         .show();
-            } else {
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);            } else {
                 set();
             }
         }
@@ -146,5 +170,12 @@ public class FabHelper{
         }
     }
 
+    public void hideFab(){
+        fab.setVisibility(View.GONE);
+    }
+
+    public void showFab(){
+        fab.setVisibility(View.VISIBLE);
+    }
 
 }

@@ -1,13 +1,17 @@
 <resources>
     <string name="app_name">WifiHeatmap</string>
+    <string name="created_by">Created by swerly\n2017</string>
     <string name="map_subtitle">Find Location</string>
     <string name="zoom_subtitle">Zoom to Fit</string>
     <string name="name_subtitle">Name Heatmap</string>
     <string name="boundry_subtitle">Draw Boundry</string>
     <string name="heatmap_subtitle">Draw Heatmap</string>
+    <string name="info_subtitle">App Info</string>
     <string name="help">Help</string>
     <string name="redo">Redo</string>
     <string name="undo">Undo</string>
+    <string name="info">Info</string>
+    <string name="feedback">Feedback</string>
     <string name="location">Location</string>
     <string name="search">Search</string>
     <string name="filter">Filter</string>
@@ -42,4 +46,6 @@
     <string name="zoom">Zoom</string>
     <string name="save_heatmap">Save Heatmap</string>
     <string name="save">Save</string>
+    <string name="naming_hint">Enter name</string>
+    <string name="enter_name">Please enter a name for this heatmap.</string>
 </resources>

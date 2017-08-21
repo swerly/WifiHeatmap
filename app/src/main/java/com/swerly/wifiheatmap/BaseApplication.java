@@ -6,6 +6,9 @@ import android.graphics.Bitmap;
 
 import com.google.android.gms.maps.GoogleMap;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 /**
  * Created by Seth on 7/3/2017.
  */
@@ -15,6 +18,7 @@ public class BaseApplication extends Application implements
     public final static String DEBUG_MESSAGE = "HeatmapDebug";
     private static Context context;
 
+    private ArrayList<HeatmapData> heatmaps;
     private CacheHelper cacheHelper;
     private HeatmapData currentInProgress;
     private boolean backgroundReady;
@@ -28,6 +32,24 @@ public class BaseApplication extends Application implements
         backgroundReady = false;
     }
 
+    @Override
+    public void onSnapshotReady(Bitmap bitmap) {
+        setBackgroundInProgress(bitmap);
+        setBackgroundReady();
+    }
+
+    public void setLoadedList(ArrayList<HeatmapData> loadedList){
+        if (loadedList == null){
+            heatmaps = new ArrayList<>();
+        } else {
+            heatmaps = loadedList;
+        }
+    }
+
+    public void setLoadedInProgress(HeatmapData loadedInProgress){
+        this.currentInProgress = loadedInProgress;
+    }
+
     public static Context getContext(){
         return context;
     }
@@ -36,8 +58,31 @@ public class BaseApplication extends Application implements
         return currentInProgress;
     }
 
-    public void setCurrentInProgress(HeatmapData inProgress){
-        this.currentInProgress = inProgress;
+    public ArrayList<HeatmapData> getHeatmaps(){
+        return heatmaps;
+    }
+
+    public void setCurrentInProgressPixels(HeatmapPixel[][] newPixels){
+        currentInProgress.setPixels(newPixels);
+        saveInProgress();
+    }
+
+    public void setCurrentInProgressFinished(Bitmap finishedHeatmap){
+        currentInProgress.setFinishedHeatmap(finishedHeatmap);
+    }
+
+    public void setCurrentInProgressName(String name){
+        currentInProgress.setName(name);
+    }
+
+    public void finishCurrentInProgress(){
+        if (heatmaps == null){
+            heatmaps = new ArrayList<>();
+        }
+        heatmaps.add(currentInProgress);
+        resetCurrent();
+        saveHeatmapList();
+        deleteInProgress();
     }
 
     public void setBackgroundInProgress(Bitmap bkg){
@@ -46,16 +91,6 @@ public class BaseApplication extends Application implements
         }
         currentInProgress.setBackgroundImage(bkg);
         saveInProgress();
-    }
-
-    private void saveInProgress(){
-        cacheHelper.saveInProgress(currentInProgress);
-    }
-
-    @Override
-    public void onSnapshotReady(Bitmap bitmap) {
-        setBackgroundInProgress(bitmap);
-        setBackgroundReady();
     }
 
     public boolean isBackgroundReady(){
@@ -69,5 +104,17 @@ public class BaseApplication extends Application implements
     public void resetCurrent(){
         currentInProgress = null;
         backgroundReady = false;
+    }
+
+    public void deleteInProgress(){
+        cacheHelper.deleteInProgress();
+    }
+
+    private void saveInProgress(){
+        cacheHelper.saveInProgress(currentInProgress);
+    }
+
+    private void saveHeatmapList(){
+        cacheHelper.saveHeatmapList(heatmaps);
     }
 }
