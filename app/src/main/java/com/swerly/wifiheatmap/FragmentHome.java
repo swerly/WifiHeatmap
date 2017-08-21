@@ -1,20 +1,25 @@
 package com.swerly.wifiheatmap;
 
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import java.util.ArrayList;
 
 /**
  * Created by Seth on 7/6/2017.
  */
 
 public class FragmentHome extends FragmentBase{
-    private TextView text;
+    private RecyclerView rv;
+    private HomeAdapter adapter;
+    private View noHeatmapView;
+    private ArrayList<HeatmapData> heatmapList;
 
     public static FragmentHome newInstance(){
         return new FragmentHome();
@@ -29,7 +34,11 @@ public class FragmentHome extends FragmentBase{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        text = view.findViewById(R.id.home_text);
+
+        noHeatmapView = view.findViewById(R.id.no_heatmap_view);
+        rv = view.findViewById(R.id.home_recycler_view);
+        setupRecyclerView();
+
         return view;
     }
 
@@ -61,9 +70,25 @@ public class FragmentHome extends FragmentBase{
     public void onResume(){
         super.onResume();
         hideSubtitle();
-        text.setText(Integer.toString(app.getHeatmaps().size()));
-        //TODO: display list of heatmaps
-
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+        heatmapList = app.getHeatmaps();
+        if (heatmapList.isEmpty()){
+            rv.setVisibility(View.GONE);
+            noHeatmapView.setVisibility(View.VISIBLE);
+        } else {
+            rv.setVisibility(View.VISIBLE);
+            noHeatmapView.setVisibility(View.GONE);
+            adapter.setNewData(heatmapList);
+        }
+    }
+
+    private void setupRecyclerView(){
+        rv.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        rv.setLayoutManager(llm);
+
+        adapter = new HomeAdapter();
+        rv.setAdapter(adapter);
     }
 }
