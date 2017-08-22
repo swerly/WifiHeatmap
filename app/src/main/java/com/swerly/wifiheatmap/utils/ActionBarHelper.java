@@ -14,6 +14,7 @@ import com.swerly.wifiheatmap.fragments.FragmentHeatmap;
 import com.swerly.wifiheatmap.fragments.FragmentHome;
 import com.swerly.wifiheatmap.fragments.FragmentInfo;
 import com.swerly.wifiheatmap.fragments.FragmentMap;
+import com.swerly.wifiheatmap.fragments.FragmentView;
 import com.swerly.wifiheatmap.fragments.FragmentZoom;
 
 /**
@@ -42,7 +43,10 @@ public class ActionBarHelper {
             idToInflate = R.menu.toolbar_zoom;
         } else if (fragment instanceof FragmentInfo){
             idToInflate = R.menu.toolbar_info;
-        } else {
+        } else if (fragment instanceof FragmentView){
+            idToInflate = R.menu.toolbar_view;
+        }
+        else {
             idToInflate = 0;
             Log.d(BaseApplication.DEBUG_MESSAGE, "action bar helper fragment type unknown");
         }

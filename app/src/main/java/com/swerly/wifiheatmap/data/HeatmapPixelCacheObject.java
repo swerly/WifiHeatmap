@@ -2,11 +2,13 @@ package com.swerly.wifiheatmap.data;
 
 import com.swerly.wifiheatmap.data.HeatmapPixel;
 
+import java.io.Serializable;
+
 /**
  * Created by Seth on 8/21/2017.
  */
 
-public class HeatmapPixelCacheObject {
+public class HeatmapPixelCacheObject implements Serializable {
     public String fName;
     public HeatmapPixel[][] pixels;
 

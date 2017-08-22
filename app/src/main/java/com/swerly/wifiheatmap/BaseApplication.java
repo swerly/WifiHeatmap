@@ -26,6 +26,7 @@ public class BaseApplication extends Application implements
     private HeatmapData currentInProgress;
     private boolean backgroundReady;
     private HeatmapPixel[][] currentPixels;
+    private int indexToView;
 
 
     @Override
@@ -64,6 +65,14 @@ public class BaseApplication extends Application implements
 
     public ArrayList<HeatmapData> getHeatmaps(){
         return heatmaps;
+    }
+
+    public void setIndexToView(int toView){
+        this.indexToView = toView;
+    }
+
+    public int getIndexToView(){
+        return indexToView;
     }
 
     public void setCurrentInProgressPixels(HeatmapPixel[][] newPixels){

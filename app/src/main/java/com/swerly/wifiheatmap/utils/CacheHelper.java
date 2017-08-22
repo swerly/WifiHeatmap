@@ -2,7 +2,9 @@ package com.swerly.wifiheatmap.utils;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
+import com.swerly.wifiheatmap.BaseApplication;
 import com.swerly.wifiheatmap.data.HeatmapData;
 import com.swerly.wifiheatmap.data.HeatmapPixelCacheObject;
 
@@ -104,8 +106,8 @@ public class CacheHelper {
                 fos.close();
                 return toReturn;
             } catch (FileNotFoundException e) {
-                //should have log message here? return null?
-                e.printStackTrace();
+                Log.d(BaseApplication.DEBUG_MESSAGE, "file not found: " + cacheToLoad);
+                return null;
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {

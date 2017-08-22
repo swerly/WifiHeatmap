@@ -48,11 +48,6 @@ public class FragmentInfo extends FragmentBase {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return false;
     }

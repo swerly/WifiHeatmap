@@ -51,6 +51,11 @@ public abstract class FragmentBase extends Fragment {
         return null;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        actionBarHelper.setupForFragment(this, menu, inflater);
+    }
+
     private void setupSubTitle(){
         subTitle = getActivity().findViewById(R.id.subtitle);
         fadeIn = new AlphaAnimation(0.0f, 1.0f);
@@ -88,7 +93,12 @@ public abstract class FragmentBase extends Fragment {
         subTitle.startAnimation(fadeOut);
     }
 
-    public abstract void onCreateOptionsMenu(Menu menu, MenuInflater inflater);
+    protected void setSubTitle(String subtitle){
+        subTitleToSet = subtitle;
+        subTitle.setVisibility(View.VISIBLE);
+        subTitle.startAnimation(fadeOut);
+    }
+
     public abstract boolean onOptionsItemSelected(MenuItem item);
     public abstract boolean onBackPressed();
     public abstract void onFabPressed();

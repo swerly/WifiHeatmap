@@ -48,11 +48,6 @@ public class FragmentHome extends FragmentBase{
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        actionBarHelper.setupForFragment(this, menu, inflater);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.action_info:
@@ -93,7 +88,7 @@ public class FragmentHome extends FragmentBase{
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         rv.setLayoutManager(llm);
 
-        adapter = new HomeAdapter();
+        adapter = new HomeAdapter(activityMain);
         rv.setAdapter(adapter);
     }
 }

@@ -1,10 +1,17 @@
 package com.swerly.wifiheatmap.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.view.View;
+
+import com.swerly.wifiheatmap.R;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * Created by Seth on 8/7/2017.
@@ -31,5 +38,9 @@ public class StaticUtils {
 
     public static String sanitizeFileName(String fName){
         return fName.replaceAll("[^a-zA-Z0-9.-]", "");
+    }
+
+    public static void shareFinishedHeatmap(Context context, Bitmap finishedBitmap){
+        //need to find a way to share images without requesting permissions...
     }
 }

@@ -2,12 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.swerly.wifiheatmap">
 
+    <!-- location for finding yourself on the map -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- internet for making requests google geocode apis -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- wifi/network state for wifi levels and detecting if wifi available-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
     <application
         android:name=".BaseApplication"

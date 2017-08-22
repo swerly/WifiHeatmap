@@ -48,11 +48,6 @@ public class FragmentZoom extends FragmentBase implements
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        actionBarHelper.setupForFragment(this, menu, inflater);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return false;
     }

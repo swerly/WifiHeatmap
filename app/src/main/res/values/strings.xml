@@ -15,6 +15,8 @@
     <string name="location">Location</string>
     <string name="search">Search</string>
     <string name="filter">Filter</string>
+    <string name="share">Share</string>
+    <string name="share_heatmap">Share Heatmap</string>
     <string name="location_rationale">You must grant this app access to your location before we can
         easily find you on the map!\n\n Hit "OK" to grant this app permission.</string>
     <string name="location_granted">Location permissions granted.</string>

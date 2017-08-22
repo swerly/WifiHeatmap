@@ -22,6 +22,7 @@ import com.swerly.wifiheatmap.fragments.FragmentHeatmap;
 import com.swerly.wifiheatmap.fragments.FragmentHome;
 import com.swerly.wifiheatmap.fragments.FragmentInfo;
 import com.swerly.wifiheatmap.fragments.FragmentMap;
+import com.swerly.wifiheatmap.fragments.FragmentView;
 import com.swerly.wifiheatmap.fragments.FragmentZoom;
 
 /**
@@ -70,6 +71,9 @@ public class FabHelper{
             toSet = new FragmentHeatmap();
             iconResId = reverse ? R.drawable.save_to_arrow : R.drawable.arrow_forward;
         } else if (frag instanceof FragmentInfo){
+            hideFab();
+            return;
+        } else if (frag instanceof FragmentView){
             hideFab();
             return;
         }

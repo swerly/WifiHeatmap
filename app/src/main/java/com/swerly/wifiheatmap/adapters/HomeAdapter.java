@@ -8,8 +8,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.swerly.wifiheatmap.BaseApplication;
 import com.swerly.wifiheatmap.R;
+import com.swerly.wifiheatmap.activities.ActivityMain;
 import com.swerly.wifiheatmap.data.HeatmapData;
+import com.swerly.wifiheatmap.fragments.FragmentView;
+import com.swerly.wifiheatmap.utils.StaticUtils;
 
 import java.util.ArrayList;
 
@@ -18,17 +22,17 @@ import java.util.ArrayList;
  */
 
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HeatmapViewHolder> {
-    ArrayList<HeatmapData> heatmapList;
+    private ArrayList<HeatmapData> heatmapList;
+    private ActivityMain activityMain;
 
-    public HomeAdapter(){
+    public HomeAdapter( ActivityMain activityMain){
+        this.activityMain = activityMain;
     }
 
     @Override
     public HeatmapViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_heatmap, parent, false);
         HeatmapViewHolder heatmapViewHolder = new HeatmapViewHolder(v);
-
-        //todo: click listeners for the buttons
 
         return heatmapViewHolder;
     }
@@ -40,6 +44,12 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HeatmapViewHol
         holder.cardImage.setImageBitmap(curItem.getFinishedImage());
         holder.name.setText(curItem.getName());
         holder.dateTime.setText(curItem.getDateTimeString());
+
+        //shouldn't attach listers in onBind, but can't access individual card elements when getting adapter postion...
+
+        //im probably overlooking something but this shouldn't be too resource intensive. There wont (read: shouldnt)
+        //be large amounts of data in this list anyway
+        attachListeners(holder, curItem, position);
     }
 
     @Override
@@ -51,6 +61,23 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HeatmapViewHol
         //should switch to notifyItemInserted at some point if I want animations...
         heatmapList = newList;
         this.notifyDataSetChanged();
+    }
+
+    private void attachListeners(HeatmapViewHolder holder, final HeatmapData curItem, final int position){
+        holder.viewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activityMain.getApp().setIndexToView(position);
+                activityMain.goToFragment(new FragmentView());
+            }
+        });
+
+        holder.shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                StaticUtils.shareFinishedHeatmap(activityMain, curItem.getFinishedImage());
+            }
+        });
     }
 
     public static class HeatmapViewHolder extends RecyclerView.ViewHolder{
