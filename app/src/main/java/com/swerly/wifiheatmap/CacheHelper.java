@@ -17,8 +17,9 @@ import java.util.ArrayList;
  */
 
 public class CacheHelper {
-    private static String HEATMAP_LIST = "heatmap_list";
-    private static String HEATMAP_IN_PROGRESS = "heatmap_in_progress";
+    public static String HEATMAP_LIST = "heatmap_list";
+    public static String HEATMAP_IN_PROGRESS = "heatmap_in_progress";
+    public static String HEATMAP_PIXEL = "heatmap_pixel_cache";
 
     private Context context;
     private CacheLoadCallbacks loadCallbacks;
@@ -32,6 +33,10 @@ public class CacheHelper {
         new SaveCacheTask().execute(inProgressData);
     }
 
+    public void savePixels(HeatmapPixelCacheObject pixelsToCache){
+        new SaveCacheTask().execute(pixelsToCache);
+    }
+
     public void saveHeatmapList(ArrayList<HeatmapData> heatmapList){
         new SaveCacheTask().execute(heatmapList);
     }
@@ -43,6 +48,7 @@ public class CacheHelper {
 
     public void deleteInProgress(){
         context.deleteFile(HEATMAP_IN_PROGRESS);
+        context.deleteFile(HEATMAP_PIXEL + HEATMAP_IN_PROGRESS);
     }
 
     private class SaveCacheTask extends AsyncTask<Object, Void, Void>{
@@ -56,6 +62,8 @@ public class CacheHelper {
                 outputFile = HEATMAP_LIST;
             } else if (objToSave instanceof HeatmapData){
                 outputFile = HEATMAP_IN_PROGRESS;
+            } else if (objToSave instanceof HeatmapPixelCacheObject){
+                outputFile = HEATMAP_PIXEL + ((HeatmapPixelCacheObject)objToSave).fName;
             }
             FileOutputStream fos = null;
             try {
@@ -80,6 +88,9 @@ public class CacheHelper {
         @Override
         protected Object doInBackground(String... strings) {
             cacheToLoad = strings[0];
+            if (!cacheToLoad.equals(HEATMAP_LIST) && !cacheToLoad.equals(HEATMAP_IN_PROGRESS)){
+                cacheToLoad = HEATMAP_PIXEL + cacheToLoad;
+            }
             FileInputStream fos = null;
 
             try {
@@ -109,8 +120,10 @@ public class CacheHelper {
 
             if (cacheToLoad.equals(HEATMAP_IN_PROGRESS)){
                 loadCallbacks.heatmapInProgressLoaded((HeatmapData) result);
-            } else {
+            } else if (cacheToLoad.equals(HEATMAP_LIST)) {
                 loadCallbacks.heatmapListLoaded((ArrayList<HeatmapData>) result);
+            } else {
+                loadCallbacks.heatmapPixelsLoaded((HeatmapPixelCacheObject) result);
             }
         }
     }
@@ -118,5 +131,6 @@ public class CacheHelper {
     public interface CacheLoadCallbacks{
         void heatmapListLoaded(ArrayList<HeatmapData> data);
         void heatmapInProgressLoaded(HeatmapData inProgress);
+        void heatmapPixelsLoaded(HeatmapPixelCacheObject pixels);
     }
 }

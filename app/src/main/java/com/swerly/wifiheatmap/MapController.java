@@ -42,6 +42,7 @@ public class MapController implements OnMapReadyCallback, GeocodingHelper.Geocod
     private void initializeMap(){
         LatLng usa = new LatLng(37, -100);
         moveCameraTo(usa);
+        mMap.getUiSettings().setCompassEnabled(false);
     }
 
     public void setUserLocation(LatLng latlng){

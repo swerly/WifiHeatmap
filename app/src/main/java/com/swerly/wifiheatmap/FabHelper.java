@@ -121,43 +121,8 @@ public class FabHelper{
                         })
                         .show();
             } else if (tag.equals(FragmentBase.HEATMAP_FRAGMENT)){
-                final InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                //this is a little messy...
-                new MaterialDialog.Builder(context)
-                        .title(R.string.save_heatmap)
-                        .autoDismiss(false)
-                        .positiveText(R.string.save)
-                        .negativeText(R.string.cancel)
-                        .customView(R.layout.naming_view, false)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                View customView = dialog.getCustomView();
-                                EditText nameTextView = customView.findViewById(R.id.naming_edittext);
-                                String nameText = nameTextView.getText().toString();
-                                if ("".equals(nameText)){
-                                    Toast.makeText(context, context.getString(R.string.enter_name), Toast.LENGTH_SHORT)
-                                            .show();
-                                } else {
-                                    BaseApplication app = context.getApp();
-                                    View viewToScreenshot = context.findViewById(R.id.fragment_container);
-                                    app.setCurrentInProgressFinished(StaticUtils.getScreenShot(viewToScreenshot));
-                                    app.setCurrentInProgressName(nameText);
-                                    app.finishCurrentInProgress();
-                                    imm.hideSoftInputFromWindow(nameTextView.getWindowToken(), 0);
-                                    dialog.dismiss();
-                                    set();
-                                }
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);            } else {
+                saveHeatmap();
+            } else {
                 set();
             }
         }
@@ -167,6 +132,46 @@ public class FabHelper{
                     context.goToFragment(toSet);
                 }
             }
+        }
+
+        private void saveHeatmap(){
+            final InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            //this is a little messy...
+            new MaterialDialog.Builder(context)
+                    .title(R.string.save_heatmap)
+                    .autoDismiss(false)
+                    .positiveText(R.string.save)
+                    .negativeText(R.string.cancel)
+                    .customView(R.layout.naming_view, false)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            View customView = dialog.getCustomView();
+                            EditText nameTextView = customView.findViewById(R.id.naming_edittext);
+                            String nameText = nameTextView.getText().toString();
+                            if ("".equals(nameText)){
+                                Toast.makeText(context, context.getString(R.string.enter_name), Toast.LENGTH_SHORT)
+                                        .show();
+                            } else {
+                                BaseApplication app = context.getApp();
+                                View viewToScreenshot = context.findViewById(R.id.fragment_container);
+                                app.setCurrentInProgressFinished(StaticUtils.getScreenShot(viewToScreenshot));
+                                app.setCurrentInProgressName(nameText);
+                                app.finishCurrentInProgress();
+                                imm.hideSoftInputFromWindow(nameTextView.getWindowToken(), 0);
+                                dialog.dismiss();
+                                set();
+                            }
+                        }
+                    })
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         }
     }
 

@@ -24,7 +24,12 @@ public class StaticUtils {
     public static Bitmap getScreenShot(View view) {
         view.buildDrawingCache();
         Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
+        view.destroyDrawingCache();
         view.setDrawingCacheEnabled(false);
         return bitmap;
+    }
+
+    public static String sanitizeFileName(String fName){
+        return fName.replaceAll("[^a-zA-Z0-9.-]", "");
     }
 }

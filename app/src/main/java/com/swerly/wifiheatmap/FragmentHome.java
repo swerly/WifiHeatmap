@@ -73,7 +73,7 @@ public class FragmentHome extends FragmentBase{
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         heatmapList = app.getHeatmaps();
-        if (heatmapList.isEmpty()){
+        if (heatmapList == null || heatmapList.isEmpty()){
             rv.setVisibility(View.GONE);
             noHeatmapView.setVisibility(View.VISIBLE);
         } else {

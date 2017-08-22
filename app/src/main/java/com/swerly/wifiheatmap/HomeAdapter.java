@@ -5,11 +5,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -57,10 +55,10 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HeatmapViewHol
         ImageView cardImage;
         TextView name;
         TextView dateTime;
-        ImageButton deleteButton;
-        ImageButton editButton;
-        ImageButton shareButton;
-        ImageButton viewButton;
+        ImageView deleteButton;
+        ImageView editButton;
+        ImageView shareButton;
+        ImageView viewButton;
 
         public HeatmapViewHolder(View itemView){
             super(itemView);

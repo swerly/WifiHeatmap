@@ -44,4 +44,9 @@ public class SplashActivity extends ActivityBase implements CacheHelper.CacheLoa
             finish();
         }
     }
+
+    @Override
+    public void heatmapPixelsLoaded(HeatmapPixelCacheObject pixels) {
+        //dont need to load pixels until the user wants to edit a map
+    }
 }

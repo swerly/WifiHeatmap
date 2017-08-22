@@ -22,6 +22,7 @@ public class BaseApplication extends Application implements
     private CacheHelper cacheHelper;
     private HeatmapData currentInProgress;
     private boolean backgroundReady;
+    private HeatmapPixel[][] currentPixels;
 
 
     @Override
@@ -63,15 +64,17 @@ public class BaseApplication extends Application implements
     }
 
     public void setCurrentInProgressPixels(HeatmapPixel[][] newPixels){
-        currentInProgress.setPixels(newPixels);
-        saveInProgress();
+        currentPixels = newPixels;
+        cacheHelper.savePixels(new HeatmapPixelCacheObject(newPixels, CacheHelper.HEATMAP_IN_PROGRESS));
     }
 
     public void setCurrentInProgressFinished(Bitmap finishedHeatmap){
+        checkCurrentNull();
         currentInProgress.setFinishedHeatmap(finishedHeatmap);
     }
 
     public void setCurrentInProgressName(String name){
+        checkCurrentNull();
         currentInProgress.setName(name);
     }
 
@@ -86,9 +89,7 @@ public class BaseApplication extends Application implements
     }
 
     public void setBackgroundInProgress(Bitmap bkg){
-        if (currentInProgress == null){
-            currentInProgress = new HeatmapData();
-        }
+        checkCurrentNull();
         currentInProgress.setBackgroundImage(bkg);
         saveInProgress();
     }
@@ -106,12 +107,19 @@ public class BaseApplication extends Application implements
         backgroundReady = false;
     }
 
+    private void checkCurrentNull(){
+        if (currentInProgress == null){
+            currentInProgress = new HeatmapData();
+        }
+    }
+
     public void deleteInProgress(){
         cacheHelper.deleteInProgress();
     }
 
     private void saveInProgress(){
         cacheHelper.saveInProgress(currentInProgress);
+        cacheHelper.savePixels(new HeatmapPixelCacheObject(currentPixels, currentInProgress.getPixelsFileName()));
     }
 
     private void saveHeatmapList(){
