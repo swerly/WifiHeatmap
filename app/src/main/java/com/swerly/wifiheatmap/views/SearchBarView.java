@@ -1,4 +1,4 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.views;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -19,6 +19,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.swerly.wifiheatmap.R;
 
 /**
  * Created by Seth on 7/13/2017.

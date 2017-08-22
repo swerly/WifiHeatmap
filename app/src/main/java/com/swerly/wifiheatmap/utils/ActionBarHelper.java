@@ -1,4 +1,4 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.utils;
 
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
@@ -7,6 +7,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import com.swerly.wifiheatmap.BaseApplication;
+import com.swerly.wifiheatmap.R;
+import com.swerly.wifiheatmap.fragments.FragmentHeatmap;
+import com.swerly.wifiheatmap.fragments.FragmentHome;
+import com.swerly.wifiheatmap.fragments.FragmentInfo;
+import com.swerly.wifiheatmap.fragments.FragmentMap;
+import com.swerly.wifiheatmap.fragments.FragmentZoom;
 
 /**
  * Created by Seth on 7/9/2017.

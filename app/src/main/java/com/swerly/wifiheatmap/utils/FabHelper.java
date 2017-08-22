@@ -1,4 +1,4 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.utils;
 
 import android.content.Context;
 import android.graphics.drawable.Animatable;
@@ -14,6 +14,15 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.swerly.wifiheatmap.BaseApplication;
+import com.swerly.wifiheatmap.R;
+import com.swerly.wifiheatmap.activities.ActivityMain;
+import com.swerly.wifiheatmap.fragments.FragmentBase;
+import com.swerly.wifiheatmap.fragments.FragmentHeatmap;
+import com.swerly.wifiheatmap.fragments.FragmentHome;
+import com.swerly.wifiheatmap.fragments.FragmentInfo;
+import com.swerly.wifiheatmap.fragments.FragmentMap;
+import com.swerly.wifiheatmap.fragments.FragmentZoom;
 
 /**
  * Created by Seth on 7/6/2017.

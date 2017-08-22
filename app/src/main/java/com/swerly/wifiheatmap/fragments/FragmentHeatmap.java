@@ -1,4 +1,4 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.fragments;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -10,6 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.swerly.wifiheatmap.data.HeatmapPixel;
+import com.swerly.wifiheatmap.views.HeatmapView;
+import com.swerly.wifiheatmap.R;
+import com.swerly.wifiheatmap.utils.SnapshotWaiter;
+import com.swerly.wifiheatmap.utils.WifiHelper;
+
 /**
  * Created by Seth on 7/6/2017.
  */
@@ -17,7 +23,7 @@ import android.widget.ImageView;
 public class FragmentHeatmap extends FragmentBase implements
         SnapshotWaiter.SnapshotReadyCallback,
         WifiHelper.WifiConnectionChangeCallback,
-        HeatmapView.HeatmapCacherCallback{
+        HeatmapView.HeatmapCacherCallback {
     private ImageView bkgView;
     private HeatmapView heatmapView;
     private WifiHelper wifiHelper;

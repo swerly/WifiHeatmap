@@ -1,4 +1,4 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +12,11 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.TextView;
+
+import com.swerly.wifiheatmap.utils.ActionBarHelper;
+import com.swerly.wifiheatmap.activities.ActivityMain;
+import com.swerly.wifiheatmap.BaseApplication;
+import com.swerly.wifiheatmap.R;
 
 public abstract class FragmentBase extends Fragment {
     public static final String HOME_FRAGMENT = "FragmentHome";
@@ -33,7 +38,7 @@ public abstract class FragmentBase extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityMain = (ActivityMain) getActivity();
-        app = activityMain.app;
+        app = activityMain.getApp();
         actionBarHelper = new ActionBarHelper();
 
         setupSubTitle();

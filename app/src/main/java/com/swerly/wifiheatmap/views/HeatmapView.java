@@ -1,4 +1,4 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,6 +9,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.swerly.wifiheatmap.data.HeatmapPixel;
+import com.swerly.wifiheatmap.utils.HeatmapPixelDrawer;
+import com.swerly.wifiheatmap.utils.WifiHelper;
 
 /**
  * Created by Seth on 8/17/2017.
@@ -102,7 +106,7 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
 
     @Override
     public void signalChanged(WifiHelper.WifiSignalLevel signalLevel) {
-        wifiSignalLevel = signalLevel.level;
+        wifiSignalLevel = signalLevel.getLevel();
     }
     public void startListeningForLevelChanges(){
         wifiHelper.listenForLevelChanges(this);

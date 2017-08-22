@@ -1,4 +1,4 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.activities;
 
 import android.animation.LayoutTransition;
 import android.content.Intent;
@@ -7,6 +7,15 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.widget.FrameLayout;
+
+import com.swerly.wifiheatmap.BaseApplication;
+import com.swerly.wifiheatmap.utils.FabHelper;
+import com.swerly.wifiheatmap.utils.LocationHelper;
+import com.swerly.wifiheatmap.R;
+import com.swerly.wifiheatmap.fragments.FragmentBase;
+import com.swerly.wifiheatmap.fragments.FragmentHeatmap;
+import com.swerly.wifiheatmap.fragments.FragmentHome;
+import com.swerly.wifiheatmap.fragments.FragmentMap;
 
 public class ActivityMain extends ActivityBase{
 

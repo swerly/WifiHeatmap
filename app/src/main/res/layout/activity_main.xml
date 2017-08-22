@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.swerly.wifiheatmap.ActivityMain"
+    tools:context="com.swerly.wifiheatmap.activities.ActivityMain"
     android:background="@color/primary_text">
 
     <FrameLayout
@@ -18,7 +18,7 @@
         android:id="@+id/main_toolbar"
         android:animateLayoutChanges="true"/>
 
-    <com.swerly.wifiheatmap.SearchBarView
+    <com.swerly.wifiheatmap.views.SearchBarView
         android:id="@+id/map_searchbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

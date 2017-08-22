@@ -1,6 +1,8 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.utils;
 
 import android.os.Handler;
+
+import com.swerly.wifiheatmap.BaseApplication;
 
 /**
  * Created by Seth on 8/14/2017.

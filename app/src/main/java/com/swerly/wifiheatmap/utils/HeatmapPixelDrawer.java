@@ -1,8 +1,12 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.utils;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+
+import com.swerly.wifiheatmap.R;
+import com.swerly.wifiheatmap.data.DrawingInstructions;
+import com.swerly.wifiheatmap.data.HeatmapPixel;
 
 /**
  * Created by Seth on 8/17/2017.

@@ -1,7 +1,9 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import com.swerly.wifiheatmap.BaseApplication;
 
 /**
  * Created by Seth on 7/3/2017.

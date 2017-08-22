@@ -5,8 +5,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.swerly.wifiheatmap.data.HeatmapData;
+import com.swerly.wifiheatmap.data.HeatmapPixel;
+import com.swerly.wifiheatmap.data.HeatmapPixelCacheObject;
+import com.swerly.wifiheatmap.utils.CacheHelper;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**

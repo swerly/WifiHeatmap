@@ -1,7 +1,11 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.swerly.wifiheatmap.utils.CacheHelper;
+import com.swerly.wifiheatmap.data.HeatmapData;
+import com.swerly.wifiheatmap.data.HeatmapPixelCacheObject;
 
 import java.util.ArrayList;
 

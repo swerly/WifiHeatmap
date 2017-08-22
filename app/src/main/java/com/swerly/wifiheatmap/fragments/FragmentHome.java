@@ -1,4 +1,4 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.fragments;
 
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,6 +9,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.swerly.wifiheatmap.data.HeatmapData;
+import com.swerly.wifiheatmap.adapters.HomeAdapter;
+import com.swerly.wifiheatmap.R;
+
 import java.util.ArrayList;
 
 /**

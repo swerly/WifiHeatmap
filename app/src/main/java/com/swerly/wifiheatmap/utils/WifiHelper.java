@@ -1,4 +1,4 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.utils;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -172,10 +172,18 @@ public class WifiHelper {
     }
 
     public class WifiSignalLevel{
-        int level, rssi;
+        private int level, rssi;
         public WifiSignalLevel(WifiInfo info){
             rssi = info.getRssi();
             level = WifiManager.calculateSignalLevel(rssi, NUMBER_LEVELS) + 1;
+        }
+
+        public int getLevel(){
+            return level;
+        }
+
+        public int getRssi(){
+            return  rssi;
         }
     }
 }

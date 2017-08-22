@@ -1,9 +1,11 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.utils;
 
 import android.content.Context;
 import android.os.AsyncTask;
 
-import java.io.File;
+import com.swerly.wifiheatmap.data.HeatmapData;
+import com.swerly.wifiheatmap.data.HeatmapPixelCacheObject;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

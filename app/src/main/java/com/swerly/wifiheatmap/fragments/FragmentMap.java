@@ -1,4 +1,4 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.fragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -15,6 +15,11 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.swerly.wifiheatmap.utils.LocationHelper;
+import com.swerly.wifiheatmap.utils.MapController;
+import com.swerly.wifiheatmap.R;
+import com.swerly.wifiheatmap.views.SearchBarView;
+import com.swerly.wifiheatmap.utils.StaticUtils;
 
 import java.util.List;
 
@@ -31,7 +36,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class FragmentMap extends FragmentBase implements
         EasyPermissions.PermissionCallbacks,
         LocationHelper.LocationHelperCallback,
-        SearchBarView.SearchBarCallback{
+        SearchBarView.SearchBarCallback {
     private String[] perms = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
 
     private MapController mapController;

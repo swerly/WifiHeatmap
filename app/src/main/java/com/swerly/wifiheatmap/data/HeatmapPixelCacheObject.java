@@ -1,4 +1,6 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.data;
+
+import com.swerly.wifiheatmap.data.HeatmapPixel;
 
 /**
  * Created by Seth on 8/21/2017.

@@ -1,7 +1,9 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.data;
 
 
 import android.graphics.Bitmap;
+
+import com.swerly.wifiheatmap.utils.StaticUtils;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;

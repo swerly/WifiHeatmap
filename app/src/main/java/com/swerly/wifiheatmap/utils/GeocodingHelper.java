@@ -1,9 +1,11 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.utils;
 
 import android.app.Activity;
 import android.content.Context;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.swerly.wifiheatmap.BaseApplication;
+import com.swerly.wifiheatmap.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -1,4 +1,4 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.fragments;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -10,13 +10,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.alexvasilkov.gestures.views.GestureImageView;
+import com.swerly.wifiheatmap.R;
+import com.swerly.wifiheatmap.utils.SnapshotWaiter;
+import com.swerly.wifiheatmap.utils.StaticUtils;
 
 /**
  * Created by Seth on 8/10/2017.
  */
 
 public class FragmentZoom extends FragmentBase implements
-        SnapshotWaiter.SnapshotReadyCallback{
+        SnapshotWaiter.SnapshotReadyCallback {
 
     private GestureImageView bkgView;
     private boolean bkgSet;

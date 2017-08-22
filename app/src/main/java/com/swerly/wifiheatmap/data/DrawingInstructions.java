@@ -1,4 +1,4 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.data;
 
 /**
  * Created by Seth on 8/17/2017.

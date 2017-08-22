@@ -20,12 +20,12 @@
 
         <!-- portrait mode because who doesn't love laziness :)-->
         <activity
-            android:name="com.swerly.wifiheatmap.ActivityMain"
+            android:name="com.swerly.wifiheatmap.activities.ActivityMain"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
-            android:name=".SplashActivity"
+            android:name=".activities.SplashActivity"
             android:theme="@style/SplashTheme"
             android:screenOrientation="portrait">
             <intent-filter>

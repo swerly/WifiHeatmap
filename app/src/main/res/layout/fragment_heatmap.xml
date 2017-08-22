@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"/>
 
-    <com.swerly.wifiheatmap.HeatmapView
+    <com.swerly.wifiheatmap.views.HeatmapView
         android:id="@+id/heatmap_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

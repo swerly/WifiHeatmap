@@ -1,4 +1,4 @@
-package com.swerly.wifiheatmap;
+package com.swerly.wifiheatmap.data;
 
 import android.graphics.Bitmap;
 
