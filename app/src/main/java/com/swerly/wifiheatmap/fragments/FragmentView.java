@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.alexvasilkov.gestures.views.GestureImageView;
 import com.swerly.wifiheatmap.R;
 import com.swerly.wifiheatmap.data.HeatmapData;
+import com.swerly.wifiheatmap.utils.ShareBitmap;
 import com.swerly.wifiheatmap.utils.StaticUtils;
 
 /**
@@ -46,7 +47,7 @@ public class FragmentView extends FragmentBase {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.action_share:
-                StaticUtils.shareFinishedHeatmap(getContext(), toView.getFinishedImage());
+                new ShareBitmap(activityMain).execute(toView.getFinishedImage());
                 break;
         }
         return false;

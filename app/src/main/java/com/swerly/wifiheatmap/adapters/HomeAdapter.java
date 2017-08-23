@@ -13,6 +13,7 @@ import com.swerly.wifiheatmap.R;
 import com.swerly.wifiheatmap.activities.ActivityMain;
 import com.swerly.wifiheatmap.data.HeatmapData;
 import com.swerly.wifiheatmap.fragments.FragmentView;
+import com.swerly.wifiheatmap.utils.ShareBitmap;
 import com.swerly.wifiheatmap.utils.StaticUtils;
 
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HeatmapViewHol
         holder.shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                StaticUtils.shareFinishedHeatmap(activityMain, curItem.getFinishedImage());
+                new ShareBitmap(activityMain).execute(curItem.getFinishedImage());
             }
         });
     }

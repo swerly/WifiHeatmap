@@ -6,12 +6,15 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.support.v4.content.FileProvider;
 import android.view.View;
 
 import com.swerly.wifiheatmap.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Created by Seth on 8/7/2017.
@@ -38,9 +41,5 @@ public class StaticUtils {
 
     public static String sanitizeFileName(String fName){
         return fName.replaceAll("[^a-zA-Z0-9.-]", "");
-    }
-
-    public static void shareFinishedHeatmap(Context context, Bitmap finishedBitmap){
-        //need to find a way to share images without requesting permissions...
     }
 }
