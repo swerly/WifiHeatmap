@@ -24,6 +24,7 @@ public class FragmentView extends FragmentBase {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_view, container, false);
 
         int indexToView = getArguments().getInt("position");
