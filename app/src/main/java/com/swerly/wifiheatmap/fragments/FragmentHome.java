@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +11,8 @@ import android.view.ViewGroup;
 import com.swerly.wifiheatmap.data.HeatmapData;
 import com.swerly.wifiheatmap.adapters.HomeAdapter;
 import com.swerly.wifiheatmap.R;
+import com.swerly.wifiheatmap.utils.ShareBitmap;
+import com.swerly.wifiheatmap.views.HeatmapViewHolder;
 
 import java.util.ArrayList;
 
@@ -20,7 +20,8 @@ import java.util.ArrayList;
  * Created by Seth on 7/6/2017.
  */
 
-public class FragmentHome extends FragmentBase{
+public class FragmentHome extends FragmentBase implements
+        HeatmapViewHolder.HeatmapCardListener{
     private RecyclerView rv;
     private HomeAdapter adapter;
     private View noHeatmapView;
@@ -79,7 +80,7 @@ public class FragmentHome extends FragmentBase{
         } else {
             rv.setVisibility(View.VISIBLE);
             noHeatmapView.setVisibility(View.GONE);
-            adapter.setNewData(heatmapList);
+            adapter.updateItems(heatmapList);
         }
     }
 
@@ -88,7 +89,33 @@ public class FragmentHome extends FragmentBase{
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         rv.setLayoutManager(llm);
 
-        adapter = new HomeAdapter(activityMain);
+        adapter = new HomeAdapter(this);
         rv.setAdapter(adapter);
+    }
+
+    @Override
+    public void onViewPressed(HeatmapData item) {
+        //setup the bundle
+        Bundle bundle = new Bundle();
+        bundle.putInt("position",  app.getHeatmaps().indexOf(item));
+
+        //set and start the fragment
+        FragmentBase viewFrag = new FragmentView();
+        viewFrag.setArguments(bundle);
+        activityMain.goToFragment(viewFrag);
+    }
+
+    @Override
+    public void onSharePressed(HeatmapData item) {
+        new ShareBitmap(activityMain).execute(item.getFinishedImage());
+    }
+
+    @Override
+    public void onEditPressed(HeatmapData item) {
+
+    }
+
+    @Override
+    public void onDeletePressed(HeatmapData item) {
     }
 }

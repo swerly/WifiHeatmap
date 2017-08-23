@@ -35,7 +35,7 @@ public class HeatmapData implements Serializable{
     public void setName(String name){
         this.name = name;
         this.dateTime = Calendar.getInstance().getTime();
-        this.pixelsFileName = StaticUtils.sanitizeFileName(this.name);
+        this.pixelsFileName = getDateTimeFileName() + StaticUtils.sanitizeFileName(this.name);
     }
 
     public String getName(){
@@ -52,11 +52,23 @@ public class HeatmapData implements Serializable{
         return simpleDateFormat.format(this.dateTime);
     }
 
+    private String getDateTimeFileName(){
+        return new SimpleDateFormat("yyyyMMddHHmm").format(dateTime);
+    }
+
     public void setFinishedHeatmap(Bitmap finishedImage){
         this.finishedHeatmap = new ProxyBitmap(finishedImage);
     }
 
     public Bitmap getFinishedImage(){
         return finishedHeatmap.getBitmap();
+    }
+
+    public boolean equals(HeatmapData toCheck){
+        if (!this.name.equals(toCheck.getName()))
+            return false;
+        if (!this.getDateTimeString().equals(toCheck.getDateTimeString()))
+            return false;
+        return true;
     }
 }

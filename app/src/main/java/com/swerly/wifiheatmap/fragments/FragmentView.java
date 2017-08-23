@@ -26,7 +26,7 @@ public class FragmentView extends FragmentBase {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_view, container, false);
 
-        int indexToView = app.getIndexToView();
+        int indexToView = getArguments().getInt("position");
         toView = app.getHeatmaps().get(indexToView);
         subtitle = toView.getName();
 
