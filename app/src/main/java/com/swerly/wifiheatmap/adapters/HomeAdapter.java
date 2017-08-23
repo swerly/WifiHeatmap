@@ -65,6 +65,14 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HeatmapViewHol
     }
 
     private void attachListeners(HeatmapViewHolder holder, final HeatmapData curItem, final int position){
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activityMain.getApp().setIndexToView(position);
+                activityMain.goToFragment(new FragmentView());
+            }
+        });
+
         holder.viewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
