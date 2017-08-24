@@ -56,6 +56,7 @@ public class WifiHelper {
             if (isWifiConnected()){
                 return;
             } else {
+                /*
                 new MaterialDialog.Builder(context)
                         .title(R.string.connect_wifi)
                         .content(R.string.connect_wifi_msg)
@@ -75,8 +76,10 @@ public class WifiHelper {
                             }
                         })
                         .show();
+                        */
             }
         } else {
+            /*
             new MaterialDialog.Builder(context)
                     .title(R.string.enable_wifi)
                     .content(R.string.enable_wifi_msg)
@@ -92,11 +95,10 @@ public class WifiHelper {
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            //todo: save to appdata and exit
                             dialog.dismiss();
                         }
                     })
-                    .show();
+                    .show();*/
         }
     }
 

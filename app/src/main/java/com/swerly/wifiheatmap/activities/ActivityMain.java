@@ -140,4 +140,12 @@ public class ActivityMain extends ActivityBase{
     public BaseApplication getApp(){
         return app;
     }
+
+    public void hideFab(){
+        fabHelper.hideFab();
+    }
+
+    public void showFab(){
+        fabHelper.showFab();
+    }
 }

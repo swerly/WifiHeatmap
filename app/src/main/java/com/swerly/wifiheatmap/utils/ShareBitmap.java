@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.content.FileProvider;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.swerly.wifiheatmap.R;
@@ -77,7 +78,8 @@ public class ShareBitmap {
                     shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
                     context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_heatmap)));
                 } else {
-                    //todo display toast
+                    Toast.makeText(context, R.string.share_error, Toast.LENGTH_SHORT)
+                            .show();
                 }
             }
         }.execute(toShare);

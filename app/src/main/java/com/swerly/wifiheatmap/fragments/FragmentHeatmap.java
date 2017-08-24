@@ -1,13 +1,17 @@
 package com.swerly.wifiheatmap.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.swerly.wifiheatmap.data.HeatmapPixel;
@@ -27,6 +31,7 @@ public class FragmentHeatmap extends FragmentBase implements
     private HeatmapView heatmapView;
     private WifiHelper wifiHelper;
     private View noWifiView;
+    private boolean isPaused;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,13 @@ public class FragmentHeatmap extends FragmentBase implements
         bkgView = view.findViewById(R.id.heatmap_bkg_view);
         heatmapView = view.findViewById(R.id.heatmap_view);
         noWifiView = view.findViewById(R.id.no_wifi_view);
+        Button settingsBtn = noWifiView.findViewById(R.id.settings_button);
+        settingsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+            }
+        });
 
         wifiHelper = new WifiHelper(getContext());
 
@@ -68,11 +80,23 @@ public class FragmentHeatmap extends FragmentBase implements
     }
 
     @Override
+    public void onStart(){
+        super.onStart();
+        wifiHelper.startListeningForWifiChanges(this);
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        wifiHelper.stopListeningForWifiChanges();
+    }
+
+    @Override
     public void onResume(){
         super.onResume();
+        isPaused = false;
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setSubTitle(R.string.heatmap_subtitle);
-        wifiHelper.startListeningForWifiChanges(this);
         heatmapView.startListeningForLevelChanges();
         doWifiCheck();
     }
@@ -80,7 +104,7 @@ public class FragmentHeatmap extends FragmentBase implements
     @Override
     public void onPause(){
         super.onPause();
-        wifiHelper.stopListeningForWifiChanges();
+        isPaused = true;
         heatmapView.stopListeningForLevelChanges();
     }
 
@@ -96,10 +120,12 @@ public class FragmentHeatmap extends FragmentBase implements
 
     @Override
     public void wifiConnectionChange(boolean wifiStatus) {
-        if (wifiStatus){
-            hideNoWifiView();
-        } else {
-            showNoWifiView();
+        if (!isPaused) {
+            if (wifiStatus) {
+                hideNoWifiView();
+            } else {
+                showNoWifiView();
+            }
         }
     }
 
@@ -116,11 +142,13 @@ public class FragmentHeatmap extends FragmentBase implements
         noWifiView.setVisibility(View.GONE);
         bkgView.setVisibility(View.VISIBLE);
         heatmapView.setVisibility(View.VISIBLE);
+        activityMain.showFab();
     }
 
     private void showNoWifiView(){
         noWifiView.setVisibility(View.VISIBLE);
         bkgView.setVisibility(View.GONE);
         heatmapView.setVisibility(View.GONE);
+        activityMain.hideFab();
     }
 }

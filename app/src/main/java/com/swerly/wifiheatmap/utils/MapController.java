@@ -14,14 +14,17 @@ import com.google.android.gms.maps.model.LatLng;
  * Created by Seth on 7/9/2017.
  */
 
-public class MapController implements OnMapReadyCallback, GeocodingHelper.GeocodingResultCallback {
+public class MapController implements
+        OnMapReadyCallback,
+        GeocodingHelper.GeocodingResultCallback{
     private static final int MAX_ZOOM = 19;
     private GoogleMap mMap;
     private Context context;
+    private MapCreatedCallback createdCallback;
 
-
-    public MapController(Context context){
+    public MapController(Context context, MapCreatedCallback createdCallback){
         this.context = context;
+        this.createdCallback = createdCallback;
     }
 
     /**
@@ -43,6 +46,7 @@ public class MapController implements OnMapReadyCallback, GeocodingHelper.Geocod
         LatLng usa = new LatLng(37, -100);
         moveCameraTo(usa);
         mMap.getUiSettings().setCompassEnabled(false);
+        //createdCallback.mapCreated();
     }
 
     public void setUserLocation(LatLng latlng){
@@ -85,5 +89,9 @@ public class MapController implements OnMapReadyCallback, GeocodingHelper.Geocod
 
     public void requestSnapshot(GoogleMap.SnapshotReadyCallback callback){
         mMap.snapshot(callback);
+    }
+
+    public interface MapCreatedCallback{
+        void mapCreated();
     }
 }

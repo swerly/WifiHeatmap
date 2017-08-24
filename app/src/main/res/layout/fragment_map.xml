@@ -2,6 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/map_main_layout"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
+
+    <include layout="@layout/no_wifi_view"
+        android:id="@+id/no_wifi_view"
+        android:animateLayoutChanges="true"
+        android:visibility="gone"/>
 
 </RelativeLayout>

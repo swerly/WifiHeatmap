@@ -3,14 +3,17 @@ package com.swerly.wifiheatmap.fragments;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
@@ -18,6 +21,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.swerly.wifiheatmap.utils.LocationHelper;
 import com.swerly.wifiheatmap.utils.MapController;
 import com.swerly.wifiheatmap.R;
+import com.swerly.wifiheatmap.utils.WifiHelper;
 import com.swerly.wifiheatmap.views.SearchBarView;
 import com.swerly.wifiheatmap.utils.StaticUtils;
 
@@ -36,7 +40,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class FragmentMap extends FragmentBase implements
         EasyPermissions.PermissionCallbacks,
         LocationHelper.LocationHelperCallback,
-        SearchBarView.SearchBarCallback {
+        SearchBarView.SearchBarCallback, WifiHelper.WifiConnectionChangeCallback, MapController.MapCreatedCallback {
     private String[] perms = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
 
     private MapController mapController;
@@ -44,6 +48,9 @@ public class FragmentMap extends FragmentBase implements
     private SupportMapFragment mapFragment;
     private SearchBarView searchBarView;
     private View searchButtonView;
+    private WifiHelper wifiHelper;
+    private View noWifiView;
+    private boolean wifiStatus, isPaused;
 
     public static FragmentHome newInstance(){
         return new FragmentHome();
@@ -53,12 +60,13 @@ public class FragmentMap extends FragmentBase implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mapController = new MapController(getActivity());
+        mapController = new MapController(getActivity(), this);
         locationHelper = new LocationHelper(getActivity());
         searchBarView = getActivity().findViewById(R.id.map_searchbar);
         searchBarView.setSearchBarCallback(this);
         searchBarView.setToolbarId(R.id.main_toolbar);
-
+        wifiHelper = new WifiHelper(getContext());
+        wifiStatus = wifiHelper.isWifiConnected();
 
         mapFragment = SupportMapFragment.newInstance(MapController.getMapOptions());
         getChildFragmentManager()
@@ -66,36 +74,47 @@ public class FragmentMap extends FragmentBase implements
                 .add(R.id.map_main_layout, mapFragment)
                 .commit();
         mapFragment.getMapAsync(mapController);
-
-        if (!StaticUtils.isConnectedToNetwork(getActivity())){
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.no_internet_title);
-            builder.setMessage(R.string.no_internet_content);
-            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.dismiss();
-                    getActivity().onBackPressed();
-                }
-            });
-            builder.show();
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_map, container, false);
 
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        noWifiView = view.findViewById(R.id.no_wifi_view);
+        noWifiView.bringToFront();
+        Button settingsBtn = noWifiView.findViewById(R.id.settings_button);
+        settingsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+            }
+        });
 
-        return inflater.inflate(R.layout.fragment_map, container, false);
+        return view;
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        wifiHelper.startListeningForWifiChanges(this);
     }
 
     @Override
     public void onResume(){
         super.onResume();
+        isPaused = false;
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setSubTitle(R.string.map_subtitle);
+
+        wifiConnectionChange(wifiStatus);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        isPaused = true;
     }
 
     @Override
@@ -111,7 +130,7 @@ public class FragmentMap extends FragmentBase implements
                 if (searchButtonView == null){
                     searchButtonView = getActivity().findViewById(R.id.action_search);
                 }
-                if (!StaticUtils.isConnectedToNetwork(getActivity())){
+                if (!wifiStatus){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle(R.string.no_internet_title);
                     builder.setMessage(R.string.no_internet_search);
@@ -127,12 +146,25 @@ public class FragmentMap extends FragmentBase implements
                 }
                 break;
             case R.id.action_location:
-                if(EasyPermissions.hasPermissions(this.getActivity(), perms)){
-                    //has permissions, start trying to find location
-                    startLocationRequest();
+                if (!wifiStatus){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle(R.string.no_internet_title);
+                    builder.setMessage(R.string.no_internet_location);
+                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+                    builder.show();
                 } else {
-                    // Do not have permissions, request them now
-                    EasyPermissions.requestPermissions(this, getString(R.string.location_rationale), 0, perms);
+                    if (EasyPermissions.hasPermissions(this.getActivity(), perms)) {
+                        //has permissions, start trying to find location
+                        startLocationRequest();
+                    } else {
+                        // Do not have permissions, request them now
+                        EasyPermissions.requestPermissions(this, getString(R.string.location_rationale), 0, perms);
+                    }
                 }
                 break;
             case R.id.action_help:
@@ -215,5 +247,41 @@ public class FragmentMap extends FragmentBase implements
         }
     }
 
+    @Override
+    public void wifiConnectionChange(boolean wifiStatus) {
+        this.wifiStatus = wifiStatus;
+        if (!isPaused) {
+            if (wifiStatus) {
+                hideNoWifiView();
+            } else {
+                showNoWifiView();
+                wifiHelper.setupWifi();
+            }
+        }
+    }
 
+    private void hideNoWifiView(){
+        noWifiView.setVisibility(View.GONE);
+        activityMain.showFab();
+
+        getChildFragmentManager()
+                .beginTransaction()
+                .show(mapFragment)
+                .commit();
+    }
+
+    private void showNoWifiView(){
+        noWifiView.setVisibility(View.VISIBLE);
+        activityMain.hideFab();
+
+        getChildFragmentManager()
+                .beginTransaction()
+                .hide(mapFragment)
+                .commit();
+    }
+
+    @Override
+    public void mapCreated() {
+        noWifiView.bringToFront();
+    }
 }
