@@ -98,10 +98,9 @@ public class ActivityMain extends ActivityBase{
         return curFrag.onBackPressed();
     }
 
-    public boolean notifyFragmentFabClick(){
+    public void notifyFragmentFabClick(){
         FragmentBase curFrag = (FragmentBase) fragmentManager.findFragmentById(R.id.fragment_container);
         curFrag.onFabPressed();
-        return false;
     }
 
     /**

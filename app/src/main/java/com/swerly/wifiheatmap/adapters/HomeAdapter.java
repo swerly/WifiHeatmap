@@ -45,6 +45,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HeatmapViewHolder> {
     }
 
     public void updateItems(final List<HeatmapData> newItems) {
+        //TODO: SORT newItems HERE
         final List<HeatmapData> oldItems = new ArrayList<>(this.items);
         this.items.clear();
         if (newItems != null) {

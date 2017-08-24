@@ -88,38 +88,6 @@ public class HeatmapPixelDrawer {
         drawCircleQuadrants(touchX, touchY, centerLevel, level, DrawingInstructions.CIRCLE_ONE, false, true);
         drawCircleQuadrants(touchX, touchY, centerLevel, level, DrawingInstructions.CIRCLE_ONE, true, false);
         drawCircleQuadrants(touchX, touchY, centerLevel, level, DrawingInstructions.CIRCLE_ONE, true, true);
-
-        /*int[] currentInstructions = DrawingInstructions.CIRCLE_ONE;
-        int length = currentInstructions.length;
-        int top = currentInstructions[0];
-        //top half
-        for (int i = 1; i < length; i++, top--){
-            int halfWidth = currentInstructions[i];
-            int fullWidth = halfWidth*2;
-            for (int j = 0; j < fullWidth; j++){
-                int curX = touchX - halfWidth + j;
-                int curY = touchY - top;
-                //if the current pixel is outside of the view bounds, ignore it
-                if (outOfBounds(curX, curY)){
-                    continue;
-                }
-                workSinglePixel(level, pixelArray[curX][curY]);
-            }
-        }
-
-        for ( ; top < length-1; top++){
-            int halfWidth = currentInstructions[length-top-1];
-            int fullWidth = halfWidth*2;
-            for (int j = 0; j < fullWidth; j++){
-                int curX = touchX - halfWidth + j;
-                int curY = touchY + top;
-                //if the current pixel is outside of the view bounds, ignore it
-                if (outOfBounds(curX, curY)){
-                    continue;
-                }
-                workSinglePixel(level, pixelArray[curX][curY]);
-            }
-        }*/
     }
 
     private void drawCircleTwo(int touchX, int touchY, int centerLevel, int level){

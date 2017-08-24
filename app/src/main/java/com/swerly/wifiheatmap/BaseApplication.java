@@ -66,11 +66,6 @@ public class BaseApplication extends Application implements
         return heatmaps;
     }
 
-    public void setCurrentInProgressPixels(HeatmapPixel[][] newPixels){
-        currentPixels = newPixels;
-        cacheHelper.savePixels(new HeatmapPixelCacheObject(newPixels, CacheHelper.HEATMAP_IN_PROGRESS));
-    }
-
     public void setCurrentInProgressFinished(Bitmap finishedHeatmap){
         checkCurrentNull();
         currentInProgress.setFinishedHeatmap(finishedHeatmap);
@@ -81,20 +76,23 @@ public class BaseApplication extends Application implements
         currentInProgress.setName(name);
     }
 
+    public void setCurrentPixels(HeatmapPixel[][] pixelsToSet){
+        this.currentPixels = pixelsToSet;
+    }
+
     public void finishCurrentInProgress(){
         if (heatmaps == null){
             heatmaps = new ArrayList<>();
         }
         heatmaps.add(currentInProgress);
-        resetCurrent();
         saveHeatmapList();
-        deleteInProgress();
+        cacheHelper.savePixels(new HeatmapPixelCacheObject(currentPixels, currentInProgress.getPixelsFileName()));
+        resetCurrent();
     }
 
     public void setBackgroundInProgress(Bitmap bkg){
         checkCurrentNull();
         currentInProgress.setBackgroundImage(bkg);
-        saveInProgress();
     }
 
     public boolean isBackgroundReady(){
@@ -116,13 +114,10 @@ public class BaseApplication extends Application implements
         }
     }
 
-    public void deleteInProgress(){
-        cacheHelper.deleteInProgress();
-    }
-
-    private void saveInProgress(){
-        cacheHelper.saveInProgress(currentInProgress);
-        //cacheHelper.savePixels(new HeatmapPixelCacheObject(currentPixels, currentInProgress.getPixelsFileName()));
+    public void deleteFromList(HeatmapData toDelete){
+        cacheHelper.deletePixels(toDelete.getPixelsFileName());
+        heatmaps.remove(toDelete);
+        saveHeatmapList();
     }
 
     private void saveHeatmapList(){

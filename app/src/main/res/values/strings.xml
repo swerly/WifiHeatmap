@@ -16,6 +16,7 @@
     <string name="search">Search</string>
     <string name="filter">Filter</string>
     <string name="share">Share</string>
+    <string name="delete">Delete</string>
     <string name="share_heatmap">Share Heatmap</string>
     <string name="share_loading">Initializing Sharing...</string>
     <string name="location_rationale">You must grant this app access to your location before we can
@@ -51,4 +52,13 @@
     <string name="save">Save</string>
     <string name="naming_hint">Enter name</string>
     <string name="enter_name">Please enter a name for this heatmap.</string>
+    <string name="removed"> has been removed.</string>
+    <string name="delete_heatmap_title">Delete Heatmap?</string>
+    <string name="delete_heatmap_content">You will not be able to undo this action. Are you sure you want to delete this heatmap?</string>
+    <string name="connect_wifi">Connect Wifi</string>
+    <string name="enable_wifi">Enable Wifi</string>
+    <string name="connect_wifi_msg">You must connect to wifi to use this application. Please come back when you have connected to WiFi</string>
+    <string name="enable_wifi_msg">You must enable wifi to use this application. Please come back when you have enabled WiFi</string>
+    <string name="connect">Connect</string>
+    <string name="enable">Enable</string>
 </resources>

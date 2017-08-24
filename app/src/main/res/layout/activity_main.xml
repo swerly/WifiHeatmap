@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.swerly.wifiheatmap.activities.ActivityMain"
-    android:background="@color/primary_text">
+    android:background="@color/primary_text"
+    android:id="@+id/main_layout">
 
     <FrameLayout
         android:id="@+id/fragment_container"

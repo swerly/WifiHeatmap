@@ -1,6 +1,8 @@
 package com.swerly.wifiheatmap.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.swerly.wifiheatmap.data.HeatmapData;
 import com.swerly.wifiheatmap.adapters.HomeAdapter;
 import com.swerly.wifiheatmap.R;
@@ -73,15 +77,7 @@ public class FragmentHome extends FragmentBase implements
         hideSubtitle();
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
-        heatmapList = app.getHeatmaps();
-        if (heatmapList == null || heatmapList.isEmpty()){
-            rv.setVisibility(View.GONE);
-            noHeatmapView.setVisibility(View.VISIBLE);
-        } else {
-            rv.setVisibility(View.VISIBLE);
-            noHeatmapView.setVisibility(View.GONE);
-            adapter.updateItems(heatmapList);
-        }
+        checkHeatmapsExist();
     }
 
     private void setupRecyclerView(){
@@ -116,6 +112,42 @@ public class FragmentHome extends FragmentBase implements
     }
 
     @Override
-    public void onDeletePressed(HeatmapData item) {
+    public void onDeletePressed(final HeatmapData item) {
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.delete_heatmap_title)
+                .content(R.string.delete_heatmap_content)
+                .positiveText(R.string.delete)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        String snackbarMessage = item.getName() + " " + getString(R.string.removed);
+                        Snackbar snackbar = Snackbar.make(activityMain.findViewById(R.id.main_layout), snackbarMessage, Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        app.deleteFromList(item);
+                        adapter.updateItems(app.getHeatmaps());
+                        checkHeatmapsExist();
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+
+    }
+
+    public void checkHeatmapsExist(){
+        heatmapList = app.getHeatmaps();
+        if (heatmapList == null || heatmapList.isEmpty()){
+            rv.setVisibility(View.GONE);
+            noHeatmapView.setVisibility(View.VISIBLE);
+        } else {
+            rv.setVisibility(View.VISIBLE);
+            noHeatmapView.setVisibility(View.GONE);
+            adapter.updateItems(heatmapList);
+        }
     }
 }

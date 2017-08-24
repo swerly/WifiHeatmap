@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.swerly.wifiheatmap.R;
 
 /**
  * Created by Seth on 8/18/2017.
@@ -56,10 +57,10 @@ public class WifiHelper {
                 return;
             } else {
                 new MaterialDialog.Builder(context)
-                        .title("Connect Wifi")
-                        .content("You must connect to Wifi to use this. Or you can save for later when you have wifi.")
-                        .positiveText("Connect")
-                        .negativeText("Save")
+                        .title(R.string.connect_wifi)
+                        .content(R.string.connect_wifi_msg)
+                        .positiveText(R.string.connect)
+                        .negativeText(R.string.cancel)
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -70,7 +71,6 @@ public class WifiHelper {
                         .onNegative(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                //todo: save to appdata and exit
                                 dialog.dismiss();
                             }
                         })
@@ -78,10 +78,10 @@ public class WifiHelper {
             }
         } else {
             new MaterialDialog.Builder(context)
-                    .title("Enable Wifi")
-                    .content("You must enable wifi to use this feature. Or you can save for later when you have wifi.")
-                    .positiveText("Enable")
-                    .negativeText("Save")
+                    .title(R.string.enable_wifi)
+                    .content(R.string.enable_wifi_msg)
+                    .positiveText(R.string.enable)
+                    .negativeText(R.string.cancel)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {

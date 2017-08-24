@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 public class SplashActivity extends ActivityBase implements CacheHelper.CacheLoadCallbacks {
     private boolean listLoaded;
-    private boolean inProgressLoaded;
 
     private CacheHelper cacheHelper;
 
@@ -34,15 +33,8 @@ public class SplashActivity extends ActivityBase implements CacheHelper.CacheLoa
         checkIfLoaded();
     }
 
-    @Override
-    public void heatmapInProgressLoaded(HeatmapData inProgress) {
-        inProgressLoaded = true;
-        app.setLoadedInProgress(inProgress);
-        checkIfLoaded();
-    }
-
     private void checkIfLoaded(){
-        if (listLoaded && inProgressLoaded){
+        if (listLoaded){
             Intent intent = new Intent(this, ActivityMain.class);
             startActivity(intent);
             finish();

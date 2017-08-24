@@ -22,7 +22,6 @@ import java.util.ArrayList;
 
 public class CacheHelper {
     public static String HEATMAP_LIST = "heatmap_list";
-    public static String HEATMAP_IN_PROGRESS = "heatmap_in_progress";
     public static String HEATMAP_PIXEL = "heatmap_pixel_cache";
 
     private Context context;
@@ -46,13 +45,11 @@ public class CacheHelper {
     }
 
     public void startupLoad(){
-        new LoadCacheTask().execute(HEATMAP_IN_PROGRESS);
         new LoadCacheTask().execute(HEATMAP_LIST);
     }
 
-    public void deleteInProgress(){
-        context.deleteFile(HEATMAP_IN_PROGRESS);
-        context.deleteFile(HEATMAP_PIXEL + HEATMAP_IN_PROGRESS);
+    public void deletePixels(String pixelsToDelete){
+        context.deleteFile(pixelsToDelete);
     }
 
     private class SaveCacheTask extends AsyncTask<Object, Void, Void>{
@@ -64,11 +61,10 @@ public class CacheHelper {
             //if the object we want to save is an arraylist then we are saving all heatmap data
             if (objToSave instanceof ArrayList<?>){
                 outputFile = HEATMAP_LIST;
-            } else if (objToSave instanceof HeatmapData){
-                outputFile = HEATMAP_IN_PROGRESS;
             } else if (objToSave instanceof HeatmapPixelCacheObject){
                 outputFile = HEATMAP_PIXEL + ((HeatmapPixelCacheObject)objToSave).fName;
             }
+            Log.d(BaseApplication.DEBUG_MESSAGE, "saving " + outputFile);
             FileOutputStream fos = null;
             try {
                 fos = context.openFileOutput(outputFile, Context.MODE_PRIVATE);
@@ -77,6 +73,7 @@ public class CacheHelper {
                 oos.flush();
                 fos.getFD().sync();
                 fos.close();
+                Log.d(BaseApplication.DEBUG_MESSAGE, "DONE saving " + outputFile);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -92,7 +89,7 @@ public class CacheHelper {
         @Override
         protected Object doInBackground(String... strings) {
             cacheToLoad = strings[0];
-            if (!cacheToLoad.equals(HEATMAP_LIST) && !cacheToLoad.equals(HEATMAP_IN_PROGRESS)){
+            if (!cacheToLoad.equals(HEATMAP_LIST)){
                 cacheToLoad = HEATMAP_PIXEL + cacheToLoad;
             }
             FileInputStream fos = null;
@@ -122,9 +119,7 @@ public class CacheHelper {
                 return;
             }
 
-            if (cacheToLoad.equals(HEATMAP_IN_PROGRESS)){
-                loadCallbacks.heatmapInProgressLoaded((HeatmapData) result);
-            } else if (cacheToLoad.equals(HEATMAP_LIST)) {
+            if (cacheToLoad.equals(HEATMAP_LIST)) {
                 loadCallbacks.heatmapListLoaded((ArrayList<HeatmapData>) result);
             } else {
                 loadCallbacks.heatmapPixelsLoaded((HeatmapPixelCacheObject) result);
@@ -134,7 +129,6 @@ public class CacheHelper {
 
     public interface CacheLoadCallbacks{
         void heatmapListLoaded(ArrayList<HeatmapData> data);
-        void heatmapInProgressLoaded(HeatmapData inProgress);
         void heatmapPixelsLoaded(HeatmapPixelCacheObject pixels);
     }
 }

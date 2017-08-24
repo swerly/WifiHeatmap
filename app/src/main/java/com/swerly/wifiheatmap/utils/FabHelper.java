@@ -110,6 +110,9 @@ public class FabHelper{
 
         @Override
         public void onClick(View view) {
+            //notify the fragment so that it can do things it needs to before we go to the next fragment
+            context.notifyFragmentFabClick();
+
             if (tag.equals(FragmentBase.MAP_FRAGMENT)){
                 new MaterialDialog.Builder(context)
                         .title(R.string.zoom_dialog_title)
@@ -141,9 +144,7 @@ public class FabHelper{
         }
         private void set(){
             if (toSet != null) {
-                if (!context.notifyFragmentFabClick()) {
-                    context.goToFragment(toSet);
-                }
+                context.goToFragment(toSet);
             }
         }
 

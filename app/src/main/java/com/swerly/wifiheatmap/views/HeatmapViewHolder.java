@@ -55,7 +55,7 @@ public class HeatmapViewHolder extends RecyclerView.ViewHolder{
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.onDeletePressed(item);
+                listener.onEditPressed(item);
             }
         });
 

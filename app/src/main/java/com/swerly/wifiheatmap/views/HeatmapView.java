@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.swerly.wifiheatmap.data.HeatmapData;
 import com.swerly.wifiheatmap.data.HeatmapPixel;
 import com.swerly.wifiheatmap.utils.HeatmapPixelDrawer;
 import com.swerly.wifiheatmap.utils.WifiHelper;
@@ -28,7 +29,6 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
     private Canvas canvasBuffer;
     private Paint canvasPaint;
     private WifiHelper wifiHelper;
-    private HeatmapCacherCallback cacherCallback;
 
     public HeatmapView(Context context) {
         this(context, null);
@@ -88,7 +88,7 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                cacherCallback.pointsChanged(pixelDrawer.getPixelArray());
+
                 break;
         }
         return true;
@@ -116,11 +116,8 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
         wifiHelper.stopListeningForLevelChanges();
     }
 
-    public void setCacherCallback(HeatmapCacherCallback cacherCallback){
-        this.cacherCallback = cacherCallback;
+    public HeatmapPixel[][] getHeatmapPixels(){
+        return pixelDrawer.getPixelArray();
     }
 
-    public interface HeatmapCacherCallback{
-        void pointsChanged(HeatmapPixel[][] newPoints);
-    }
 }
