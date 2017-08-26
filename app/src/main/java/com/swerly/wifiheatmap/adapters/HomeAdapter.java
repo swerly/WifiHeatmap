@@ -8,34 +8,38 @@ import android.view.ViewGroup;
 
 import com.swerly.wifiheatmap.R;
 import com.swerly.wifiheatmap.data.HeatmapData;
-import com.swerly.wifiheatmap.views.HeatmapViewHolder;
+import com.swerly.wifiheatmap.views.HeatmapDataViewHolder;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * Created by Seth on 8/20/2017.
  */
 
-public class HomeAdapter extends RecyclerView.Adapter<HeatmapViewHolder> {
+public class HomeAdapter extends RecyclerView.Adapter<HeatmapDataViewHolder> {
     private List<HeatmapData> items;
-    private HeatmapViewHolder.HeatmapCardListener listener;
+    private HeatmapDataViewHolder.HeatmapCardListener listener;
+    private Comparator<HeatmapData> comparatorToUse;
 
-    public HomeAdapter(HeatmapViewHolder.HeatmapCardListener listener){
+    public HomeAdapter(HeatmapDataViewHolder.HeatmapCardListener listener){
         this.listener = listener;
         items = new ArrayList<>();
+        comparatorToUse = HeatmapData.getComparator(HeatmapData.HeatmapDataComparator.NAME_SORT);
     }
 
     @Override
-    public HeatmapViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public HeatmapDataViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_heatmap, parent, false);
-        HeatmapViewHolder heatmapViewHolder = new HeatmapViewHolder(listener, v);
+        HeatmapDataViewHolder heatmapDataViewHolder = new HeatmapDataViewHolder(listener, v);
 
-        return heatmapViewHolder;
+        return heatmapDataViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(HeatmapViewHolder holder, int position) {
+    public void onBindViewHolder(HeatmapDataViewHolder holder, int position) {
         holder.setItem(items.get(position));
     }
 
@@ -44,14 +48,25 @@ public class HomeAdapter extends RecyclerView.Adapter<HeatmapViewHolder> {
         return items == null ? 0 : items.size();
     }
 
-    public void updateItems(final List<HeatmapData> newItems) {
-        //TODO: SORT newItems HERE
+    public void updateItems(final List<HeatmapData> newItems, Comparator<HeatmapData> comparator) {
+        if (comparator == comparatorToUse){
+            return;
+        }
+
         final List<HeatmapData> oldItems = new ArrayList<>(this.items);
         this.items.clear();
+
         if (newItems != null) {
             this.items.addAll(newItems);
         }
-        DiffUtil.calculateDiff(new DiffUtil.Callback() {
+
+        if (comparator != null) {
+            comparatorToUse = comparator;
+        }
+
+        Collections.sort(items, comparatorToUse);
+
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
             @Override
             public int getOldListSize() {
                 return oldItems.size();
@@ -71,7 +86,8 @@ public class HomeAdapter extends RecyclerView.Adapter<HeatmapViewHolder> {
             public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
                 return oldItems.get(oldItemPosition).equals(newItems.get(newItemPosition));
             }
-        }).dispatchUpdatesTo(this);
+        });
+        diffResult.dispatchUpdatesTo(this);
 
     }
 

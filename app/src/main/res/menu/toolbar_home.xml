@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_filter"
+        android:id="@+id/action_sort"
         android:orderInCategory="101"
         app:showAsAction="always"
         android:icon="@drawable/ic_filter_list_black_24dp"
-        android:title="@string/filter" />
+        android:title="@string/sort" />
 
     <item
         android:id="@+id/action_info"

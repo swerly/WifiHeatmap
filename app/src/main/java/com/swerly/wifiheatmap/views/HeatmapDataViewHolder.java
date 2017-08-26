@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.swerly.wifiheatmap.R;
 import com.swerly.wifiheatmap.data.HeatmapData;
 
-public class HeatmapViewHolder extends RecyclerView.ViewHolder{
+public class HeatmapDataViewHolder extends RecyclerView.ViewHolder{
     HeatmapData item;
     CardView cardView;
     ImageView cardImage;
@@ -20,7 +20,7 @@ public class HeatmapViewHolder extends RecyclerView.ViewHolder{
     ImageView shareButton;
     ImageView viewButton;
 
-    public HeatmapViewHolder(final HeatmapCardListener listener, View itemView){
+    public HeatmapDataViewHolder(final HeatmapCardListener listener, View itemView){
         super(itemView);
         cardView = itemView.findViewById(R.id.card_view);
         cardImage = itemView.findViewById(R.id.card_image_view);

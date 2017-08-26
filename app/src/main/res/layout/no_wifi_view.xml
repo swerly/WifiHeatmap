@@ -31,7 +31,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="@string/settings" />
+            android:text="@string/settings"
+            android:theme="@style/TealButton"/>
     </LinearLayout>
 
 </RelativeLayout>

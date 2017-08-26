@@ -8,6 +8,7 @@ import com.swerly.wifiheatmap.utils.StaticUtils;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 
 
@@ -19,6 +20,23 @@ public class HeatmapData implements Serializable{
     private ProxyBitmap backgroundImage, finishedHeatmap;
     private String name, pixelsFileName;
     private Date dateTime;
+
+    public enum HeatmapDataComparator implements Comparator<HeatmapData>{
+        NAME_SORT{
+            public int compare(HeatmapData d1, HeatmapData d2){
+                return d1.getName().compareTo(d2.getName());
+            }
+        },
+        DATE_SORT{
+            public int compare(HeatmapData d1, HeatmapData d2){
+                return d1.getDateTime().compareTo(d2.getDateTime());
+            }
+        }
+    }
+
+    public static Comparator<HeatmapData> getComparator(final HeatmapDataComparator comparator){
+        return comparator;
+    }
 
     public HeatmapData(){
         name = "In Progress";
@@ -44,6 +62,10 @@ public class HeatmapData implements Serializable{
 
     public String getPixelsFileName(){
         return pixelsFileName;
+    }
+
+    public Date getDateTime(){
+        return dateTime;
     }
 
     public String getDateTimeString(){

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -16,16 +17,17 @@ import com.swerly.wifiheatmap.data.HeatmapData;
 import com.swerly.wifiheatmap.adapters.HomeAdapter;
 import com.swerly.wifiheatmap.R;
 import com.swerly.wifiheatmap.utils.ShareBitmap;
-import com.swerly.wifiheatmap.views.HeatmapViewHolder;
+import com.swerly.wifiheatmap.views.HeatmapDataViewHolder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by Seth on 7/6/2017.
  */
 
 public class FragmentHome extends FragmentBase implements
-        HeatmapViewHolder.HeatmapCardListener{
+        HeatmapDataViewHolder.HeatmapCardListener{
     private RecyclerView rv;
     private HomeAdapter adapter;
     private View noHeatmapView;
@@ -57,6 +59,10 @@ public class FragmentHome extends FragmentBase implements
         switch(item.getItemId()){
             case R.id.action_info:
                 activityMain.goToFragment(new FragmentInfo());
+                break;
+            case R.id.action_sort:
+                View sortButton = activityMain.findViewById(R.id.action_sort);
+                createSortPopup(sortButton);
                 break;
         }
         return true;
@@ -136,7 +142,7 @@ public class FragmentHome extends FragmentBase implements
                         Snackbar snackbar = Snackbar.make(activityMain.findViewById(R.id.main_layout), snackbarMessage, Snackbar.LENGTH_LONG);
                         snackbar.show();
                         app.deleteFromList(item);
-                        adapter.updateItems(app.getHeatmaps());
+                        adapter.updateItems(app.getHeatmaps(), null);
                         checkHeatmapsExist();
                     }
                 })
@@ -158,7 +164,28 @@ public class FragmentHome extends FragmentBase implements
         } else {
             rv.setVisibility(View.VISIBLE);
             noHeatmapView.setVisibility(View.GONE);
-            adapter.updateItems(heatmapList);
+            adapter.updateItems(heatmapList, null);
         }
+    }
+
+    private void createSortPopup(View sortView){
+        PopupMenu sortPopupMenu = new PopupMenu(getActivity(), sortView);
+        sortPopupMenu.inflate(R.menu.sort_popup);
+        sortPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                ArrayList<HeatmapData> heatmapList = app.getHeatmaps();
+                switch (item.getItemId()){
+                    case R.id.sort_name:
+                        adapter.updateItems(heatmapList, HeatmapData.getComparator(HeatmapData.HeatmapDataComparator.NAME_SORT));
+                        break;
+                    case R.id.sort_date:
+                        adapter.updateItems(heatmapList, HeatmapData.getComparator(HeatmapData.HeatmapDataComparator.DATE_SORT));
+                        break;
+                }
+                return true;
+            }
+        });
+        sortPopupMenu.show();
     }
 }
