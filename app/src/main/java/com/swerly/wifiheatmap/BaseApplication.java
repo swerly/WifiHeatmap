@@ -25,6 +25,7 @@ public class BaseApplication extends Application implements
     private CacheHelper cacheHelper;
     private HeatmapData currentInProgress;
     private boolean backgroundReady;
+    private boolean isEditing;
     private HeatmapPixel[][] currentPixels;
 
 
@@ -50,8 +51,16 @@ public class BaseApplication extends Application implements
         }
     }
 
-    public void setLoadedInProgress(HeatmapData loadedInProgress){
-        this.currentInProgress = loadedInProgress;
+    public void setIsEditing(){
+        this.isEditing = true;
+    }
+
+    public void setNotEditing(){
+        this.isEditing = false;
+    }
+
+    public boolean isEditing(){
+        return  this.isEditing;
     }
 
     public static Context getContext(){
@@ -64,6 +73,10 @@ public class BaseApplication extends Application implements
 
     public ArrayList<HeatmapData> getHeatmaps(){
         return heatmaps;
+    }
+
+    public void setCurrentInProgress(HeatmapData currentInProgress){
+        this.currentInProgress = currentInProgress;
     }
 
     public void setCurrentInProgressFinished(Bitmap finishedHeatmap){
@@ -84,7 +97,9 @@ public class BaseApplication extends Application implements
         if (heatmaps == null){
             heatmaps = new ArrayList<>();
         }
-        heatmaps.add(currentInProgress);
+        if (!heatmaps.contains(currentInProgress)) {
+            heatmaps.add(currentInProgress);
+        }
         saveHeatmapList();
         cacheHelper.savePixels(new HeatmapPixelCacheObject(currentPixels, currentInProgress.getPixelsFileName()));
         resetCurrent();

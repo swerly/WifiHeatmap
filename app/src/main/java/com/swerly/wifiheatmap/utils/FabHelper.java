@@ -137,7 +137,7 @@ public class FabHelper{
                         })
                         .show();
             } else if (tag.equals(FragmentBase.HEATMAP_FRAGMENT)){
-                saveHeatmap();
+                saveClicked();
             } else {
                 set();
             }
@@ -148,7 +148,12 @@ public class FabHelper{
             }
         }
 
-        private void saveHeatmap(){
+        private void saveClicked(){
+            if (context.getApp().isEditing()){
+                saveHeatmap(null);
+                set();
+                return;
+            }
             final InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
             //this is a little messy...
             new MaterialDialog.Builder(context)
@@ -167,11 +172,7 @@ public class FabHelper{
                                 Toast.makeText(context, context.getString(R.string.enter_name), Toast.LENGTH_SHORT)
                                         .show();
                             } else {
-                                BaseApplication app = context.getApp();
-                                View viewToScreenshot = context.findViewById(R.id.fragment_container);
-                                app.setCurrentInProgressFinished(StaticUtils.getScreenShot(viewToScreenshot));
-                                app.setCurrentInProgressName(nameText);
-                                app.finishCurrentInProgress();
+                                saveHeatmap(nameText);
                                 imm.hideSoftInputFromWindow(nameTextView.getWindowToken(), 0);
                                 dialog.dismiss();
                                 set();
@@ -187,6 +188,16 @@ public class FabHelper{
                     .show();
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         }
+    }
+
+    private void saveHeatmap(String nameText){
+        BaseApplication app = context.getApp();
+        View viewToScreenshot = context.findViewById(R.id.fragment_container);
+        app.setCurrentInProgressFinished(StaticUtils.getScreenShot(viewToScreenshot));
+        if (nameText != null) {
+            app.setCurrentInProgressName(nameText);
+        }
+        app.finishCurrentInProgress();
     }
 
     public void hideFab(){

@@ -25,15 +25,11 @@ public class CacheHelper {
     public static String HEATMAP_PIXEL = "heatmap_pixel_cache";
 
     private Context context;
-    private CacheLoadCallbacks loadCallbacks;
+    private LoadCacheTask.CacheLoadCallbacks loadCallbacks;
 
-    public CacheHelper(Context context, CacheLoadCallbacks loadCallbacks){
+    public CacheHelper(Context context, LoadCacheTask.CacheLoadCallbacks loadCallbacks){
         this.context = context;
         this.loadCallbacks = loadCallbacks;
-    }
-
-    public void saveInProgress(HeatmapData inProgressData){
-        new SaveCacheTask().execute(inProgressData);
     }
 
     public void savePixels(HeatmapPixelCacheObject pixelsToCache){
@@ -45,7 +41,7 @@ public class CacheHelper {
     }
 
     public void startupLoad(){
-        new LoadCacheTask().execute(HEATMAP_LIST);
+        new LoadCacheTask(context, loadCallbacks).execute(HEATMAP_LIST);
     }
 
     public void deletePixels(String pixelsToDelete){
@@ -81,54 +77,5 @@ public class CacheHelper {
             }
             return null;
         }
-    }
-
-    private class LoadCacheTask extends AsyncTask<String, Void, Object>{
-        private String cacheToLoad;
-
-        @Override
-        protected Object doInBackground(String... strings) {
-            cacheToLoad = strings[0];
-            if (!cacheToLoad.equals(HEATMAP_LIST)){
-                cacheToLoad = HEATMAP_PIXEL + cacheToLoad;
-            }
-            FileInputStream fos = null;
-
-            try {
-                fos = context.openFileInput(cacheToLoad);
-                ObjectInputStream ois = new ObjectInputStream(fos);
-                Object toReturn = null;
-                toReturn = ois.readObject();
-                ois.close();
-                fos.close();
-                return toReturn;
-            } catch (FileNotFoundException e) {
-                Log.d(BaseApplication.DEBUG_MESSAGE, "file not found: " + cacheToLoad);
-                return null;
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object result){
-            if (loadCallbacks == null){
-                return;
-            }
-
-            if (cacheToLoad.equals(HEATMAP_LIST)) {
-                loadCallbacks.heatmapListLoaded((ArrayList<HeatmapData>) result);
-            } else {
-                loadCallbacks.heatmapPixelsLoaded((HeatmapPixelCacheObject) result);
-            }
-        }
-    }
-
-    public interface CacheLoadCallbacks{
-        void heatmapListLoaded(ArrayList<HeatmapData> data);
-        void heatmapPixelsLoaded(HeatmapPixelCacheObject pixels);
     }
 }

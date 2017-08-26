@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.swerly.wifiheatmap.utils.CacheHelper;
 import com.swerly.wifiheatmap.data.HeatmapData;
 import com.swerly.wifiheatmap.data.HeatmapPixelCacheObject;
+import com.swerly.wifiheatmap.utils.LoadCacheTask;
 
 import java.util.ArrayList;
 
@@ -13,7 +14,7 @@ import java.util.ArrayList;
  * Created by Seth on 8/13/2017.
  */
 
-public class SplashActivity extends ActivityBase implements CacheHelper.CacheLoadCallbacks {
+public class SplashActivity extends ActivityBase implements LoadCacheTask.CacheLoadCallbacks {
     private boolean listLoaded;
 
     private CacheHelper cacheHelper;
@@ -33,16 +34,16 @@ public class SplashActivity extends ActivityBase implements CacheHelper.CacheLoa
         checkIfLoaded();
     }
 
+    @Override
+    public void heatmapPixelsLoaded(HeatmapPixelCacheObject pixels) {
+        //dont need to load pixels until the user wants to edit a map
+    }
+
     private void checkIfLoaded(){
         if (listLoaded){
             Intent intent = new Intent(this, ActivityMain.class);
             startActivity(intent);
             finish();
         }
-    }
-
-    @Override
-    public void heatmapPixelsLoaded(HeatmapPixelCacheObject pixels) {
-        //dont need to load pixels until the user wants to edit a map
     }
 }

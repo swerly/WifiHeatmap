@@ -65,4 +65,6 @@
     <string name="share_error">Error sharing image. Please try again!</string>
     <string name="no_wifi_text">You do not have a wifi connection.</string>
     <string name="settings">Settings</string>
+    <string name="loading_heatmap_patient">Loading your heatmap....\n\nThis may take a few seconds, please be patient.</string>
+    <string name="could_not_load_text">The data for your heatmap seems to be missing...\n\n</string>
 </resources>

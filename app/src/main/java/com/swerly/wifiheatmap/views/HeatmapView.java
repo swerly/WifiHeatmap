@@ -12,14 +12,19 @@ import android.view.View;
 
 import com.swerly.wifiheatmap.data.HeatmapData;
 import com.swerly.wifiheatmap.data.HeatmapPixel;
+import com.swerly.wifiheatmap.data.HeatmapPixelCacheObject;
+import com.swerly.wifiheatmap.utils.CacheHelper;
 import com.swerly.wifiheatmap.utils.HeatmapPixelDrawer;
+import com.swerly.wifiheatmap.utils.LoadCacheTask;
 import com.swerly.wifiheatmap.utils.WifiHelper;
+
+import java.util.ArrayList;
 
 /**
  * Created by Seth on 8/17/2017.
  */
 
-public class HeatmapView extends View implements WifiHelper.SignalChangedCallback {
+public class HeatmapView extends View implements WifiHelper.SignalChangedCallback{
     private Context context;
     private float density, viewTop, viewLeft;
     private int dpViewWidth, dpViewHeight, wifiSignalLevel;
@@ -29,6 +34,9 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
     private Canvas canvasBuffer;
     private Paint canvasPaint;
     private WifiHelper wifiHelper;
+    private HeatmapLoadingDone callback;
+
+    private String toLoad;
 
     public HeatmapView(Context context) {
         this(context, null);
@@ -37,31 +45,12 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
     public HeatmapView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
-        setup();
-    }
-
-    private void setup(){
         this.wifiHelper = new WifiHelper(context);
-        density = getResources().getDisplayMetrics().density;
-        canvasPaint = new Paint(Paint.DITHER_FLAG);
-        canvasPaint.setAlpha(175);
-        drawnOn = false;
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh){
-        viewLeft = getLeft();
-        viewTop = getTop();
-        dpViewWidth = (int) Math.floor(w/density);
-        dpViewHeight = (int) Math.floor(h/density);
-
-        Log.d("dpDebug", "width x height: " + Integer.toString(dpViewWidth) + " x " + Integer.toString(dpViewHeight));
-
-        Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types;
-        bitmapBuffer = Bitmap.createBitmap(w, h, conf); // this creates a MUTABLE bitmap
-        canvasBuffer = new Canvas(bitmapBuffer);
-
-        pixelDrawer = new HeatmapPixelDrawer(context, canvasBuffer, dpViewWidth, dpViewHeight, density );
+        initialize(w, h);
     }
 
     @Override
@@ -108,6 +97,35 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
     public void signalChanged(WifiHelper.WifiSignalLevel signalLevel) {
         wifiSignalLevel = signalLevel.getLevel();
     }
+
+    public void setToLoad(String toLoad, HeatmapLoadingDone callback){
+        this.toLoad = toLoad;
+        this.callback = callback;
+    }
+
+    public void initialize(int w, int h){
+        density = getResources().getDisplayMetrics().density;
+        canvasPaint = new Paint(Paint.DITHER_FLAG);
+        canvasPaint.setAlpha(175);
+        drawnOn = false;
+
+        viewLeft = getLeft();
+        viewTop = getTop();
+        dpViewWidth = (int) Math.floor(w/density);
+        dpViewHeight = (int) Math.floor(h/density);
+
+        Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types;
+        bitmapBuffer = Bitmap.createBitmap(w, h, conf); // this creates a MUTABLE bitmap
+        canvasBuffer = new Canvas(bitmapBuffer);
+
+        if (toLoad == null) {
+            callback.heatmapLoadingDone(true);
+            pixelDrawer = new HeatmapPixelDrawer(context, canvasBuffer, dpViewWidth, dpViewHeight, density, null);
+        } else {
+            startPixelLoad();
+        }
+    }
+
     public void startListeningForLevelChanges(){
         wifiHelper.listenForLevelChanges(this);
     }
@@ -120,4 +138,37 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
         return pixelDrawer.getPixelArray();
     }
 
+
+    private void startPixelLoad(){
+        new PixelLoad(context, null).execute(toLoad);
+    }
+
+    private class PixelLoad extends LoadCacheTask {
+        public PixelLoad(Context context, CacheLoadCallbacks callbacks) {
+            super(context, callbacks);
+        }
+
+        @Override
+        protected Object doInBackground(String... strings) {
+            HeatmapPixel[][] pixels =  ((HeatmapPixelCacheObject) super.doInBackground(strings)).pixels;
+            if (pixels == null){
+                return false;
+            }
+            pixelDrawer = new HeatmapPixelDrawer(context, canvasBuffer, dpViewWidth, dpViewHeight, density, pixels);
+            pixelDrawer.drawAllPixels();
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Object object){
+            boolean finishedDrawing = (boolean) object;
+            callback.heatmapLoadingDone(finishedDrawing);
+            drawnOn = true;
+            invalidate();
+        }
+    }
+
+    public interface HeatmapLoadingDone{
+        void heatmapLoadingDone(boolean status);
+    }
 }

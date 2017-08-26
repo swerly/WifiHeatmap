@@ -76,6 +76,7 @@ public class FragmentHome extends FragmentBase implements
         super.onResume();
         hideSubtitle();
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        app.setNotEditing();
 
         checkHeatmapsExist();
     }
@@ -108,7 +109,17 @@ public class FragmentHome extends FragmentBase implements
 
     @Override
     public void onEditPressed(HeatmapData item) {
+        Bundle bundle = new Bundle();
+        bundle.putString("toLoad", item.getPixelsFileName());
 
+        FragmentHeatmap goTo = new FragmentHeatmap();
+        goTo.setArguments(bundle);
+        app.setBackgroundInProgress(item.getBackgroundImage());
+        app.setBackgroundReady();
+        app.setCurrentInProgress(item);
+        app.setIsEditing();
+
+        activityMain.goToFragment(goTo);
     }
 
     @Override

@@ -26,25 +26,43 @@ import com.swerly.wifiheatmap.utils.WifiHelper;
 
 public class FragmentHeatmap extends FragmentBase implements
         SnapshotWaiter.SnapshotReadyCallback,
-        WifiHelper.WifiConnectionChangeCallback {
+        WifiHelper.WifiConnectionChangeCallback,
+        HeatmapView.HeatmapLoadingDone{
     private ImageView bkgView;
     private HeatmapView heatmapView;
     private WifiHelper wifiHelper;
     private View noWifiView;
-    private boolean isPaused;
+    private View heatmapLoadingView;
+    private View heatmapCouldntLoadView;
+    private View heatmapLoadContainer;
+    private boolean isPaused, wifiShowFab, editShowFab;
+    private String toLoad;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Bundle args = getArguments();
+        if (args != null && args.containsKey("toLoad")) {
+            toLoad = args.getString("toLoad");
+        } else {
+            toLoad = null;
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        //setup views
         View view = inflater.inflate(R.layout.fragment_heatmap, container, false);
         bkgView = view.findViewById(R.id.heatmap_bkg_view);
         heatmapView = view.findViewById(R.id.heatmap_view);
+        heatmapView.setToLoad(toLoad, this);
+        editShowFab = false;
         noWifiView = view.findViewById(R.id.no_wifi_view);
+        heatmapLoadContainer = view.findViewById(R.id.heatmap_load_container);
+        heatmapLoadingView = view.findViewById(R.id.heatmap_currently_loading);
+        heatmapCouldntLoadView = view.findViewById(R.id.could_not_load_view);
         Button settingsBtn = noWifiView.findViewById(R.id.settings_button);
         settingsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,6 +131,19 @@ public class FragmentHeatmap extends FragmentBase implements
         setBackground();
     }
 
+    @Override
+    public void heatmapLoadingDone(boolean status) {
+        if (status){
+            heatmapLoadContainer.setVisibility(View.GONE);
+            heatmapLoadingView.setVisibility(View.GONE);
+            editShowFab = true;
+        } else {
+            heatmapLoadingView.setVisibility(View.GONE);
+            heatmapCouldntLoadView.setVisibility(View.VISIBLE);
+        }
+        showHideFab();
+    }
+
     private void setBackground(){
         Bitmap bkgToSet = app.getCurrentInProgress().getBackgroundImage();
         bkgView.setImageBitmap(bkgToSet);
@@ -143,12 +174,23 @@ public class FragmentHeatmap extends FragmentBase implements
         bkgView.setVisibility(View.VISIBLE);
         heatmapView.setVisibility(View.VISIBLE);
         activityMain.showFab();
+        showHideFab();
+        wifiShowFab = true;
     }
 
     private void showNoWifiView(){
         noWifiView.setVisibility(View.VISIBLE);
         bkgView.setVisibility(View.GONE);
         heatmapView.setVisibility(View.GONE);
-        activityMain.hideFab();
+        showHideFab();
+        wifiShowFab = false;
+    }
+
+    private void showHideFab(){
+        if (wifiShowFab && editShowFab){
+            activityMain.showFab();
+        } else {
+            activityMain.hideFab();
+        }
     }
 }

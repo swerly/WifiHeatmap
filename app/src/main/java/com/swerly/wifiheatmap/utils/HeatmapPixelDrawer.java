@@ -20,7 +20,7 @@ public class HeatmapPixelDrawer {
     private HeatmapPixel[][] pixelArray;
     private Paint redPaint, orangePaint, yellowPaint, greenPaint, bluePaint;
 
-    public HeatmapPixelDrawer(Context context, Canvas canvas, int width, int height, float density){
+    public HeatmapPixelDrawer(Context context, Canvas canvas, int width, int height, float density, HeatmapPixel[][] toEdit){
         this.context = context;
         this.currentCanvas = canvas;
         this.width = width;
@@ -28,10 +28,15 @@ public class HeatmapPixelDrawer {
         this.density = density;
         pixelArray = new HeatmapPixel[width][height];
 
-        for(int i = 0; i < width; i++){
-            for(int j=0; j < height; j++){
-                pixelArray[i][j] = new HeatmapPixel(i,j);
+
+        if (toEdit == null) {
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    pixelArray[i][j] = new HeatmapPixel(i, j);
+                }
             }
+        } else {
+            pixelArray = toEdit;
         }
 
         setupPaints();
@@ -73,6 +78,24 @@ public class HeatmapPixelDrawer {
                 return bluePaint;
             default:
                 return bluePaint;
+        }
+    }
+
+    public void drawAllPixels(){
+        int iMax = pixelArray.length;
+        for (int i = 0; i < iMax; i++){
+            int jMax = pixelArray[i].length;
+            for (int j = 0; j < jMax; j++){
+                HeatmapPixel curPixel = pixelArray[i][j];
+                int level = curPixel.getLevel();
+                if (level == Integer.MIN_VALUE){
+                    continue;
+                } else {
+                    float x = curPixel.getX()*density;
+                    float y = curPixel.getY()*density;
+                    currentCanvas.drawRect(x, y, x+density, y+density, getPaint(level));
+                }
+            }
         }
     }
 
