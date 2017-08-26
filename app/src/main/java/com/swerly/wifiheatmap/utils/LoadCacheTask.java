@@ -33,12 +33,14 @@ public class LoadCacheTask extends AsyncTask<String, Void, Object> {
         FileInputStream fos = null;
 
         try {
+            Log.d(BaseApplication.DEBUG_MESSAGE, "loading cache: " + cacheToLoad);
             fos = context.openFileInput(cacheToLoad);
             ObjectInputStream ois = new ObjectInputStream(fos);
             Object toReturn = null;
             toReturn = ois.readObject();
             ois.close();
             fos.close();
+            Log.d(BaseApplication.DEBUG_MESSAGE, "cache loaded: " + cacheToLoad);
             return toReturn;
         } catch (FileNotFoundException e) {
             Log.d(BaseApplication.DEBUG_MESSAGE, "file not found: " + cacheToLoad);

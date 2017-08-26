@@ -150,10 +150,11 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
 
         @Override
         protected Object doInBackground(String... strings) {
-            HeatmapPixel[][] pixels =  ((HeatmapPixelCacheObject) super.doInBackground(strings)).pixels;
-            if (pixels == null){
+            HeatmapPixelCacheObject cacheObject = (HeatmapPixelCacheObject) super.doInBackground(strings);
+            if (cacheObject == null){
                 return false;
             }
+            HeatmapPixel[][] pixels =  cacheObject.pixels;
             pixelDrawer = new HeatmapPixelDrawer(context, canvasBuffer, dpViewWidth, dpViewHeight, density, pixels);
             pixelDrawer.drawAllPixels();
             return true;
