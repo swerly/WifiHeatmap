@@ -156,4 +156,8 @@ public class ActivityMain extends ActivityBase{
     public void showHelp(){
         helpScreen.showHelp();
     }
+
+    public void hideHelp(){
+        helpScreen.hideHelp();
+    }
 }

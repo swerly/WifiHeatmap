@@ -23,6 +23,11 @@ import com.swerly.wifiheatmap.R;
 
 public class WifiHelper {
     public static final int NUMBER_LEVELS = 5;
+
+    private static final int MIN_RSSI = -90;
+
+    private static final int MAX_RSSI = -55;
+
     private Context context;
     private WifiManager wifiManager;
     private BroadcastReceiver wifiConnectionReceiver;
@@ -177,7 +182,7 @@ public class WifiHelper {
         private int level, rssi;
         public WifiSignalLevel(WifiInfo info){
             rssi = info.getRssi();
-            level = WifiManager.calculateSignalLevel(rssi, NUMBER_LEVELS) + 1;
+            level = calculateSignalLevel(rssi, NUMBER_LEVELS) + 1;
         }
 
         public int getLevel(){
@@ -186,6 +191,19 @@ public class WifiHelper {
 
         public int getRssi(){
             return  rssi;
+        }
+    }
+
+    //taken from android source but modified rssi levels a bit
+    private int calculateSignalLevel(int rssi, int numLevels) {
+        if (rssi <= MIN_RSSI) {
+            return 0;
+        } else if (rssi >= MAX_RSSI) {
+            return numLevels - 1;
+        } else {
+            float inputRange = (MAX_RSSI - MIN_RSSI);
+            float outputRange = (numLevels - 1);
+            return (int)((float)(rssi - MIN_RSSI) * outputRange / inputRange);
         }
     }
 }

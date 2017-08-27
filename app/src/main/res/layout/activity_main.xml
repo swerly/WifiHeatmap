@@ -14,7 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"></FrameLayout>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    </FrameLayout>
 
     <include layout="@layout/toolbar_main"
         android:id="@+id/main_toolbar"
@@ -44,11 +46,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:elevation="6dp"
-        android:background="@color/black_alpha90"
+        android:background="@color/black_alpha80"
         android:animateLayoutChanges="true"
         android:visibility="gone">
 
-        <include layout="@layout/help_view"/>
+        <include layout="@layout/view_help"/>
 
     </RelativeLayout>
 

@@ -3,6 +3,8 @@ package com.swerly.wifiheatmap.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -45,6 +47,7 @@ public class FragmentHeatmap extends FragmentBase implements
         Bundle args = getArguments();
         if (args != null && args.containsKey("toLoad")) {
             toLoad = args.getString("toLoad");
+            activityMain.hideHelp();
         } else {
             toLoad = null;
         }
@@ -62,6 +65,13 @@ public class FragmentHeatmap extends FragmentBase implements
         noWifiView = view.findViewById(R.id.no_wifi_view);
         heatmapLoadContainer = view.findViewById(R.id.heatmap_load_container);
         heatmapLoadingView = view.findViewById(R.id.heatmap_currently_loading);
+
+        ImageView loadingIcon = view.findViewById(R.id.loading_spinner);
+        Drawable spinner = loadingIcon.getDrawable();
+        if (spinner instanceof Animatable){
+            ((Animatable) spinner).start();
+        }
+
         heatmapCouldntLoadView = view.findViewById(R.id.could_not_load_view);
         Button settingsBtn = noWifiView.findViewById(R.id.settings_button);
         settingsBtn.setOnClickListener(new View.OnClickListener() {

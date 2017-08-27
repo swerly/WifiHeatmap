@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
 
-    <include layout="@layout/no_wifi_view"
+    <include layout="@layout/view_no_wifi"
         android:id="@+id/no_wifi_view"
         android:animateLayoutChanges="true"
         android:visibility="gone"/>

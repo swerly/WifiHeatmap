@@ -51,7 +51,7 @@ public class SearchBarView extends LinearLayout {
         this.context = context;
         this.setLayoutTransition(new LayoutTransition());
 
-        rootView = inflate(context, R.layout.map_searchbar, this);
+        rootView = inflate(context, R.layout.view_map_searchbar, this);
         backArrow = rootView.findViewById(R.id.back_arrow);
         clearText = rootView.findViewById(R.id.clear_text);
         searchText = rootView.findViewById(R.id.search_edittext);

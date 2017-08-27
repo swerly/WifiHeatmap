@@ -161,7 +161,7 @@ public class FabHelper{
                     .autoDismiss(false)
                     .positiveText(R.string.save)
                     .negativeText(R.string.cancel)
-                    .customView(R.layout.naming_view, false)
+                    .customView(R.layout.view_naming, false)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {

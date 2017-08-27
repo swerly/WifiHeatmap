@@ -1,5 +1,7 @@
 package com.swerly.wifiheatmap.fragments;
 
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -50,6 +53,12 @@ public class FragmentHome extends FragmentBase implements
         noHeatmapView = view.findViewById(R.id.no_heatmap_view);
         rv = view.findViewById(R.id.home_recycler_view);
         setupRecyclerView();
+
+        ImageView loadingIcon = noHeatmapView.findViewById(R.id.spinning_logo);
+        Drawable spinner = loadingIcon.getDrawable();
+        if (spinner instanceof Animatable){
+            ((Animatable) spinner).start();
+        }
 
         return view;
     }

@@ -18,7 +18,7 @@
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"/>
 
-    <include layout="@layout/no_wifi_view"
+    <include layout="@layout/view_no_wifi"
         android:id="@+id/no_wifi_view"
         android:animateLayoutChanges="true"/>
 
@@ -36,19 +36,20 @@
             android:orientation="vertical"
             android:id="@+id/heatmap_currently_loading">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:src="@drawable/logo_loading"
+                android:tint="@color/accent"
+                android:id="@+id/loading_spinner"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:text="@string/loading_heatmap_patient"/>
-
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/activity_vertical_margin"/>
 
         </LinearLayout>
 

@@ -18,6 +18,7 @@
     <string name="share">Share</string>
     <string name="delete">Delete</string>
     <string name="close">Close</string>
+    <string name="back">Back</string>
     <string name="share_heatmap">Share Heatmap</string>
     <string name="share_loading">Initializing Sharing...</string>
     <string name="location_rationale">You must grant this app access to your location before we can
@@ -81,7 +82,22 @@
     <string name="help_zoom_content">Zoom, pan, and rotate to fill the screen as much as possible with the building of interest.</string>
     <string name="help_heatmap_title">Drawing Heatmap</string>
     <string name="help_heatmap_content">Place your finger on the screen where you are located in the building.\n\n
-            Walk around while moving your finger along the path you're walking inside the building.\n\n
-            SIGNAL INFO HERE</string>
+            Walk around while moving your finger along the path you're walking inside the building.</string>
+    <string name="more_signal_info_title">Signal Info</string>
+
+    <string name="signal_info">More Signal Info</string>
+    <string name="good">Good</string>
+    <string name="bad">Bad</string>
+    <string name="level_one">&gt; -50dB</string>
+    <string name="level_two">-60dB</string>
+    <string name="level_three">-70dB</string>
+    <string name="level_four">-80dB</string>
+    <string name="level_five">&lt; -90dB</string>
+
+    <string name="sig_desc_1">Amazing, max achievable signal strength. The client can only be a few feet from the AP to achieve this. Not typical or desirable in the real world.</string>
+    <string name="sig_desc_2">Very good, minimum signal strength for applications that require very reliable, timely delivery of data packets. (VoIP, video streaming)</string>
+    <string name="sig_desc_3">Okay, minimum signal strength for reliable packet delivery. (Email, web)</string>
+    <string name="sig_desc_4">Not good, minimum signal strength for basic connectivity. Packet delivery may be unreliable.</string>
+    <string name="sig_desc_5">Unusable, approaching or drowning in the noise floor. Any functionality is highly unlikely.</string>
 
 </resources>
