@@ -72,6 +72,7 @@
     <string name="completed_to_save">When completed, hit the save button in the bottom right</string>
     <string name="dont_show">HIde this help screen by default.</string>
     <string name="dont_show_under">(This screen can be accessed by pressing the help button in the upper right)</string>
+    <string name="no_heatmaps">You have not added any heatmaps.\n\nClick the plus button to create one.</string>
 
     <string name="help_map_title">Finding Location</string>
     <string name="help_map_content">Find the location of the building that you want to map by searching an address or using your current location.\n\n

@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:text="No heatmaps added"
+            android:text="@string/no_heatmaps"
             android:gravity="center_vertical"
             android:layout_centerVertical="true"
             android:layout_alignParentStart="true" />
