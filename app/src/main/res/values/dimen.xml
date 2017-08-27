@@ -4,4 +4,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="icon_padding">8dp</dimen>
     <dimen name="card_height">250dip</dimen>
+    <dimen name="help_title">24sp</dimen>
+    <dimen name="help_text">18sp</dimen>
 </resources>

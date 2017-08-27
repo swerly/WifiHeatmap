@@ -49,6 +49,11 @@ public class FragmentZoom extends FragmentBase implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.action_help:
+                activityMain.showHelp();
+                break;
+        }
         return false;
     }
 

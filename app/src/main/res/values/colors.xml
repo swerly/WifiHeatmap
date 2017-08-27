@@ -7,6 +7,7 @@
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#757575</color>
     <color name="black_alpha60">#96000000</color>
+    <color name="black_alpha90">#E6000000</color>
     <color name="white">#FFFFFF</color>
     <color name="off_white">#EEEEEE</color>
     <color name="icons">#FFFFFF</color>

@@ -168,8 +168,7 @@ public class FragmentMap extends FragmentBase implements
                 }
                 break;
             case R.id.action_help:
-                Toast.makeText(activityMain, "Help Pressed", Toast.LENGTH_SHORT)
-                        .show();
+                    activityMain.showHelp();
                 break;
             default:
                 break;

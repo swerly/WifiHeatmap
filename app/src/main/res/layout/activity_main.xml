@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     tools:context="com.swerly.wifiheatmap.activities.ActivityMain"
     android:background="@color/primary_text"
-    android:id="@+id/main_layout">
+    android:id="@+id/main_layout"
+    android:animateLayoutChanges="true">
 
     <FrameLayout
         android:id="@+id/fragment_container"
@@ -37,5 +38,18 @@
         android:focusable="true"
         android:src="@drawable/ic_add_black_24dp"
         android:tint="@color/white"/>
+
+    <RelativeLayout
+        android:id="@+id/help_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="6dp"
+        android:background="@color/black_alpha90"
+        android:animateLayoutChanges="true"
+        android:visibility="gone">
+
+        <include layout="@layout/help_view"/>
+
+    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

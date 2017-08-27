@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 
 import com.swerly.wifiheatmap.BaseApplication;
 import com.swerly.wifiheatmap.utils.FabHelper;
+import com.swerly.wifiheatmap.utils.HelpScreenHelper;
 import com.swerly.wifiheatmap.utils.LocationHelper;
 import com.swerly.wifiheatmap.R;
 import com.swerly.wifiheatmap.fragments.FragmentBase;
@@ -22,8 +23,7 @@ public class ActivityMain extends ActivityBase{
     private FabHelper fabHelper;
     private FloatingActionButton mainFab;
     private FragmentManager fragmentManager;
-    private FrameLayout fragContainer;
-    private LayoutTransition fragFadeTransition;
+    private HelpScreenHelper helpScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +32,7 @@ public class ActivityMain extends ActivityBase{
 
         mainFab = findViewById(R.id.fab);
         fabHelper = new FabHelper(this, mainFab);
-        fragContainer = findViewById(R.id.fragment_container);
-        fragFadeTransition = new LayoutTransition();
+        helpScreen = new HelpScreenHelper(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(getTitle());
@@ -79,6 +78,10 @@ public class ActivityMain extends ActivityBase{
     }
 
     public void backNavigation(){
+        if (helpScreen.isHelpVisible()){
+            helpScreen.hideHelp();
+            return;
+        }
         FragmentBase toPop = (FragmentBase) fragmentManager.findFragmentById(R.id.fragment_container);
         boolean fromHeatmap = toPop instanceof FragmentHeatmap;
         boolean popped = getSupportFragmentManager().popBackStackImmediate();
@@ -109,6 +112,7 @@ public class ActivityMain extends ActivityBase{
      */
     public void goToFragment(FragmentBase frag){
         String tag = frag.getClass().getSimpleName();
+        helpScreen.setupForFragment(frag);
 
         //if we are at the last sequence in the heatmap drawing, go home
         //this will pop the entire backstack instead of making a new fragment
@@ -147,5 +151,9 @@ public class ActivityMain extends ActivityBase{
 
     public void showFab(){
         fabHelper.showFab();
+    }
+
+    public void showHelp(){
+        helpScreen.showHelp();
     }
 }
