@@ -195,6 +195,12 @@ public class FragmentHeatmap extends FragmentBase implements
 
     private void showNoWifiView(){
         noWifiView.setVisibility(View.VISIBLE);
+        activityMain.hideHelp();
+        ImageView loadingIcon = noWifiView.findViewById(R.id.no_wifi_spinner);
+        Drawable spinner = loadingIcon.getDrawable();
+        if (spinner instanceof Animatable){
+            ((Animatable) spinner).start();
+        }
         bkgView.setVisibility(View.GONE);
         heatmapView.setVisibility(View.GONE);
         showHideFab();

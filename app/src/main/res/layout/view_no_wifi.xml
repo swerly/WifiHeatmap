@@ -13,10 +13,11 @@
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_signal_wifi_off_black_24dp"
+            android:layout_height="150dp"
+            android:src="@drawable/logo_x"
             android:tint="@color/grey"
-            android:id="@+id/imageView"
+            android:id="@+id/no_wifi_spinner"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_gravity="center_horizontal"/>
 
         <TextView

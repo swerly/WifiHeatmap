@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -14,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
@@ -271,6 +274,12 @@ public class FragmentMap extends FragmentBase implements
 
     private void showNoWifiView(){
         noWifiView.setVisibility(View.VISIBLE);
+        activityMain.hideHelp();
+        ImageView loadingIcon = noWifiView.findViewById(R.id.no_wifi_spinner);
+        Drawable spinner = loadingIcon.getDrawable();
+        if (spinner instanceof Animatable){
+            ((Animatable) spinner).start();
+        }
         activityMain.hideFab();
 
         getChildFragmentManager()
