@@ -38,12 +38,6 @@ public class FragmentZoom extends FragmentBase implements
         bkgView.getController().getSettings()
                 .setRotationEnabled(true);
 
-        if (app.isBackgroundReady()){
-            setBackground();
-        } else {
-            new SnapshotWaiter(app, this).startWaiting();
-        }
-
         return view;
     }
 
@@ -74,6 +68,18 @@ public class FragmentZoom extends FragmentBase implements
         super.onResume();
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setSubTitle(R.string.zoom_subtitle);
+
+        if (app.isBackgroundReady()){
+            setBackground();
+        } else {
+            new SnapshotWaiter(app, this).startWaiting();
+        }
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        bkgSet = false;
     }
 
     @Override

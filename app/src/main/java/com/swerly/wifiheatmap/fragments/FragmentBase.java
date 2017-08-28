@@ -52,6 +52,11 @@ public abstract class FragmentBase extends Fragment {
     }
 
     @Override
+    public void onResume(){
+        super.onResume();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         actionBarHelper.setupForFragment(this, menu, inflater);
     }

@@ -50,7 +50,11 @@ public class HelpScreenHelper {
         setCheckboxListener();
     }
 
-    public void setupForFragment(FragmentBase setupFor){
+    public void setupForFragmentAndHide(FragmentBase frag){
+        setupForFragment(frag, true);
+        hideHelp();
+    }
+    public void setupForFragment(FragmentBase setupFor, boolean hide){
         if (setupFor instanceof FragmentHome || setupFor instanceof FragmentInfo){
             hideHelp();
             return;
@@ -98,7 +102,7 @@ public class HelpScreenHelper {
             signalInfoBackButton.setVisibility(View.GONE);
         }
 
-        if (curPref){
+        if (curPref || hide){
             hideHelp();
         } else {
             showHelp();

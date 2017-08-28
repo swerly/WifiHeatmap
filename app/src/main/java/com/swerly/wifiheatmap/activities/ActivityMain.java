@@ -91,6 +91,7 @@ public class ActivityMain extends ActivityBase{
                 app.resetCurrent();
             }
             fabHelper.setupFab(curFrag, true, fromHeatmap);
+            setupHelpForFragmentAndHide(curFrag);
         } else {
             finish();
         }
@@ -112,7 +113,7 @@ public class ActivityMain extends ActivityBase{
      */
     public void goToFragment(FragmentBase frag){
         String tag = frag.getClass().getSimpleName();
-        helpScreen.setupForFragment(frag);
+        helpScreen.setupForFragment(frag, false);
 
         //if we are at the last sequence in the heatmap drawing, go home
         //this will pop the entire backstack instead of making a new fragment
@@ -159,5 +160,9 @@ public class ActivityMain extends ActivityBase{
 
     public void hideHelp(){
         helpScreen.hideHelp();
+    }
+
+    public void setupHelpForFragmentAndHide(FragmentBase frag){
+        helpScreen.setupForFragmentAndHide(frag);
     }
 }
