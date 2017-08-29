@@ -7,8 +7,8 @@ android {
         applicationId "com.swerly.wifiheatmap"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 1
-        versionName "0.1 BETA"
+        versionCode 2
+        versionName "0.2 BETA"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

@@ -50,6 +50,9 @@ public class FragmentView extends FragmentBase {
             case R.id.action_share:
                 new ShareBitmap(activityMain).execute(toView.getFinishedImage());
                 break;
+            case R.id.action_help:
+                activityMain.showHelp();
+                break;
         }
         return false;
     }

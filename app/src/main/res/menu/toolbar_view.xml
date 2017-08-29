@@ -3,9 +3,16 @@
 
     <item
         android:id="@+id/action_share"
-        android:orderInCategory="101"
+        android:orderInCategory="100"
         app:showAsAction="always"
         android:icon="@drawable/ic_share_black_24dp"
         android:title="@string/share" />
+
+    <item
+        android:id="@+id/action_help"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_help_black_24dp"
+        android:title="@string/help"/>
 
 </menu>
