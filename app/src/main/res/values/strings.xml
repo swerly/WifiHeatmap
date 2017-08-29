@@ -19,6 +19,7 @@
     <string name="delete">Delete</string>
     <string name="close">Close</string>
     <string name="back">Back</string>
+    <string name="open_source_licenses">Open Source Licenses</string>
     <string name="share_heatmap">Share Heatmap</string>
     <string name="share_loading">Initializing Sharing...</string>
     <string name="location_rationale">You must grant this app access to your location before we can

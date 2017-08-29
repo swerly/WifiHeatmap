@@ -6,6 +6,7 @@ import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -34,12 +35,12 @@ public class SearchBarView extends LinearLayout {
     private EditText searchText;
     private int radius, cx, cy;
     private View toolbar;
+    private CoordinatorLayout parent;
 
     private SearchBarCallback searchBarCallback;
 
     public SearchBarView(Context context) {
-        super(context);
-        init(context);
+        this(context, null);
     }
 
     public SearchBarView(Context context, @Nullable AttributeSet attrs) {
@@ -50,6 +51,8 @@ public class SearchBarView extends LinearLayout {
     private void init(Context context){
         this.context = context;
         this.setLayoutTransition(new LayoutTransition());
+
+        parent = (CoordinatorLayout) getParent();
 
         rootView = inflate(context, R.layout.view_map_searchbar, this);
         backArrow = rootView.findViewById(R.id.back_arrow);
@@ -154,6 +157,10 @@ public class SearchBarView extends LinearLayout {
 
     public boolean animateClose(){
         if(rootView.getVisibility() == View.VISIBLE){
+            if (parent == null){
+                parent = (CoordinatorLayout) this.getParent();
+            }
+            parent.setLayoutTransition(null);
             // create the animation (the final radius is zero)
             Animator anim =
                     ViewAnimationUtils.createCircularReveal(rootView, cx, cy, radius, 0);
@@ -171,6 +178,7 @@ public class SearchBarView extends LinearLayout {
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
                     rootView.setVisibility(GONE);
+                    parent.setLayoutTransition(new LayoutTransition());
                 }
             });
 

@@ -42,4 +42,14 @@
             android:theme="@style/TealButton"/>
     </LinearLayout>
 
+    <Button
+        android:id="@+id/licenses_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/open_source_licenses"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:theme="@style/TealButton"
+        android:layout_margin="@dimen/activity_vertical_margin"/>
+
 </RelativeLayout>
