@@ -20,8 +20,12 @@
     <color name="light_gray">#EEEEEE</color>
 
     <color name="red">#f44336</color>
+    <color name="redorange">#fa6e1b</color>
     <color name="orange">#ff9800</color>
+    <color name="orangeyellow">#ffc21e</color>
     <color name="yellow">#ffeb3b</color>
+    <color name="yellowgreen">#a6cd46</color>
     <color name="green">#4caf50</color>
+    <color name="greenblue">#468083</color>
     <color name="blue">#3f51b5</color>
 </resources>

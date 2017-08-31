@@ -199,7 +199,6 @@ public class FragmentHeatmap extends FragmentBase implements
             hideNoWifiView();
         } else {
             showNoWifiView();
-            wifiHelper.setupWifi();
         }
     }
 

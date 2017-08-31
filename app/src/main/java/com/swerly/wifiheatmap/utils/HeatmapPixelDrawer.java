@@ -37,7 +37,7 @@ public class HeatmapPixelDrawer {
     private int width, height;
     private float density;
     private HeatmapPixel[][] pixelArray;
-    private Paint redPaint, orangePaint, yellowPaint, greenPaint, bluePaint;
+    private Paint redPaint, redOrangePaint, orangePaint, orangeYellowPaint, yellowPaint, yellowGreenPaint, greenPaint, greenBluePaint, bluePaint;
 
     public HeatmapPixelDrawer(Context context, Canvas canvas, int width, int height, float density, HeatmapPixel[][] toEdit){
         this.context = context;
@@ -66,17 +66,33 @@ public class HeatmapPixelDrawer {
         redPaint.setStyle(Paint.Style.FILL);
         redPaint.setColor(context.getResources().getColor(R.color.red));
 
+        redOrangePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        redOrangePaint.setStyle(Paint.Style.FILL);
+        redOrangePaint.setColor(context.getResources().getColor(R.color.redorange));
+
         orangePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         orangePaint.setStyle(Paint.Style.FILL);
         orangePaint.setColor(context.getResources().getColor(R.color.orange));
+
+        orangeYellowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        orangeYellowPaint.setStyle(Paint.Style.FILL);
+        orangeYellowPaint.setColor(context.getResources().getColor(R.color.orangeyellow));
 
         yellowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         yellowPaint.setStyle(Paint.Style.FILL);
         yellowPaint.setColor(context.getResources().getColor(R.color.yellow));
 
+        yellowGreenPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        yellowGreenPaint.setStyle(Paint.Style.FILL);
+        yellowGreenPaint.setColor(context.getResources().getColor(R.color.yellowgreen));
+
         greenPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         greenPaint.setStyle(Paint.Style.FILL);
         greenPaint.setColor(context.getResources().getColor(R.color.green));
+
+        greenBluePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        greenBluePaint.setStyle(Paint.Style.FILL);
+        greenBluePaint.setColor(context.getResources().getColor(R.color.greenblue));
 
         bluePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         bluePaint.setStyle(Paint.Style.FILL);
@@ -85,14 +101,22 @@ public class HeatmapPixelDrawer {
 
     private Paint getPaint(int level){
         switch (level){
-            case 5:
+            case 9:
                 return redPaint;
-            case 4:
+            case 8:
+                return redOrangePaint;
+            case 7:
                 return orangePaint;
-            case 3:
+            case 6:
+                return orangeYellowPaint;
+            case 5:
                 return yellowPaint;
-            case 2:
+            case 4:
+                return yellowGreenPaint;
+            case 3:
                 return greenPaint;
+            case 2:
+                return greenBluePaint;
             case 1:
                 return bluePaint;
             default:
@@ -179,10 +203,7 @@ public class HeatmapPixelDrawer {
         if (assignedLevel == 0 || assignedLevel < ringLevel){
             currentCanvas.drawRect(x, y, x+density, y+density, getPaint(ringLevel));
             pixel.setLevel(ringLevel);
-        } else if (assignedLevel > centerLevel && (ringLevel == 5)){
-            currentCanvas.drawRect(x, y, x+density, y+density, getPaint(centerLevel));
-            pixel.setLevel(ringLevel);
-        } else if (assignedLevel < centerLevel && centerLevel == ringLevel){
+        } else if (centerLevel == ringLevel){
             currentCanvas.drawRect(x, y, x+density, y+density, getPaint(ringLevel));
             pixel.setLevel(ringLevel);
         }

@@ -19,7 +19,6 @@
 
 package com.swerly.wifiheatmap.utils;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -29,23 +28,17 @@ import android.net.NetworkInfo;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
-
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.swerly.wifiheatmap.R;
 
 /**
  * Created by Seth on 8/18/2017.
  */
 
 public class WifiHelper {
-    public static final int NUMBER_LEVELS = 5;
+    public static final int NUMBER_LEVELS = 9;
 
-    private static final int MIN_RSSI = -90;
+    private static final int MIN_RSSI = -85;
 
-    private static final int MAX_RSSI = -55;
+    private static final int MAX_RSSI = -48;
 
     private Context context;
     private WifiManager wifiManager;
@@ -72,57 +65,6 @@ public class WifiHelper {
             }
         } else {
             return false;
-        }
-    }
-
-    public void setupWifi(){
-        if (isWifiEnabled()){
-            if (isWifiConnected()){
-                return;
-            } else {
-                /*
-                new MaterialDialog.Builder(context)
-                        .title(R.string.connect_wifi)
-                        .content(R.string.connect_wifi_msg)
-                        .positiveText(R.string.connect)
-                        .negativeText(R.string.cancel)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                dialog.dismiss();
-                                ((Activity)context).startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
-                        */
-            }
-        } else {
-            /*
-            new MaterialDialog.Builder(context)
-                    .title(R.string.enable_wifi)
-                    .content(R.string.enable_wifi_msg)
-                    .positiveText(R.string.enable)
-                    .negativeText(R.string.cancel)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            dialog.dismiss();
-                            ((Activity)context).startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                        }
-                    })
-                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .show();*/
         }
     }
 
@@ -173,13 +115,13 @@ public class WifiHelper {
         context.unregisterReceiver(wifiConnectionReceiver);
     }
 
-    public void listenForLevelChanges(final SignalChangedCallback callack){
+    public void listenForLevelChanges(final SignalChangedCallback callback){
         wifiSignalLevelReceiver = new BroadcastReceiver(){
             @Override
             public void onReceive(Context context, Intent intent) {
                 WifiInfo info = wifiManager.getConnectionInfo();
 
-                callack.signalChanged(new WifiSignalLevel(info));
+                callback.signalChanged(new WifiSignalLevel(info));
             }
         };
         context.registerReceiver(wifiSignalLevelReceiver, new IntentFilter(WifiManager.RSSI_CHANGED_ACTION));
