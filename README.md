@@ -2,7 +2,7 @@
 
 The app can be found on the Google Play Store [here.](https://play.google.com/store/apps/details?id=com.swerly.wifiheatmap)
 
-Use Google Maps to find the location of interest, then walk around the location and create a Wifi Heatmap!
+Use Google Maps to find the location of interest, then map the Wifi connectivity by walking!
 
 Steps:
 - Get a top down view of desired location using Google Maps.
