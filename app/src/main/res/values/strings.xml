@@ -72,7 +72,7 @@
     <string name="could_not_load_text">The data for your heatmap seems to be missing...\n\n</string>
     <string name="completed_to_next">When completed, hit the next button in the bottom right.</string>
     <string name="completed_to_save">When completed, hit the save button in the bottom right.</string>
-    <string name="dont_show">HIde this help screen by default.</string>
+    <string name="dont_show">Hide this help screen by default.</string>
     <string name="dont_show_under">(This screen can be accessed by pressing the help button in the upper right)</string>
     <string name="no_heatmaps">You have not added any heatmaps.\n\nClick the plus button to create one.</string>
 
