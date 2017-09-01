@@ -47,7 +47,7 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
     private Context context;
     private float density, viewTop, viewLeft;
     private int dpViewWidth, dpViewHeight, wifiSignalLevel;
-    private boolean drawnOn;
+    private boolean drawnOn, readyForDraw;
     private HeatmapPixelDrawer pixelDrawer;
     private Bitmap bitmapBuffer;
     private Canvas canvasBuffer;
@@ -82,6 +82,9 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
+        if (!readyForDraw){
+            return true;
+        }
         int[] touchPoints;
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
@@ -127,6 +130,7 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
         canvasPaint = new Paint(Paint.DITHER_FLAG);
         canvasPaint.setAlpha(175);
         drawnOn = false;
+        readyForDraw = false;
 
         viewLeft = getLeft();
         viewTop = getTop();
@@ -140,6 +144,7 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
         if (toLoad == null) {
             callback.heatmapLoadingDone(true);
             pixelDrawer = new HeatmapPixelDrawer(context, canvasBuffer, dpViewWidth, dpViewHeight, density, null);
+            readyForDraw = true;
         } else {
             startPixelLoad();
         }
@@ -184,6 +189,7 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
             boolean finishedDrawing = (boolean) object;
             callback.heatmapLoadingDone(finishedDrawing);
             drawnOn = true;
+            readyForDraw = true;
             invalidate();
         }
     }

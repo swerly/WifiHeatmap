@@ -107,20 +107,37 @@ public abstract class FragmentBase extends Fragment {
     }
 
     protected void hideSubtitle(){
-        subTitle.setText("");
-        subTitle.setVisibility(View.GONE);
+        if (subtitleOK()) {
+            subTitle.setText("");
+            subTitle.setVisibility(View.GONE);
+        }
     }
 
     protected void setSubTitle(int resId){
-        subTitleToSet = getString(resId);
-        subTitle.setVisibility(View.VISIBLE);
-        subTitle.startAnimation(fadeOut);
+        if (subtitleOK()) {
+            subTitleToSet = getString(resId);
+            subTitle.setVisibility(View.VISIBLE);
+            subTitle.startAnimation(fadeOut);
+        }
     }
 
     protected void setSubTitle(String subtitle){
-        subTitleToSet = subtitle;
-        subTitle.setVisibility(View.VISIBLE);
-        subTitle.startAnimation(fadeOut);
+        if (subtitleOK()) {
+            subTitleToSet = subtitle;
+            subTitle.setVisibility(View.VISIBLE);
+            subTitle.startAnimation(fadeOut);
+        }
+    }
+
+    private boolean subtitleOK(){
+        if (subTitle == null){
+            subTitle = getActivity().findViewById(R.id.subtitle);
+        }
+        if (subTitle == null){
+            return false;
+        } else{
+            return true;
+        }
     }
 
     public abstract boolean onOptionsItemSelected(MenuItem item);
