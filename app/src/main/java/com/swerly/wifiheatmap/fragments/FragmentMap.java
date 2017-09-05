@@ -82,6 +82,7 @@ public class FragmentMap extends FragmentBase implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //setup the controllers and helpers
         mapController = new MapController(getActivity(), this);
         locationHelper = new LocationHelper(getActivity());
         searchBarView = getActivity().findViewById(R.id.map_searchbar);
@@ -90,6 +91,7 @@ public class FragmentMap extends FragmentBase implements
         wifiHelper = new WifiHelper(getContext());
         wifiStatus = wifiHelper.isWifiConnected();
 
+        //setup the fragment for the map
         mapFragment = SupportMapFragment.newInstance(MapController.getMapOptions());
         getChildFragmentManager()
                 .beginTransaction()
@@ -103,6 +105,9 @@ public class FragmentMap extends FragmentBase implements
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
+        //setup the views
+        //im getting lazy commenting this code i should have done it as i was writing it
+        //ughghghghghgh
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         noWifiView = view.findViewById(R.id.no_wifi_view);
         noWifiView.bringToFront();
@@ -120,6 +125,7 @@ public class FragmentMap extends FragmentBase implements
     @Override
     public void onStart(){
         super.onStart();
+        //start listening for wifi connection changes
         wifiHelper.startListeningForWifiChanges(this);
     }
 
@@ -149,6 +155,8 @@ public class FragmentMap extends FragmentBase implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
+                //setup the search view
+                //do i really want to go through the rest of these files and ommcnet...
                 if (searchButtonView == null){
                     searchButtonView = getActivity().findViewById(R.id.action_search);
                 }
@@ -164,10 +172,12 @@ public class FragmentMap extends FragmentBase implements
                     });
                     builder.show();
                 } else {
+                    //animate open the search view
                     searchBarView.animateOpenFrom(searchButtonView);
                 }
                 break;
             case R.id.action_location:
+                //if no internet display a dialog
                 if (!wifiStatus){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle(R.string.no_internet_title);
@@ -180,6 +190,7 @@ public class FragmentMap extends FragmentBase implements
                     });
                     builder.show();
                 } else {
+                    //check permissions
                     if (EasyPermissions.hasPermissions(this.getActivity(), perms)) {
                         //has permissions, start trying to find location
                         startLocationRequest();
@@ -190,7 +201,8 @@ public class FragmentMap extends FragmentBase implements
                 }
                 break;
             case R.id.action_help:
-                    activityMain.showHelp();
+                //show the help
+                activityMain.showHelp();
                 break;
             default:
                 break;
@@ -207,7 +219,9 @@ public class FragmentMap extends FragmentBase implements
 
     @Override
     public void onFabPressed() {
+        //when the fab is pressed, close the search bar
         searchBarView.animateClose();
+        //and request a snapshot from the map fragment
         mapController.requestSnapshot(app);
     }
 
@@ -244,6 +258,7 @@ public class FragmentMap extends FragmentBase implements
 
     @Override
     public void gotLocation(Location location) {
+        //location was found, do stuff with it man im so lazy i should come back to these comments later
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         mapController.setUserLocation(latLng);
     }
@@ -258,6 +273,9 @@ public class FragmentMap extends FragmentBase implements
         locationHelper.returnFromSettings();
     }
 
+    /**
+     * start a location request
+     */
     private void startLocationRequest(){
         if(!locationHelper.requestLocation(this)){
             Toast.makeText(getActivity(), getString(R.string.no_location), Toast.LENGTH_LONG)
@@ -270,6 +288,7 @@ public class FragmentMap extends FragmentBase implements
 
     @Override
     public void wifiConnectionChange(boolean wifiStatus) {
+        //do things when a wifi connection change happened
         this.wifiStatus = wifiStatus;
         if (!isPaused) {
             if (wifiStatus) {
@@ -280,6 +299,9 @@ public class FragmentMap extends FragmentBase implements
         }
     }
 
+    /**
+     * hide the no wifi view and show the google map fragment
+     */
     private void hideNoWifiView(){
         noWifiView.setVisibility(View.GONE);
         activityMain.showFab();
@@ -290,9 +312,13 @@ public class FragmentMap extends FragmentBase implements
                 .commit();
     }
 
+    /**
+     * show the no wifi view and hide the google map fragment
+     */
     private void showNoWifiView(){
         noWifiView.setVisibility(View.VISIBLE);
         activityMain.hideHelp();
+        //start the no wifi spinning drawable animation
         ImageView loadingIcon = noWifiView.findViewById(R.id.no_wifi_spinner);
         Drawable spinner = loadingIcon.getDrawable();
         if (spinner instanceof Animatable){

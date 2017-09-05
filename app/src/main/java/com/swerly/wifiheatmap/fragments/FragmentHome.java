@@ -46,6 +46,10 @@ import java.util.Collections;
 
 /**
  * Created by Seth on 7/6/2017.
+ *
+ * First fragment to display
+ * Will show an animation when no heatmaps have been created
+ * Will show a list of cards for each individual heatmap when there is > 0 created
  */
 
 public class FragmentHome extends FragmentBase implements
@@ -69,10 +73,13 @@ public class FragmentHome extends FragmentBase implements
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        //setup the view that will be shown if no heatmaps exist
         noHeatmapView = view.findViewById(R.id.no_heatmap_view);
+        //setup the recycler view
         rv = view.findViewById(R.id.home_recycler_view);
         setupRecyclerView();
 
+        //start the loading icon animation (repeats, set in the xml of the icon)
         ImageView loadingIcon = noHeatmapView.findViewById(R.id.spinning_logo);
         Drawable spinner = loadingIcon.getDrawable();
         if (spinner instanceof Animatable){
@@ -85,9 +92,11 @@ public class FragmentHome extends FragmentBase implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
+            //if info was selected, go to the info fragment
             case R.id.action_info:
                 activityMain.goToFragment(new FragmentInfo());
                 break;
+            //if sort was selected, create the sort popup
             case R.id.action_sort:
                 View sortButton = activityMain.findViewById(R.id.action_sort);
                 createSortPopup(sortButton);
@@ -98,11 +107,13 @@ public class FragmentHome extends FragmentBase implements
 
     @Override
     public boolean onBackPressed() {
+        //this fragment has nothing to do when back is pressed
         return false;
     }
 
     @Override
     public void onFabPressed() {
+        //no actions need to be taken before we advance to the next fragment
     }
 
     @Override
@@ -115,6 +126,9 @@ public class FragmentHome extends FragmentBase implements
         checkHeatmapsExist();
     }
 
+    /**
+     * setup the recycler view and adapter for showing heatmap cards
+     */
     private void setupRecyclerView(){
         rv.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
@@ -143,11 +157,14 @@ public class FragmentHome extends FragmentBase implements
 
     @Override
     public void onEditPressed(HeatmapData item) {
+        //set the string of the pixel data to load
         Bundle bundle = new Bundle();
         bundle.putString("toLoad", item.getPixelsFileName());
 
+        //go to the heatmap fragment to edit
         FragmentHeatmap goTo = new FragmentHeatmap();
         goTo.setArguments(bundle);
+        //setup the app for editing
         app.setBackgroundInProgress(item.getBackgroundImage());
         app.setBackgroundReady();
         app.setCurrentInProgress(item);
@@ -158,6 +175,7 @@ public class FragmentHome extends FragmentBase implements
 
     @Override
     public void onDeletePressed(final HeatmapData item) {
+        //create new dialog to confirm deletion
         new MaterialDialog.Builder(getContext())
                 .title(R.string.delete_heatmap_title)
                 .content(R.string.delete_heatmap_content)
@@ -166,9 +184,11 @@ public class FragmentHome extends FragmentBase implements
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        //create a snackbar
                         String snackbarMessage = item.getName() + " " + getString(R.string.removed);
                         Snackbar snackbar = Snackbar.make(activityMain.findViewById(R.id.main_layout), snackbarMessage, Snackbar.LENGTH_LONG);
                         snackbar.show();
+                        //delete the item and update the adapter
                         app.deleteFromList(item);
                         adapter.updateItems(app.getHeatmaps(), null);
                         checkHeatmapsExist();
@@ -184,19 +204,30 @@ public class FragmentHome extends FragmentBase implements
 
     }
 
+    /**
+     * checks to see if heatmaps exist in the application and handles showing the empty graphic
+     */
     public void checkHeatmapsExist(){
         heatmapList = app.getHeatmaps();
+        //if list is null or empty, display the empty graphic
         if (heatmapList == null || heatmapList.isEmpty()){
             rv.setVisibility(View.GONE);
             noHeatmapView.setVisibility(View.VISIBLE);
-        } else {
+        }
+        //else hid the empty graphic and update the list
+        else {
             rv.setVisibility(View.VISIBLE);
             noHeatmapView.setVisibility(View.GONE);
             adapter.updateItems(heatmapList, null);
         }
     }
 
+    /**
+     * Creates a popup asking the user how they want to sort the list
+     * @param sortView parent view to expand popup from
+     */
     private void createSortPopup(View sortView){
+        //create the popup menu with specific click listeners
         PopupMenu sortPopupMenu = new PopupMenu(getActivity(), sortView);
         sortPopupMenu.inflate(R.menu.sort_popup);
         sortPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {

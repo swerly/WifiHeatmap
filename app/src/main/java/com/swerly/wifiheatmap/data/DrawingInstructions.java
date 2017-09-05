@@ -21,6 +21,8 @@ package com.swerly.wifiheatmap.data;
 
 /**
  * Created by Seth on 8/17/2017.
+ *
+ * Instructions to draw the top left quadrant of each of the circles/rings used in drawing a heatmap
  */
 
 public class DrawingInstructions{

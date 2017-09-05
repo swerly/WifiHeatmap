@@ -35,6 +35,8 @@ import com.swerly.wifiheatmap.utils.StaticUtils;
 
 /**
  * Created by Seth on 8/10/2017.
+ *
+ * Fragment to control zooming in on a background image (since google maps limits the amount you can view)
  */
 
 public class FragmentZoom extends FragmentBase implements
@@ -77,6 +79,7 @@ public class FragmentZoom extends FragmentBase implements
 
     @Override
     public void onFabPressed() {
+        //save the current view as the apps current heatmap background
         Bitmap bkg = StaticUtils.getScreenShot(bkgView);
         app.setBackgroundInProgress(bkg);
         app.setBackgroundReady();
@@ -88,6 +91,7 @@ public class FragmentZoom extends FragmentBase implements
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setSubTitle(R.string.zoom_subtitle);
 
+        //if the background from the google map snapshot isnt ready wait for it
         if (app.isBackgroundReady()){
             setBackground();
         } else {

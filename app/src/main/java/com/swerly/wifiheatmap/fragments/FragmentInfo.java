@@ -40,6 +40,8 @@ import com.swerly.wifiheatmap.R;
 
 /**
  * Created by Seth on 8/20/2017.
+ *
+ * Fragment to show info about the application
  */
 
 public class FragmentInfo extends FragmentBase {
@@ -55,6 +57,7 @@ public class FragmentInfo extends FragmentBase {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        //setup views for the fragment
         View view = inflater.inflate(R.layout.fragment_info, container, false);
         feedbackButton = view.findViewById(R.id.feedback_button);
         versionName = view.findViewById(R.id.version_text_view);
@@ -84,10 +87,11 @@ public class FragmentInfo extends FragmentBase {
 
     @Override
     public void onFabPressed() {
-
+        //there is no fab on this screen
     }
 
     private void setupFeedback(){
+        //start an email intent when the feedback button is pressed
         feedbackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,11 +105,13 @@ public class FragmentInfo extends FragmentBase {
     }
 
     private void setupVersion(){
+        //get the version text and set it
         String versionNameText = BuildConfig.VERSION_NAME;
         versionName.setText("Version: " + versionNameText);
     }
 
     private void setupLicenses(){
+        //create a webview dialog to show open source licenses when the license button is pressed
         licenseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -25,12 +25,19 @@ import java.io.Serializable;
 
 /**
  * Created by Seth on 8/21/2017.
+ *
+ * Object to store the heatmap pixels in the cache
  */
 
 public class HeatmapPixelCacheObject implements Serializable {
     public String fName;
     public HeatmapPixel[][] pixels;
 
+    /**
+     * constructor for the cache object
+     * @param pixels pixels to save
+     * @param fName name of the file to save
+     */
     public HeatmapPixelCacheObject(HeatmapPixel[][] pixels, String fName){
         this.pixels = pixels;
         this.fName = fName;

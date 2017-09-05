@@ -43,6 +43,8 @@ import com.swerly.wifiheatmap.utils.WifiHelper;
 
 /**
  * Created by Seth on 7/6/2017.
+ *
+ * Fragment used to draw the heatmaps
  */
 
 public class FragmentHeatmap extends FragmentBase implements
@@ -84,14 +86,16 @@ public class FragmentHeatmap extends FragmentBase implements
         noWifiView = view.findViewById(R.id.no_wifi_view);
         heatmapLoadContainer = view.findViewById(R.id.heatmap_load_container);
         heatmapLoadingView = view.findViewById(R.id.heatmap_currently_loading);
+        heatmapCouldntLoadView = view.findViewById(R.id.could_not_load_view);
 
+        //start the spinning of the loading icon
         ImageView loadingIcon = view.findViewById(R.id.loading_spinner);
         Drawable spinner = loadingIcon.getDrawable();
         if (spinner instanceof Animatable){
             ((Animatable) spinner).start();
         }
 
-        heatmapCouldntLoadView = view.findViewById(R.id.could_not_load_view);
+        //setup the button to go to settings if no wifi is enabled
         Button settingsBtn = noWifiView.findViewById(R.id.settings_button);
         settingsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,9 +106,12 @@ public class FragmentHeatmap extends FragmentBase implements
 
         wifiHelper = new WifiHelper(getContext());
 
+        //if the background image is ready, set it
         if (app.isBackgroundReady()){
             setBackground();
-        } else {
+        }
+        //else create a function on a timer that will check to see when the background image is ready
+        else {
             new SnapshotWaiter(app, this).startWaiting();
         }
 
@@ -114,6 +121,7 @@ public class FragmentHeatmap extends FragmentBase implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
+            //show help screen when its selected
             case R.id.action_help:
                 activityMain.showHelp();
                 break;
@@ -128,18 +136,21 @@ public class FragmentHeatmap extends FragmentBase implements
 
     @Override
     public void onFabPressed() {
+        //set and save the current pixels when the fab is pressed
         app.setCurrentPixels(heatmapView.getHeatmapPixels());
     }
 
     @Override
     public void onStart(){
         super.onStart();
+        //start a broadcast listener to listen for wifi connection changes
         wifiHelper.startListeningForWifiChanges(this);
     }
 
     @Override
     public void onStop(){
         super.onStop();
+        //stop the broadcast listener, dont need updates when the fragment isnt active
         wifiHelper.stopListeningForWifiChanges();
     }
 
@@ -148,7 +159,9 @@ public class FragmentHeatmap extends FragmentBase implements
         super.onResume();
         isPaused = false;
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //set the subtitle
         setSubTitle(R.string.heatmap_subtitle);
+        //start listening for wifi level changes
         heatmapView.startListeningForLevelChanges();
         doWifiCheck();
     }
@@ -157,35 +170,48 @@ public class FragmentHeatmap extends FragmentBase implements
     public void onPause(){
         super.onPause();
         isPaused = true;
+        //dont need to listen for level changes anymore
         heatmapView.stopListeningForLevelChanges();
     }
 
     @Override
     public void snapshotReady() {
+        // the background is now ready so we can set it
         setBackground();
     }
 
     @Override
     public void heatmapLoadingDone(boolean status) {
+        //if the heatmap was successfully loaded
         if (status){
+            // hide the loading view
             heatmapLoadContainer.setVisibility(View.GONE);
             heatmapLoadingView.setVisibility(View.GONE);
             editShowFab = true;
-        } else {
+        }
+        //else hide the loading view and display the error view
+        else {
             heatmapLoadingView.setVisibility(View.GONE);
             heatmapCouldntLoadView.setVisibility(View.VISIBLE);
         }
+        //decide what to do with the fab
         showHideFab();
     }
 
+    /**
+     * sets the background image
+     */
     private void setBackground(){
+        //get the current background from the app and display it
         Bitmap bkgToSet = app.getCurrentInProgress().getBackgroundImage();
         bkgView.setImageBitmap(bkgToSet);
     }
 
     @Override
     public void wifiConnectionChange(boolean wifiStatus) {
+        //dont do anything if we're paused
         if (!isPaused) {
+            //show / hide the no wifi view depending on the status
             if (wifiStatus) {
                 hideNoWifiView();
             } else {
@@ -202,6 +228,9 @@ public class FragmentHeatmap extends FragmentBase implements
         }
     }
 
+    /**
+     * sets up the fragment views when hiding the no wifi view
+     */
     private void hideNoWifiView(){
         noWifiView.setVisibility(View.GONE);
         bkgView.setVisibility(View.VISIBLE);
@@ -211,9 +240,14 @@ public class FragmentHeatmap extends FragmentBase implements
         wifiShowFab = true;
     }
 
+    /**
+     * shows the no wifi view when wifi isn't enabled
+     */
     private void showNoWifiView(){
         noWifiView.setVisibility(View.VISIBLE);
         activityMain.hideHelp();
+
+        //start the loading spinner
         ImageView loadingIcon = noWifiView.findViewById(R.id.no_wifi_spinner);
         Drawable spinner = loadingIcon.getDrawable();
         if (spinner instanceof Animatable){
@@ -225,7 +259,11 @@ public class FragmentHeatmap extends FragmentBase implements
         wifiShowFab = false;
     }
 
+    /**
+     * decide what to do with the fab
+     */
     private void showHideFab(){
+        //if wifi is enabled and heatmap to edit is done loading show the fab
         if (wifiShowFab && editShowFab){
             activityMain.showFab();
         } else {

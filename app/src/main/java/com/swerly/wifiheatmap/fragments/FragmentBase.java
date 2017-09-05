@@ -37,6 +37,10 @@ import com.swerly.wifiheatmap.activities.ActivityMain;
 import com.swerly.wifiheatmap.BaseApplication;
 import com.swerly.wifiheatmap.R;
 
+/**
+ * Base fragment that all other fragments will extend
+ */
+
 public abstract class FragmentBase extends Fragment {
     public static final String HOME_FRAGMENT = "FragmentHome";
     public static final String MAP_FRAGMENT = "FragmentMap";
@@ -56,16 +60,20 @@ public abstract class FragmentBase extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //set the main activity
         activityMain = (ActivityMain) getActivity();
+        //set the application
         app = activityMain.getApp();
         actionBarHelper = new ActionBarHelper();
 
+        //setup the subtitle text
         setupSubTitle();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        //each fragment will have an options menu
         setHasOptionsMenu(true);
         return null;
     }
@@ -77,9 +85,13 @@ public abstract class FragmentBase extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        //setup the actionbar for each fragment
         actionBarHelper.setupForFragment(this, menu, inflater);
     }
 
+    /**
+     * setup the subtitle and the fade animations
+     */
     private void setupSubTitle(){
         subTitle = getActivity().findViewById(R.id.subtitle);
         fadeIn = new AlphaAnimation(0.0f, 1.0f);
@@ -106,6 +118,9 @@ public abstract class FragmentBase extends Fragment {
         });
     }
 
+    /**
+     * hide the subtitle
+     */
     protected void hideSubtitle(){
         if (subtitleOK()) {
             subTitle.setText("");
@@ -113,6 +128,10 @@ public abstract class FragmentBase extends Fragment {
         }
     }
 
+    /**
+     * set the subtitle
+     * @param resId resource id to set as the subtitle
+     */
     protected void setSubTitle(int resId){
         if (subtitleOK()) {
             subTitleToSet = getString(resId);
@@ -121,6 +140,10 @@ public abstract class FragmentBase extends Fragment {
         }
     }
 
+    /**
+     * set the subtitle
+     * @param subtitle string to set as the subtitle
+     */
     protected void setSubTitle(String subtitle){
         if (subtitleOK()) {
             subTitleToSet = subtitle;
@@ -129,10 +152,16 @@ public abstract class FragmentBase extends Fragment {
         }
     }
 
+    /**
+     * make sure the subtitle is ok for presenting
+     * @return if the subtitle can be set
+     */
     private boolean subtitleOK(){
+        //if the subtitle view is null, find it again
         if (subTitle == null){
             subTitle = getActivity().findViewById(R.id.subtitle);
         }
+        //return whether the subtitle view could be found
         if (subTitle == null){
             return false;
         } else{
@@ -140,6 +169,7 @@ public abstract class FragmentBase extends Fragment {
         }
     }
 
+    //methods that each fragment should be able to handle
     public abstract boolean onOptionsItemSelected(MenuItem item);
     public abstract boolean onBackPressed();
     public abstract void onFabPressed();

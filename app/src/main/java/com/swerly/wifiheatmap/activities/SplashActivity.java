@@ -31,6 +31,8 @@ import java.util.ArrayList;
 
 /**
  * Created by Seth on 8/13/2017.
+ *
+ * A splash screen to show to the user while we do an initial load of the heatmap data
  */
 
 public class SplashActivity extends ActivityBase implements LoadCacheTask.CacheLoadCallbacks {
@@ -42,6 +44,7 @@ public class SplashActivity extends ActivityBase implements LoadCacheTask.CacheL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //create the cache helper and perform a startup laod
         cacheHelper = new CacheHelper(this, this);
         cacheHelper.startupLoad();
     }
@@ -59,6 +62,7 @@ public class SplashActivity extends ActivityBase implements LoadCacheTask.CacheL
     }
 
     private void checkIfLoaded(){
+        //if the list was loaded then end the splash screen and start the main activity
         if (listLoaded){
             Intent intent = new Intent(this, ActivityMain.class);
             startActivity(intent);

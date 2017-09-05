@@ -35,6 +35,8 @@ import com.swerly.wifiheatmap.utils.StaticUtils;
 
 /**
  * Created by Seth on 8/22/2017.
+ *
+ * Fragment to show a bitmap of a created heatmap
  */
 
 public class FragmentView extends FragmentBase {
@@ -46,10 +48,12 @@ public class FragmentView extends FragmentBase {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_view, container, false);
 
+        //get the index of the heatmap that was selected
         int indexToView = getArguments().getInt("position");
         toView = app.getHeatmaps().get(indexToView);
         subtitle = toView.getName();
 
+        //setup the gesture view with the bitmap
         GestureImageView bkgView = view.findViewById(R.id.view_view);
         bkgView.setImageBitmap(toView.getFinishedImage());
 
@@ -67,9 +71,11 @@ public class FragmentView extends FragmentBase {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.action_share:
+                //start the sharing
                 new ShareBitmap(activityMain).execute(toView.getFinishedImage());
                 break;
             case R.id.action_help:
+                //show the help view
                 activityMain.showHelp();
                 break;
         }

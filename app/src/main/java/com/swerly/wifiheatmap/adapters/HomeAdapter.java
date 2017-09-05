@@ -36,6 +36,8 @@ import java.util.List;
 
 /**
  * Created by Seth on 8/20/2017.
+ *
+ * Heatmap card adapter to be used in the home screen recycler view
  */
 
 public class HomeAdapter extends RecyclerView.Adapter<HeatmapDataViewHolder> {
@@ -43,9 +45,14 @@ public class HomeAdapter extends RecyclerView.Adapter<HeatmapDataViewHolder> {
     private HeatmapDataViewHolder.HeatmapCardListener listener;
     private Comparator<HeatmapData> comparatorToUse;
 
+    /**
+     * constructor
+     * @param listener the listener that will react to card touch events
+     */
     public HomeAdapter(HeatmapDataViewHolder.HeatmapCardListener listener){
         this.listener = listener;
         items = new ArrayList<>();
+        //set the default sort
         comparatorToUse = HeatmapData.getComparator(HeatmapData.HeatmapDataComparator.NAME_SORT);
     }
 
@@ -59,6 +66,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HeatmapDataViewHolder> {
 
     @Override
     public void onBindViewHolder(HeatmapDataViewHolder holder, int position) {
+        //set the item here
         holder.setItem(items.get(position));
     }
 
@@ -67,14 +75,23 @@ public class HomeAdapter extends RecyclerView.Adapter<HeatmapDataViewHolder> {
         return items == null ? 0 : items.size();
     }
 
+    /**
+     * update the list of items on the home screen
+     * @param newItems the list of new items to display
+     * @param comparator the comparator to use when sorting the list, null if using current sort
+     */
     public void updateItems(final List<HeatmapData> newItems, Comparator<HeatmapData> comparator) {
+        //if the comparator the user wants to use is the same, return
+        //this is because if there were any new items / deleted items, the comparator would be null
         if (comparator == comparatorToUse){
             return;
         }
 
+        //get the current list, save it as another list, clear the current list
         final List<HeatmapData> oldItems = new ArrayList<>(this.items);
         this.items.clear();
 
+        //add all the new items to the current list
         if (newItems != null) {
             this.items.addAll(newItems);
         }
@@ -83,8 +100,11 @@ public class HomeAdapter extends RecyclerView.Adapter<HeatmapDataViewHolder> {
             comparatorToUse = comparator;
         }
 
+        //sort the new list
         Collections.sort(items, comparatorToUse);
 
+        //compare the new and old lists
+        //diff util will handle all the notify adapter events, screw doing that by hand
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
             @Override
             public int getOldListSize() {
@@ -106,6 +126,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HeatmapDataViewHolder> {
                 return oldItems.get(oldItemPosition).equals(newItems.get(newItemPosition));
             }
         });
+        //dispatch events (onItemInserted, onItemRemoved, etc) to the adapter)
         diffResult.dispatchUpdatesTo(this);
 
     }
