@@ -38,6 +38,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.swerly.wifiheatmap.utils.LocationHelper;
@@ -85,9 +86,6 @@ public class FragmentMap extends FragmentBase implements
         //setup the controllers and helpers
         mapController = new MapController(getActivity(), this);
         locationHelper = new LocationHelper(getActivity());
-        searchBarView = getActivity().findViewById(R.id.map_searchbar);
-        searchBarView.setSearchBarCallback(this);
-        searchBarView.setToolbarId(R.id.main_toolbar);
         wifiHelper = new WifiHelper(getContext());
         wifiStatus = wifiHelper.isWifiConnected();
 
@@ -109,6 +107,8 @@ public class FragmentMap extends FragmentBase implements
         //im getting lazy commenting this code i should have done it as i was writing it
         //ughghghghghgh
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        searchBarView = activityMain.findViewById(R.id.map_searchbar);
+        setupSearchBar();
         noWifiView = view.findViewById(R.id.no_wifi_view);
         noWifiView.bringToFront();
         Button settingsBtn = noWifiView.findViewById(R.id.settings_button);
@@ -160,17 +160,21 @@ public class FragmentMap extends FragmentBase implements
                 if (searchButtonView == null){
                     searchButtonView = getActivity().findViewById(R.id.action_search);
                 }
+
+                if (searchBarView == null){
+                    new MaterialDialog.Builder(getActivity())
+                            .title(R.string.search_unavailable)
+                            .content(R.string.search_unavailable_content)
+                            .positiveText(R.string.ok)
+                            .show();
+                    return true;
+                }
                 if (!wifiStatus){
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle(R.string.no_internet_title);
-                    builder.setMessage(R.string.no_internet_search);
-                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    });
-                    builder.show();
+                    new MaterialDialog.Builder(getActivity())
+                            .title(R.string.no_internet_title)
+                            .content(R.string.no_internet_content)
+                            .positiveText(R.string.ok)
+                            .show();
                 } else {
                     //animate open the search view
                     searchBarView.animateOpenFrom(searchButtonView);
@@ -335,5 +339,16 @@ public class FragmentMap extends FragmentBase implements
     @Override
     public void mapCreated() {
         noWifiView.bringToFront();
+    }
+
+    private void setupSearchBar(){
+        if(searchBarView == null) {
+            searchBarView = activityMain.findViewById(R.id.map_searchbar);
+        }
+        if (searchBarView == null){
+            return;
+        }
+        searchBarView.setSearchBarCallback(this);
+        searchBarView.setToolbarId(R.id.main_toolbar);
     }
 }

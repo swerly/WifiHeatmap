@@ -58,6 +58,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HeatmapDataViewHolder> {
 
     @Override
     public HeatmapDataViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        //there was a crash report (InflateException) while inflating this view, but I can't seem to find the issue?
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_heatmap, parent, false);
         HeatmapDataViewHolder heatmapDataViewHolder = new HeatmapDataViewHolder(listener, v);
 

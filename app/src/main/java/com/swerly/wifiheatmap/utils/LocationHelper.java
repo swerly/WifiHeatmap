@@ -245,9 +245,11 @@ public class LocationHelper implements
 
     public void stopLocationUpdates(){
         if (started) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-            expirationTimer.removeCallbacksAndMessages(null);
-            reset();
+            if (googleApiClient.isConnected()) {
+                LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+                expirationTimer.removeCallbacksAndMessages(null);
+                reset();
+            }
         }
     }
 
