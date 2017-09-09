@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.swerly.wifiheatmap.utils.ActionBarHelper;
@@ -81,6 +82,12 @@ public abstract class FragmentBase extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
+        if (activityMain == null){
+            activityMain = (ActivityMain) getActivity();
+        }
+        if (app == null && activityMain != null){
+            app = activityMain.getApp();
+        }
     }
 
     @Override

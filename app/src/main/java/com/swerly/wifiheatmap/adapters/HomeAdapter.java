@@ -19,6 +19,7 @@
 
 package com.swerly.wifiheatmap.adapters;
 
+import android.content.Context;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -44,12 +45,14 @@ public class HomeAdapter extends RecyclerView.Adapter<HeatmapDataViewHolder> {
     private List<HeatmapData> items;
     private HeatmapDataViewHolder.HeatmapCardListener listener;
     private Comparator<HeatmapData> comparatorToUse;
+    private Context context;
 
     /**
      * constructor
      * @param listener the listener that will react to card touch events
      */
-    public HomeAdapter(HeatmapDataViewHolder.HeatmapCardListener listener){
+    public HomeAdapter(Context context, HeatmapDataViewHolder.HeatmapCardListener listener){
+        this.context = context;
         this.listener = listener;
         items = new ArrayList<>();
         //set the default sort
@@ -58,8 +61,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HeatmapDataViewHolder> {
 
     @Override
     public HeatmapDataViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //there was a crash report (InflateException) while inflating this view, but I can't seem to find the issue?
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_heatmap, parent, false);
+        View v = LayoutInflater.from(context).inflate(R.layout.card_heatmap, parent, false);
         HeatmapDataViewHolder heatmapDataViewHolder = new HeatmapDataViewHolder(listener, v);
 
         return heatmapDataViewHolder;

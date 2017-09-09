@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <!--Added large heap to manifest to try and resolve oom issues on high density devices
+     (in addition to changing bitmap color format)-->
     <application
         android:name=".BaseApplication"
         android:allowBackup="true"
@@ -18,7 +20,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:largeHeap="true">
 
         <!-- portrait mode because who doesn't love laziness :)-->
         <activity
