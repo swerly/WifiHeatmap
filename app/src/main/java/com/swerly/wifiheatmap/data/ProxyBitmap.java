@@ -43,6 +43,6 @@ public class ProxyBitmap implements Serializable {
     }
 
     public Bitmap getBitmap(){
-        return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
+        return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.RGB_565);
     }
 }
