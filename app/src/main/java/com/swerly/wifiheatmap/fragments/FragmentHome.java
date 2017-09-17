@@ -134,7 +134,7 @@ public class FragmentHome extends FragmentBase implements
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         rv.setLayoutManager(llm);
 
-        adapter = new HomeAdapter(this);
+        adapter = new HomeAdapter(activityMain, this);
         rv.setAdapter(adapter);
     }
 
