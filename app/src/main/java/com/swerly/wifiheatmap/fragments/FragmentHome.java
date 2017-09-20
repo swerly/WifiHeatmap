@@ -113,7 +113,7 @@ public class FragmentHome extends FragmentBase implements
                 createSortPopup(sortButton);
                 break;
             case R.id.action_feedback:
-                activityMain.showErrorPopup();
+                StaticUtils.sendFeedbackEmail(activityMain);
                 break;
         }
         return true;
