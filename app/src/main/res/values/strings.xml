@@ -107,4 +107,10 @@
     <string name="woops">Oh no!</string>
     <string name="error_data_load">There was an error loading some data, sorry about that!\n\nPlease try again.</string>
 
+    <string name="rating_title">Rate this app</string>
+    <string name="rating_content">If you like the app, please leave a rating on the Play Store.\n\n
+        If you don\'t like app, please send me some feedback so I can improve it!</string>
+    <string name="dont_show_again">Don\'t show again.</string>
+    <string name="rate">Rate</string>
+
 </resources>

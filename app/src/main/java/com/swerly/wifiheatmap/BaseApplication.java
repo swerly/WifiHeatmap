@@ -41,6 +41,8 @@ public class BaseApplication extends Application{
     public final static String PREFS = "WifiHeatmapPrefs";
     public final static String LAST_FRAG_PREF = "lastFragmentOpened";
     public final static String CURRENT_VIEW_NAME = "currentViewName";
+    public final static String IS_FIRST_RUN = "isFirstRun";
+    public final static String DONT_ASK_RATING = "dontAskRating";
     private static Context context;
 
     public static Context getContext(){

@@ -19,8 +19,11 @@
 
 package com.swerly.wifiheatmap.fragments;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -32,6 +35,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -83,6 +87,8 @@ public class FragmentHome extends FragmentBase implements
         ImageView noHeatmapsSpinner = noHeatmapView.findViewById(R.id.spinning_logo);
         StaticUtils.playAnimatedVectorDrawable(noHeatmapsSpinner);
         startLoadingSpinner(view);
+
+        handleRatingPopup();
 
         return view;
     }
@@ -280,5 +286,53 @@ public class FragmentHome extends FragmentBase implements
         }
     }
 
+    private void handleRatingPopup(){
+        SharedPreferences prefs = activityMain.getSharedPreferences(BaseApplication.PREFS, 0);
+        final SharedPreferences.Editor prefEditor = prefs.edit();
+        boolean isFirstRun = prefs.getBoolean(BaseApplication.IS_FIRST_RUN, true);
+        boolean dontAskRating = prefs.getBoolean(BaseApplication.DONT_ASK_RATING, false);
 
+        if (isFirstRun || dontAskRating){
+            //don't show popup
+            //set not first run
+            if (isFirstRun) {
+                prefEditor.putBoolean(BaseApplication.IS_FIRST_RUN, false);
+                prefEditor.commit();
+            }
+        } else {
+            new MaterialDialog.Builder(activityMain)
+                    .title(R.string.rating_title)
+                    .content(R.string.rating_content)
+                    .positiveText(R.string.rate)
+                    .negativeText(R.string.feedback)
+                    .neutralText(R.string.close)
+                    .checkBoxPromptRes(R.string.dont_show_again, false, new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                            prefEditor.putBoolean(BaseApplication.DONT_ASK_RATING, b);
+                            prefEditor.commit();
+                        }
+                    })
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            activityMain.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.swerly.wifiheatmap")));
+                            dialog.dismiss();
+                        }
+                    })
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            StaticUtils.sendFeedbackEmail(activityMain);
+                        }
+                    })
+                    .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        }
+    }
 }
