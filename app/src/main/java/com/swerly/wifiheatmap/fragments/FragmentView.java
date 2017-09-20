@@ -19,7 +19,11 @@
 
 package com.swerly.wifiheatmap.fragments;
 
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,10 +32,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.alexvasilkov.gestures.views.GestureImageView;
+import com.swerly.wifiheatmap.BaseApplication;
 import com.swerly.wifiheatmap.R;
 import com.swerly.wifiheatmap.data.HeatmapData;
+import com.swerly.wifiheatmap.utils.CacheHelper;
+import com.swerly.wifiheatmap.utils.LoadCacheTask;
 import com.swerly.wifiheatmap.utils.ShareBitmap;
 import com.swerly.wifiheatmap.utils.StaticUtils;
+
+import java.util.ArrayList;
 
 /**
  * Created by Seth on 8/22/2017.
@@ -39,32 +48,39 @@ import com.swerly.wifiheatmap.utils.StaticUtils;
  * Fragment to show a bitmap of a created heatmap
  */
 
-public class FragmentView extends FragmentBase {
+public class FragmentView extends FragmentBase implements LoadCacheTask.CacheLoadCallback {
     private String subtitle;
-    private HeatmapData toView;
+    private String nameToView;
+    private Bitmap bkgImage;
+    private View mainView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_view, container, false);
+        mainView = inflater.inflate(R.layout.fragment_view, container, false);
 
-        //get the index of the heatmap that was selected
-        int indexToView = getArguments().getInt("position");
-        toView = app.getHeatmaps().get(indexToView);
-        subtitle = toView.getName();
+        SharedPreferences prefs = activityMain.getSharedPreferences(BaseApplication.PREFS, 0);
+        Bundle arguments = getArguments();
+        if (arguments.containsKey("name")){
+            nameToView = arguments.getString("name");
+            //save the index
+            SharedPreferences.Editor prefEditor = prefs.edit();
+            prefEditor.putString(BaseApplication.CURRENT_VIEW_NAME, nameToView);
+            prefEditor.commit();
+        } else {
+            nameToView = prefs.getString(BaseApplication.CURRENT_VIEW_NAME, "null");
+        }
 
-        //setup the gesture view with the bitmap
-        GestureImageView bkgView = view.findViewById(R.id.view_view);
-        bkgView.setImageBitmap(toView.getFinishedImage());
+        startLoadingSpinner(mainView);
+        getList();
 
-        return view;
+        return mainView;
     }
 
     @Override
     public void onResume(){
         super.onResume();
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setSubTitle(subtitle);
     }
 
     @Override
@@ -72,7 +88,7 @@ public class FragmentView extends FragmentBase {
         switch(item.getItemId()){
             case R.id.action_share:
                 //start the sharing
-                new ShareBitmap(activityMain).execute(toView.getFinishedImage());
+                new ShareBitmap(activityMain).execute(bkgImage);
                 break;
             case R.id.action_help:
                 //show the help view
@@ -90,5 +106,54 @@ public class FragmentView extends FragmentBase {
     @Override
     public void onFabPressed() {
 
+    }
+
+    @Override
+    public void dataLoaded(String type, Object data) {
+        ArrayList<HeatmapData> list = (ArrayList<HeatmapData>) data;
+        setupImageToView(list);
+    }
+
+    private void getList(){
+        //get the application (should have heatmap data)
+        BaseApplication app = activityMain.getApp();
+        //if the app is null (it shouldnt be), the loaded data is null, else its the loaded data
+        ArrayList<HeatmapData> loadedHeatmaps = app == null ? null : app.getHeatmaps();
+
+        //if the loaded heatmaps are null and current list is null, start loading
+        if (loadedHeatmaps == null){
+            showLoading();
+            new LoadCacheTask(getActivity(), this).execute(CacheHelper.HEATMAP_LIST);
+        } else {
+            //if loaded heatmaps arent null, setup the view bkg image
+            setupImageToView(loadedHeatmaps);
+        }
+    }
+
+    private void setupImageToView(ArrayList<HeatmapData> list){
+        if (list == null || list.isEmpty()){
+            displayLoadError();
+        }
+        HeatmapData toView = null;
+        for (HeatmapData current : list){
+            if (current.getName().equals(nameToView)){
+                toView = current;
+            }
+        }
+        hideLoading();
+        if (toView == null){
+            displayLoadError();
+        } else {
+            bkgImage = toView.getFinishedImage();
+            subtitle = toView.getName();
+            setSubTitle(subtitle);
+            //setup the gesture view with the bitmap
+            GestureImageView bkgView = mainView.findViewById(R.id.view_view);
+            bkgView.setImageBitmap(toView.getFinishedImage());
+        }
+    }
+
+    private void displayLoadError(){
+        activityMain.showErrorPopup();
     }
 }

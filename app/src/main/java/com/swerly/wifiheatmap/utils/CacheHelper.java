@@ -20,12 +20,14 @@
 package com.swerly.wifiheatmap.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.swerly.wifiheatmap.BaseApplication;
 import com.swerly.wifiheatmap.data.HeatmapData;
 import com.swerly.wifiheatmap.data.HeatmapPixelCacheObject;
+import com.swerly.wifiheatmap.data.ProxyBitmap;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -42,32 +44,43 @@ import java.util.ArrayList;
 public class CacheHelper {
     public static String HEATMAP_LIST = "heatmap_list";
     public static String HEATMAP_PIXEL = "heatmap_pixel_cache";
+    public static String BKG_IN_PROGRESS = "bkg_in_progress";
 
     private Context context;
-    private LoadCacheTask.CacheLoadCallbacks loadCallbacks;
 
-    public CacheHelper(Context context, LoadCacheTask.CacheLoadCallbacks loadCallbacks){
+    public CacheHelper(Context context){
         this.context = context;
-        this.loadCallbacks = loadCallbacks;
     }
 
-    public void savePixels(HeatmapPixelCacheObject pixelsToCache){
-        new SaveCacheTask().execute(pixelsToCache);
-    }
-
+    /**
+     * Saves a list of heatmaps to the cache
+     * @param heatmapList list to save to cache
+     */
     public void saveHeatmapList(ArrayList<HeatmapData> heatmapList){
         new SaveCacheTask().execute(heatmapList);
     }
 
-    public void startupLoad(){
-        new LoadCacheTask(context, loadCallbacks).execute(HEATMAP_LIST);
-    }
-
+    /**
+     * Deletes a list of pixels from the cache
+     * @param pixelsToDelete filename of pixels to delete
+     */
     public void deletePixels(String pixelsToDelete){
         context.deleteFile(pixelsToDelete);
     }
 
-    private class SaveCacheTask extends AsyncTask<Object, Void, Void>{
+    public void savePixels(HeatmapPixelCacheObject toSave){
+        new SaveCacheTask().execute(toSave);
+    }
+
+    public void saveBkgInProgress(Bitmap bkg){
+        new SaveCacheTask().execute(bkg);
+    }
+
+    public void deleteInProgressBkg(){
+        context.deleteFile(BKG_IN_PROGRESS);
+    }
+
+    public class SaveCacheTask extends AsyncTask<Object, Void, Void>{
 
         @Override
         protected Void doInBackground(Object... inputObj) {
@@ -78,11 +91,14 @@ public class CacheHelper {
                 outputFile = HEATMAP_LIST;
             } else if (objToSave instanceof HeatmapPixelCacheObject){
                 outputFile = HEATMAP_PIXEL + ((HeatmapPixelCacheObject)objToSave).fName;
+            } else if (objToSave instanceof Bitmap){
+                objToSave = new ProxyBitmap((Bitmap) objToSave);
+                outputFile = BKG_IN_PROGRESS;
             }
             Log.d(BaseApplication.DEBUG_MESSAGE, "saving " + outputFile);
             FileOutputStream fos = null;
             try {
-                fos = context.openFileOutput(outputFile, Context.MODE_PRIVATE);
+                fos = context.openFileOutput(outputFile, Context.MODE_MULTI_PROCESS);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
                 oos.writeObject(objToSave);
                 oos.flush();

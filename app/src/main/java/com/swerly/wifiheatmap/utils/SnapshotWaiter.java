@@ -22,6 +22,7 @@ package com.swerly.wifiheatmap.utils;
 import android.os.Handler;
 
 import com.swerly.wifiheatmap.BaseApplication;
+import com.swerly.wifiheatmap.activities.ActivityMain;
 
 /**
  * Created by Seth on 8/14/2017.
@@ -29,11 +30,11 @@ import com.swerly.wifiheatmap.BaseApplication;
 
 public class SnapshotWaiter {
     private static int WAIT_DELAY = 50;
-    private BaseApplication app;
+    private ActivityMain mainActivity;
     private SnapshotReadyCallback readyCallback;
 
-    public SnapshotWaiter(BaseApplication app, SnapshotReadyCallback readyCallback){
-        this.app = app;
+    public SnapshotWaiter(ActivityMain mainActivity, SnapshotReadyCallback readyCallback){
+        this.mainActivity = mainActivity;
         this.readyCallback = readyCallback;
     }
 
@@ -42,7 +43,7 @@ public class SnapshotWaiter {
 
         handler.postDelayed(new Runnable(){
             public void run(){
-                if (app.isBackgroundReady()){
+                if (!mainActivity.isSavingBkg()){
                     readyCallback.snapshotReady();
                 } else {
                     handler.postDelayed(this, WAIT_DELAY);

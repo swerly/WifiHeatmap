@@ -56,11 +56,12 @@ public class HomeAdapter extends RecyclerView.Adapter<HeatmapDataViewHolder> {
         this.listener = listener;
         items = new ArrayList<>();
         //set the default sort
-        comparatorToUse = HeatmapData.getComparator(HeatmapData.HeatmapDataComparator.NAME_SORT);
+        comparatorToUse = HeatmapData.getComparator(HeatmapData.HeatmapDataComparator.DATE_SORT);
     }
 
     @Override
     public HeatmapDataViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
         View v = LayoutInflater.from(context).inflate(R.layout.card_heatmap, parent, false);
         HeatmapDataViewHolder heatmapDataViewHolder = new HeatmapDataViewHolder(listener, v);
 

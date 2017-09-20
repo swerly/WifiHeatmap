@@ -22,12 +22,15 @@ package com.swerly.wifiheatmap.utils;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.content.FileProvider;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.swerly.wifiheatmap.R;
 
@@ -60,5 +63,20 @@ public class StaticUtils {
 
     public static String sanitizeFileName(String fName){
         return fName.replaceAll("[^a-zA-Z0-9.-]", "");
+    }
+
+    public static void playAnimatedVectorDrawable(ImageView view){
+        Drawable spinner = view.getDrawable();
+        if (spinner instanceof Animatable){
+            ((Animatable) spinner).start();
+        }
+    }
+
+    public static void sendFeedbackEmail(Context context){
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                "mailto","swerly.dev@gmail.com", null));
+
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "WifiHeatmap Feedback");
+        context.startActivity(Intent.createChooser(emailIntent, "Send feedback..."));
     }
 }

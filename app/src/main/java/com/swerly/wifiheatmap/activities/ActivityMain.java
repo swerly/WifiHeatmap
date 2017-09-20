@@ -20,14 +20,22 @@
 package com.swerly.wifiheatmap.activities;
 
 import android.animation.LayoutTransition;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.FrameLayout;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.maps.GoogleMap;
 import com.swerly.wifiheatmap.BaseApplication;
+import com.swerly.wifiheatmap.utils.CacheHelper;
 import com.swerly.wifiheatmap.utils.FabHelper;
 import com.swerly.wifiheatmap.utils.HelpScreenHelper;
 import com.swerly.wifiheatmap.utils.LocationHelper;
@@ -36,13 +44,16 @@ import com.swerly.wifiheatmap.fragments.FragmentBase;
 import com.swerly.wifiheatmap.fragments.FragmentHeatmap;
 import com.swerly.wifiheatmap.fragments.FragmentHome;
 import com.swerly.wifiheatmap.fragments.FragmentMap;
+import com.swerly.wifiheatmap.utils.StaticUtils;
 
-public class ActivityMain extends ActivityBase{
+public class ActivityMain extends ActivityBase implements GoogleMap.SnapshotReadyCallback {
 
     private FabHelper fabHelper;
     private FloatingActionButton mainFab;
     private FragmentManager fragmentManager;
     private HelpScreenHelper helpScreen;
+    private CacheHelper cacheHelper;
+    private boolean savingBkg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +78,27 @@ public class ActivityMain extends ActivityBase{
                     .beginTransaction()
                     .add(R.id.fragment_container, FragmentHome.newInstance(), FragmentBase.HOME_FRAGMENT)
                     .commit();
+        }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        if (cacheHelper == null){
+            cacheHelper = new CacheHelper(this);
+        }
+
+        if (mainFab == null){
+            mainFab = findViewById(R.id.fab);
+        }
+
+        if (fabHelper == null){
+            fabHelper = new FabHelper(this, mainFab);
+        }
+
+        if (helpScreen == null){
+            helpScreen = new HelpScreenHelper(this);
         }
     }
 
@@ -117,10 +149,6 @@ public class ActivityMain extends ActivityBase{
         if (popped){
             //check the currently active fragment
             FragmentBase curFrag = (FragmentBase) fragmentManager.findFragmentById(R.id.fragment_container);
-            //reset current heatmap data if instance of fragment map
-            if (curFrag instanceof FragmentMap){
-                app.resetCurrent();
-            }
             //setup the fab for the current fragment
             fabHelper.setupFab(curFrag, true, fromHeatmap);
             //setup the help screen for the current fragment and hide it
@@ -157,7 +185,6 @@ public class ActivityMain extends ActivityBase{
      */
     public void goToFragment(FragmentBase frag){
         String tag = frag.getClass().getSimpleName();
-        helpScreen.setupForFragment(frag, false);
 
         //if we are at the last sequence in the heatmap drawing, go home
         //this will pop the entire backstack instead of making a new fragment
@@ -179,7 +206,7 @@ public class ActivityMain extends ActivityBase{
     /**
      * Pops all the backstack entries so we are left with the first fragment (home)
      */
-    private void goHome(){
+    public void goHome(){
         //if the backstack has at least on entry
         if (fragmentManager.getBackStackEntryCount() > 0) {
             FragmentManager.BackStackEntry first = fragmentManager.getBackStackEntryAt(0);
@@ -215,5 +242,50 @@ public class ActivityMain extends ActivityBase{
      */
     public void setupHelpForFragmentAndHide(FragmentBase frag){
         helpScreen.setupForFragmentAndHide(frag);
+    }
+
+    public void setupHelpForFragment(FragmentBase frag){
+        helpScreen.setupForFragment(frag, false);
+    }
+
+    @Override
+    public void onSnapshotReady(Bitmap bitmap) {
+        app.saveBkgInProgress(bitmap);
+        savingBkg = false;
+    }
+
+    public void setSavingBkg(){
+        savingBkg = true;
+    }
+
+    public boolean isSavingBkg(){
+        return savingBkg;
+    }
+
+    public void showErrorPopup(){
+        new MaterialDialog.Builder(this)
+                .title(R.string.no_internet_title)
+                .content(R.string.error_data_load)
+                .positiveText(R.string.ok)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .negativeText(R.string.feedback)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        StaticUtils.sendFeedbackEmail(ActivityMain.this);
+                    }
+                })
+                .dismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        goHome();
+                    }
+                })
+                .show();
     }
 }

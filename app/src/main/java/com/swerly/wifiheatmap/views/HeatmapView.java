@@ -23,12 +23,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.swerly.wifiheatmap.BaseApplication;
 import com.swerly.wifiheatmap.data.HeatmapData;
 import com.swerly.wifiheatmap.data.HeatmapPixel;
 import com.swerly.wifiheatmap.data.HeatmapPixelCacheObject;
@@ -54,6 +56,7 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
     private Paint canvasPaint;
     private WifiHelper wifiHelper;
     private HeatmapLoadingDone callback;
+    private PixelLoad pixelLoad;
 
     private String toLoad;
 
@@ -145,7 +148,11 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
             callback.heatmapLoadingDone(true);
             pixelDrawer = new HeatmapPixelDrawer(context, canvasBuffer, dpViewWidth, dpViewHeight, density, null);
             readyForDraw = true;
-        } else {
+        }
+    }
+
+    public void refresh(){
+        if (toLoad != null) {
             startPixelLoad();
         }
     }
@@ -164,11 +171,19 @@ public class HeatmapView extends View implements WifiHelper.SignalChangedCallbac
 
 
     private void startPixelLoad(){
-        new PixelLoad(context, null).execute(toLoad);
+        pixelLoad = new PixelLoad(context, null);
+        pixelLoad.execute(toLoad);
+    }
+
+    public void stopPixelLoad(){
+        if (pixelLoad != null && pixelLoad.getStatus() == AsyncTask.Status.RUNNING){
+            Log.d(BaseApplication.DEBUG_MESSAGE, "stopping pixel cache load...");
+            pixelLoad.cancel(true);
+        }
     }
 
     private class PixelLoad extends LoadCacheTask {
-        public PixelLoad(Context context, CacheLoadCallbacks callbacks) {
+        public PixelLoad(Context context, CacheLoadCallback callbacks) {
             super(context, callbacks);
         }
 

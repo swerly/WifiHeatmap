@@ -19,6 +19,7 @@
     <string name="delete">Delete</string>
     <string name="close">Close</string>
     <string name="back">Back</string>
+    <string name="loading">Loading...</string>
     <string name="open_source_licenses">Open Source Licenses</string>
     <string name="share_heatmap">Share Heatmap</string>
     <string name="share_loading">Initializing Sharing...</string>
@@ -102,5 +103,14 @@
     <string name="sig_desc_3">Okay, minimum signal strength for reliable packet delivery. (Email, web)</string>
     <string name="sig_desc_4">Not good, minimum signal strength for basic connectivity. Packet delivery may be unreliable.</string>
     <string name="sig_desc_5">Unusable, approaching or drowning in the noise floor. Any functionality is highly unlikely.</string>
+
+    <string name="woops">Oh no!</string>
+    <string name="error_data_load">There was an error loading some data, sorry about that!\n\nPlease try again.</string>
+
+    <string name="rating_title">Rate this app</string>
+    <string name="rating_content">If you like the app, please leave a rating on the Play Store.\n\n
+        If you don\'t like app, please send me some feedback so I can improve it!</string>
+    <string name="dont_show_again">Don\'t show again.</string>
+    <string name="rate">Rate</string>
 
 </resources>

@@ -10,6 +10,13 @@
         android:title="@string/sort" />
 
     <item
+        android:id="@+id/action_feedback"
+        android:orderInCategory="101"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_feedback_black_24dp"
+        android:title="@string/feedback"/>
+
+    <item
         android:id="@+id/action_info"
         android:orderInCategory="101"
         app:showAsAction="always"

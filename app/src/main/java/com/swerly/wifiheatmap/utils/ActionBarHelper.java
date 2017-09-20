@@ -51,7 +51,6 @@ public class ActionBarHelper {
 
         int idToInflate;
 
-        //TODO: set fade animations for icons
         if (fragment instanceof FragmentHome){
             idToInflate = R.menu.toolbar_home;
         } else if (fragment instanceof FragmentMap){

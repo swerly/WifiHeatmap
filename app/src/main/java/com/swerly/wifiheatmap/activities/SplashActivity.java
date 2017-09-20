@@ -19,9 +19,14 @@
 
 package com.swerly.wifiheatmap.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import com.swerly.wifiheatmap.BaseApplication;
+import com.swerly.wifiheatmap.fragments.FragmentBase;
+import com.swerly.wifiheatmap.fragments.FragmentHeatmap;
 import com.swerly.wifiheatmap.utils.CacheHelper;
 import com.swerly.wifiheatmap.data.HeatmapData;
 import com.swerly.wifiheatmap.data.HeatmapPixelCacheObject;
@@ -35,38 +40,28 @@ import java.util.ArrayList;
  * A splash screen to show to the user while we do an initial load of the heatmap data
  */
 
-public class SplashActivity extends ActivityBase implements LoadCacheTask.CacheLoadCallbacks {
-    private boolean listLoaded;
-
-    private CacheHelper cacheHelper;
+public class SplashActivity extends ActivityBase implements LoadCacheTask.CacheLoadCallback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //create the cache helper and perform a startup laod
-        cacheHelper = new CacheHelper(this, this);
-        cacheHelper.startupLoad();
+        new LoadCacheTask(this, this).execute(CacheHelper.HEATMAP_LIST);
     }
 
     @Override
-    public void heatmapListLoaded(ArrayList<HeatmapData> data) {
-        listLoaded = true;
-        app.setLoadedList(data);
-        checkIfLoaded();
-    }
+    public void dataLoaded(String type, Object data) {
+        //set the last viewed fragment to be home
+        SharedPreferences.Editor prefEditor = getSharedPreferences(BaseApplication.PREFS, 0).edit();
+        prefEditor.putString(BaseApplication.LAST_FRAG_PREF, FragmentBase.HOME_FRAGMENT);
+        prefEditor.commit();
 
-    @Override
-    public void heatmapPixelsLoaded(HeatmapPixelCacheObject pixels) {
-        //dont need to load pixels until the user wants to edit a map
-    }
+        //set the heatmap list
+        app.setLoadedList((ArrayList<HeatmapData>)data);
 
-    private void checkIfLoaded(){
-        //if the list was loaded then end the splash screen and start the main activity
-        if (listLoaded){
-            Intent intent = new Intent(this, ActivityMain.class);
-            startActivity(intent);
-            finish();
-        }
+        //start the main activity
+        Intent intent = new Intent(this, ActivityMain.class);
+        startActivity(intent);
+        finish();
     }
 }

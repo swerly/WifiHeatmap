@@ -27,6 +27,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.swerly.wifiheatmap.BaseApplication;
 import com.swerly.wifiheatmap.R;
 import com.swerly.wifiheatmap.activities.ActivityMain;
 import com.swerly.wifiheatmap.fragments.FragmentBase;
@@ -63,7 +64,7 @@ public class HelpScreenHelper {
         moreSignalInfoButton = helpView.findViewById(R.id.signal_info_button);
         signalInfoBackButton = helpView.findViewById(R.id.signal_info_back_button);
 
-        prefs = activityMain.getPreferences(Context.MODE_PRIVATE);
+        prefs = activityMain.getSharedPreferences(BaseApplication.PREFS, 0);
         setButtonClose();
         setMoreInfoButton();
         setCheckboxListener();
@@ -73,6 +74,7 @@ public class HelpScreenHelper {
         setupForFragment(frag, true);
         hideHelp();
     }
+
     public void setupForFragment(FragmentBase setupFor, boolean hide){
         if (setupFor instanceof FragmentHome || setupFor instanceof FragmentInfo){
             hideHelp();
