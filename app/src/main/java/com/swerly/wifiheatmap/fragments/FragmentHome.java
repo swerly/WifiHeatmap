@@ -112,6 +112,9 @@ public class FragmentHome extends FragmentBase implements
                 View sortButton = activityMain.findViewById(R.id.action_sort);
                 createSortPopup(sortButton);
                 break;
+            case R.id.action_feedback:
+                activityMain.showErrorPopup();
+                break;
         }
         return true;
     }
