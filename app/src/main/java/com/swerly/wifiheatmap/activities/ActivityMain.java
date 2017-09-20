@@ -20,15 +20,19 @@
 package com.swerly.wifiheatmap.activities;
 
 import android.animation.LayoutTransition;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.FrameLayout;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.maps.GoogleMap;
 import com.swerly.wifiheatmap.BaseApplication;
 import com.swerly.wifiheatmap.utils.CacheHelper;
@@ -40,6 +44,7 @@ import com.swerly.wifiheatmap.fragments.FragmentBase;
 import com.swerly.wifiheatmap.fragments.FragmentHeatmap;
 import com.swerly.wifiheatmap.fragments.FragmentHome;
 import com.swerly.wifiheatmap.fragments.FragmentMap;
+import com.swerly.wifiheatmap.utils.StaticUtils;
 
 public class ActivityMain extends ActivityBase implements GoogleMap.SnapshotReadyCallback {
 
@@ -255,5 +260,32 @@ public class ActivityMain extends ActivityBase implements GoogleMap.SnapshotRead
 
     public boolean isSavingBkg(){
         return savingBkg;
+    }
+
+    public void showErrorPopup(){
+        new MaterialDialog.Builder(this)
+                .title(R.string.no_internet_title)
+                .content(R.string.error_data_load)
+                .positiveText(R.string.ok)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .negativeText(R.string.feedback)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        StaticUtils.sendFeedbackEmail(ActivityMain.this);
+                    }
+                })
+                .dismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        goHome();
+                    }
+                })
+                .show();
     }
 }

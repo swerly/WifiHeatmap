@@ -37,6 +37,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.swerly.wifiheatmap.BuildConfig;
 import com.swerly.wifiheatmap.R;
+import com.swerly.wifiheatmap.utils.StaticUtils;
 
 /**
  * Created by Seth on 8/20/2017.
@@ -95,11 +96,7 @@ public class FragmentInfo extends FragmentBase {
         feedbackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto","seth.werly@gmail.com", null));
-
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "WifiHeatmap Feedback");
-                startActivity(Intent.createChooser(emailIntent, "Send feedback..."));
+                StaticUtils.sendFeedbackEmail(activityMain);
             }
         });
     }

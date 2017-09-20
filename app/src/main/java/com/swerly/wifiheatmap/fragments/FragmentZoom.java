@@ -117,7 +117,7 @@ public class FragmentZoom extends FragmentBase implements
         if (bkg != null){
             setBackground(bkg);
         } else {
-            //TODO: display error message
+            activityMain.showErrorPopup();
             Log.d(BaseApplication.DEBUG_MESSAGE, "zoom frag ERROR BKG IN PROG NULL");
         }
     }
@@ -134,7 +134,7 @@ public class FragmentZoom extends FragmentBase implements
             activityMain.onSnapshotReady(bkg);
             setBackground(bkg);
         } else {
-            //TODO: display error message
+            activityMain.showErrorPopup();
             Log.d(BaseApplication.DEBUG_MESSAGE, "zoom frag ERROR LOADING DATA");
         }
     }

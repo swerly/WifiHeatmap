@@ -71,4 +71,12 @@ public class StaticUtils {
             ((Animatable) spinner).start();
         }
     }
+
+    public static void sendFeedbackEmail(Context context){
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                "mailto","swerly.dev@gmail.com", null));
+
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "WifiHeatmap Feedback");
+        context.startActivity(Intent.createChooser(emailIntent, "Send feedback..."));
+    }
 }

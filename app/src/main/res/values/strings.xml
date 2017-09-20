@@ -104,4 +104,7 @@
     <string name="sig_desc_4">Not good, minimum signal strength for basic connectivity. Packet delivery may be unreliable.</string>
     <string name="sig_desc_5">Unusable, approaching or drowning in the noise floor. Any functionality is highly unlikely.</string>
 
+    <string name="woops">Oh no!</string>
+    <string name="error_data_load">There was an error loading some data, sorry about that!\n\nPlease try again.</string>
+
 </resources>

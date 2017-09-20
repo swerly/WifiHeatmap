@@ -191,7 +191,7 @@ public class FragmentHeatmap extends FragmentBase implements
         if (bkg != null){
             setBackground(bkg);
         } else {
-            //TODO: display error message
+            activityMain.showErrorPopup();
             Log.d(BaseApplication.DEBUG_MESSAGE, "heatmap frag ERROR BKG IN PROG NULL");
         }
     }

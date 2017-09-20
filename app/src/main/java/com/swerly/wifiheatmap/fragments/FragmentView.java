@@ -154,6 +154,6 @@ public class FragmentView extends FragmentBase implements LoadCacheTask.CacheLoa
     }
 
     private void displayLoadError(){
-        //TODO: display error message
+        activityMain.showErrorPopup();
     }
 }
