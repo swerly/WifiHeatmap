@@ -21,6 +21,7 @@ package com.swerly.wifiheatmap.fragments;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,7 +30,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.alexvasilkov.gestures.views.GestureImageView;
+import com.swerly.wifiheatmap.BaseApplication;
 import com.swerly.wifiheatmap.R;
+import com.swerly.wifiheatmap.utils.CacheHelper;
+import com.swerly.wifiheatmap.utils.LoadCacheTask;
 import com.swerly.wifiheatmap.utils.SnapshotWaiter;
 import com.swerly.wifiheatmap.utils.StaticUtils;
 
@@ -40,9 +44,11 @@ import com.swerly.wifiheatmap.utils.StaticUtils;
  */
 
 public class FragmentZoom extends FragmentBase implements
-        SnapshotWaiter.SnapshotReadyCallback {
+        SnapshotWaiter.SnapshotReadyCallback,
+        LoadCacheTask.CacheLoadCallback {
 
     private GestureImageView bkgView;
+    private Bitmap bkg;
     private boolean bkgSet;
 
     @Override
@@ -56,8 +62,11 @@ public class FragmentZoom extends FragmentBase implements
 
         View view = inflater.inflate(R.layout.fragment_zoom, container, false);
         bkgView = view.findViewById(R.id.gesture_view);
+        //set the gesture view so we can rotate the image
         bkgView.getController().getSettings()
                 .setRotationEnabled(true);
+
+        startLoadingSpinner(view);
 
         return view;
     }
@@ -81,8 +90,7 @@ public class FragmentZoom extends FragmentBase implements
     public void onFabPressed() {
         //save the current view as the apps current heatmap background
         Bitmap bkg = StaticUtils.getScreenShot(bkgView);
-        app.setBackgroundInProgress(bkg);
-        app.setBackgroundReady();
+        activityMain.onSnapshotReady(bkg);
     }
 
     @Override
@@ -91,12 +99,7 @@ public class FragmentZoom extends FragmentBase implements
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setSubTitle(R.string.zoom_subtitle);
 
-        //if the background from the google map snapshot isnt ready wait for it
-        if (app.isBackgroundReady()){
-            setBackground();
-        } else {
-            new SnapshotWaiter(app, this).startWaiting();
-        }
+        handleBackground();
     }
 
     @Override
@@ -105,16 +108,67 @@ public class FragmentZoom extends FragmentBase implements
         bkgSet = false;
     }
 
+    /**
+     * callback when we are waiting for the data to save
+     */
     @Override
     public void snapshotReady() {
-        setBackground();
+        Bitmap bkg = activityMain.getApp().getBkgInProgress();
+        if (bkg != null){
+            setBackground(bkg);
+        } else {
+            //TODO: display error message
+            Log.d(BaseApplication.DEBUG_MESSAGE, "zoom frag ERROR BKG IN PROG NULL");
+        }
     }
 
-    private void setBackground(){
+    /**
+     * callback when data is loaded from cache
+     * @param type type of data that was loaded
+     * @param data data that was loaded
+     */
+    @Override
+    public void dataLoaded(String type, Object data) {
+        if (data != null){
+            Bitmap bkg = (Bitmap) data;
+            activityMain.onSnapshotReady(bkg);
+            setBackground(bkg);
+        } else {
+            //TODO: display error message
+            Log.d(BaseApplication.DEBUG_MESSAGE, "zoom frag ERROR LOADING DATA");
+        }
+    }
+
+    private void handleBackground(){
+        BaseApplication app = activityMain.getApp();
+        //if the background from the google map snapshot isnt ready wait for it
+        bkg = app == null ? null : app.getBkgInProgress();
+
+        //if the bkg is null but we are currently in the process of saving it
+        if (bkg == null && activityMain.isSavingBkg()){
+            Log.d(BaseApplication.DEBUG_MESSAGE, "zoom frag currently saving...");
+            //wait for the snapshot to save
+            new SnapshotWaiter(activityMain, this).startWaiting();
+            showLoading();
+        }
+        //if the bkg is null and we are NOT in the process of saving it
+        else if (bkg == null && !activityMain.isSavingBkg()){
+            Log.d(BaseApplication.DEBUG_MESSAGE, "zoom frag starting load of bkg...");
+            //start loading the snapshot
+            new LoadCacheTask(activityMain, this).execute(CacheHelper.BKG_IN_PROGRESS);
+            showLoading();
+        }
+        //else if the bkg isn't null, we can set it
+        else if (bkg != null){
+            Log.d(BaseApplication.DEBUG_MESSAGE, "zoom frag bkg already saved and loaded");
+            setBackground(bkg);
+        }
+    }
+
+    private void setBackground(Bitmap bkg){
+        hideLoading();
         if (!bkgSet) {
-            Bitmap bkgToSet = app.getCurrentInProgress().getBackgroundImage();
-            bkgView.setImageBitmap(bkgToSet);
-            bkgSet = true;
+            bkgView.setImageBitmap(bkg);
         }
     }
 }

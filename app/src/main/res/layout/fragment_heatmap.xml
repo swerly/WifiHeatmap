@@ -73,4 +73,5 @@
         </LinearLayout>
     </RelativeLayout>
 
+    <include layout="@layout/view_fragment_loading"/>
 </RelativeLayout>

@@ -26,6 +26,7 @@ import android.util.Log;
 import com.swerly.wifiheatmap.BaseApplication;
 import com.swerly.wifiheatmap.data.HeatmapData;
 import com.swerly.wifiheatmap.data.HeatmapPixelCacheObject;
+import com.swerly.wifiheatmap.data.ProxyBitmap;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,17 +37,17 @@ import java.util.ArrayList;
 public class LoadCacheTask extends AsyncTask<String, Void, Object> {
     private String cacheToLoad;
     private Context context;
-    private CacheLoadCallbacks callbacks;
+    private CacheLoadCallback callback;
 
-    public LoadCacheTask(Context context, CacheLoadCallbacks callbacks){
+    public LoadCacheTask(Context context, CacheLoadCallback callback){
         this.context = context;
-        this.callbacks = callbacks;
+        this.callback = callback;
     }
 
     @Override
     protected Object doInBackground(String... strings) {
         cacheToLoad = strings[0];
-        if (!cacheToLoad.equals(CacheHelper.HEATMAP_LIST)){
+        if (!cacheToLoad.equals(CacheHelper.HEATMAP_LIST) && !cacheToLoad.equals(CacheHelper.BKG_IN_PROGRESS)){
             cacheToLoad = CacheHelper.HEATMAP_PIXEL + cacheToLoad;
         }
         FileInputStream fos = null;
@@ -60,6 +61,12 @@ public class LoadCacheTask extends AsyncTask<String, Void, Object> {
             ois.close();
             fos.close();
             Log.d(BaseApplication.DEBUG_MESSAGE, "cache loaded: " + cacheToLoad);
+
+            //if we saved the bkg image, turn it into a bitmap before we return it
+            if (cacheToLoad.equals(CacheHelper.BKG_IN_PROGRESS) && toReturn != null){
+                toReturn = ((ProxyBitmap)toReturn).getBitmap();
+            }
+
             return toReturn;
         } catch (FileNotFoundException e) {
             Log.d(BaseApplication.DEBUG_MESSAGE, "file not found: " + cacheToLoad);
@@ -74,19 +81,14 @@ public class LoadCacheTask extends AsyncTask<String, Void, Object> {
 
     @Override
     protected void onPostExecute(Object result){
-        if (callbacks == null){
+        if (callback == null){
             return;
         }
 
-        if (cacheToLoad.equals(CacheHelper.HEATMAP_LIST)) {
-            callbacks.heatmapListLoaded((ArrayList<HeatmapData>) result);
-        } else {
-            callbacks.heatmapPixelsLoaded((HeatmapPixelCacheObject) result);
-        }
+        callback.dataLoaded(cacheToLoad, result);
     }
 
-    public interface CacheLoadCallbacks{
-        void heatmapListLoaded(ArrayList<HeatmapData> data);
-        void heatmapPixelsLoaded(HeatmapPixelCacheObject pixels);
+    public interface CacheLoadCallback{
+        void dataLoaded(String type, Object data);
     }
 }

@@ -27,6 +27,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,10 +36,14 @@ import android.widget.ImageView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.swerly.wifiheatmap.BaseApplication;
 import com.swerly.wifiheatmap.data.HeatmapData;
 import com.swerly.wifiheatmap.adapters.HomeAdapter;
 import com.swerly.wifiheatmap.R;
+import com.swerly.wifiheatmap.utils.CacheHelper;
+import com.swerly.wifiheatmap.utils.LoadCacheTask;
 import com.swerly.wifiheatmap.utils.ShareBitmap;
+import com.swerly.wifiheatmap.utils.StaticUtils;
 import com.swerly.wifiheatmap.views.HeatmapDataViewHolder;
 
 import java.util.ArrayList;
@@ -53,7 +58,7 @@ import java.util.Collections;
  */
 
 public class FragmentHome extends FragmentBase implements
-        HeatmapDataViewHolder.HeatmapCardListener{
+        HeatmapDataViewHolder.HeatmapCardListener, LoadCacheTask.CacheLoadCallback {
     private RecyclerView rv;
     private HomeAdapter adapter;
     private View noHeatmapView;
@@ -61,11 +66,6 @@ public class FragmentHome extends FragmentBase implements
 
     public static FragmentHome newInstance(){
         return new FragmentHome();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -80,13 +80,24 @@ public class FragmentHome extends FragmentBase implements
         setupRecyclerView();
 
         //start the loading icon animation (repeats, set in the xml of the icon)
-        ImageView loadingIcon = noHeatmapView.findViewById(R.id.spinning_logo);
-        Drawable spinner = loadingIcon.getDrawable();
-        if (spinner instanceof Animatable){
-            ((Animatable) spinner).start();
-        }
+        ImageView noHeatmapsSpinner = noHeatmapView.findViewById(R.id.spinning_logo);
+        StaticUtils.playAnimatedVectorDrawable(noHeatmapsSpinner);
+        startLoadingSpinner(view);
 
         return view;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        hideSubtitle();
+        activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        activityMain.getApp().resetDataToEdit();
+
+        setupList();
+
+        activityMain.getApp().deleteInProgressBkg();
+        //TODO: rating popup
     }
 
     @Override
@@ -116,16 +127,6 @@ public class FragmentHome extends FragmentBase implements
         //no actions need to be taken before we advance to the next fragment
     }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-        hideSubtitle();
-        activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        app.setNotEditing();
-
-        checkHeatmapsExist();
-    }
-
     /**
      * setup the recycler view and adapter for showing heatmap cards
      */
@@ -142,7 +143,7 @@ public class FragmentHome extends FragmentBase implements
     public void onViewPressed(HeatmapData item) {
         //setup the bundle
         Bundle bundle = new Bundle();
-        bundle.putInt("position",  app.getHeatmaps().indexOf(item));
+        bundle.putString("name",  item.getName());
 
         //set and start the fragment
         FragmentBase viewFrag = new FragmentView();
@@ -161,14 +162,12 @@ public class FragmentHome extends FragmentBase implements
         Bundle bundle = new Bundle();
         bundle.putString("toLoad", item.getPixelsFileName());
 
+        BaseApplication app = activityMain.getApp();
+        app.setDataToEdit(item);
+
         //go to the heatmap fragment to edit
         FragmentHeatmap goTo = new FragmentHeatmap();
         goTo.setArguments(bundle);
-        //setup the app for editing
-        app.setBackgroundInProgress(item.getBackgroundImage());
-        app.setBackgroundReady();
-        app.setCurrentInProgress(item);
-        app.setIsEditing();
 
         activityMain.goToFragment(goTo);
     }
@@ -189,9 +188,10 @@ public class FragmentHome extends FragmentBase implements
                         Snackbar snackbar = Snackbar.make(activityMain.findViewById(R.id.main_layout), snackbarMessage, Snackbar.LENGTH_LONG);
                         snackbar.show();
                         //delete the item and update the adapter
-                        app.deleteFromList(item);
-                        adapter.updateItems(app.getHeatmaps(), null);
-                        checkHeatmapsExist();
+                        heatmapList.remove(item);
+                        adapter.updateItems(heatmapList, null);
+                        activityMain.getApp().setModifiedList(heatmapList);
+                        updateList();
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -205,20 +205,35 @@ public class FragmentHome extends FragmentBase implements
     }
 
     /**
-     * checks to see if heatmaps exist in the application and handles showing the empty graphic
+     *
+     * @param type type of data that was loaded
+     * @param data data that was loaded
      */
-    public void checkHeatmapsExist(){
-        heatmapList = app.getHeatmaps();
-        //if list is null or empty, display the empty graphic
-        if (heatmapList == null || heatmapList.isEmpty()){
-            rv.setVisibility(View.GONE);
-            noHeatmapView.setVisibility(View.VISIBLE);
-        }
-        //else hid the empty graphic and update the list
-        else {
-            rv.setVisibility(View.VISIBLE);
-            noHeatmapView.setVisibility(View.GONE);
-            adapter.updateItems(heatmapList, null);
+    @Override
+    public void dataLoaded(String type, Object data) {
+        heatmapList = data == null ? new ArrayList<HeatmapData>() : (ArrayList<HeatmapData>) data;
+        updateList();
+    }
+
+    /**
+     * sets up the list of heatmaps that have been created by the user
+     */
+    public void setupList(){
+        //get the application (should have heatmap data)
+        BaseApplication app = activityMain.getApp();
+        //if the app is null (it shouldnt be), the loaded data is null, else its the loaded data
+        ArrayList<HeatmapData> loadedHeatmaps = app == null ? null : app.getHeatmaps();
+
+        //if the loaded heatmaps are null and current list is null, start loading
+        if (loadedHeatmaps == null && heatmapList == null){
+            showLoading();
+            new LoadCacheTask(getActivity(), this).execute(CacheHelper.HEATMAP_LIST);
+        } else {
+            //if loaded heatmaps arent null, set them as the current list
+            if (loadedHeatmaps != null){
+                heatmapList = loadedHeatmaps;
+            }
+            updateList();
         }
     }
 
@@ -233,7 +248,6 @@ public class FragmentHome extends FragmentBase implements
         sortPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                ArrayList<HeatmapData> heatmapList = app.getHeatmaps();
                 switch (item.getItemId()){
                     case R.id.sort_name:
                         adapter.updateItems(heatmapList, HeatmapData.getComparator(HeatmapData.HeatmapDataComparator.NAME_SORT));
@@ -247,4 +261,21 @@ public class FragmentHome extends FragmentBase implements
         });
         sortPopupMenu.show();
     }
+
+    private void updateList(){
+        hideLoading();
+        //if list is null or empty, display the empty graphic
+        if (heatmapList == null || heatmapList.isEmpty()){
+            rv.setVisibility(View.GONE);
+            noHeatmapView.setVisibility(View.VISIBLE);
+        }
+        //else hide the empty graphic and update the list
+        else {
+            rv.setVisibility(View.VISIBLE);
+            noHeatmapView.setVisibility(View.GONE);
+            adapter.updateItems(heatmapList, null);
+        }
+    }
+
+
 }

@@ -137,6 +137,7 @@ public class FragmentMap extends FragmentBase implements
         setSubTitle(R.string.map_subtitle);
 
         wifiConnectionChange(wifiStatus);
+        activityMain.getApp().deleteInProgressBkg();
     }
 
     @Override
@@ -226,7 +227,8 @@ public class FragmentMap extends FragmentBase implements
         //when the fab is pressed, close the search bar
         searchBarView.animateClose();
         //and request a snapshot from the map fragment
-        mapController.requestSnapshot(app);
+        mapController.requestSnapshot(activityMain);
+        activityMain.setSavingBkg();
     }
 
     @Override
@@ -324,10 +326,7 @@ public class FragmentMap extends FragmentBase implements
         activityMain.hideHelp();
         //start the no wifi spinning drawable animation
         ImageView loadingIcon = noWifiView.findViewById(R.id.no_wifi_spinner);
-        Drawable spinner = loadingIcon.getDrawable();
-        if (spinner instanceof Animatable){
-            ((Animatable) spinner).start();
-        }
+
         activityMain.hideFab();
 
         getChildFragmentManager()

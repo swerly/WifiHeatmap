@@ -20,12 +20,15 @@
 package com.swerly.wifiheatmap.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,7 +38,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.swerly.wifiheatmap.data.HeatmapPixel;
+import com.swerly.wifiheatmap.BaseApplication;
+import com.swerly.wifiheatmap.utils.StaticUtils;
 import com.swerly.wifiheatmap.views.HeatmapView;
 import com.swerly.wifiheatmap.R;
 import com.swerly.wifiheatmap.utils.SnapshotWaiter;
@@ -51,6 +55,8 @@ public class FragmentHeatmap extends FragmentBase implements
         SnapshotWaiter.SnapshotReadyCallback,
         WifiHelper.WifiConnectionChangeCallback,
         HeatmapView.HeatmapLoadingDone{
+    public static String HEATMAP_WAS_OPEN = "heatmap_was_open";
+
     private ImageView bkgView;
     private HeatmapView heatmapView;
     private WifiHelper wifiHelper;
@@ -60,6 +66,8 @@ public class FragmentHeatmap extends FragmentBase implements
     private View heatmapLoadContainer;
     private boolean isPaused, wifiShowFab, editShowFab;
     private String toLoad;
+    private Bitmap bkg;
+    private SharedPreferences prefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,7 +76,6 @@ public class FragmentHeatmap extends FragmentBase implements
         Bundle args = getArguments();
         if (args != null && args.containsKey("toLoad")) {
             toLoad = args.getString("toLoad");
-            activityMain.hideHelp();
         } else {
             toLoad = null;
         }
@@ -77,10 +84,15 @@ public class FragmentHeatmap extends FragmentBase implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        prefs = activityMain.getSharedPreferences(BaseApplication.PREFS, 0);
+        if (checkWasOpen()){
+            return null;
+        }
         //setup views
         View view = inflater.inflate(R.layout.fragment_heatmap, container, false);
         bkgView = view.findViewById(R.id.heatmap_bkg_view);
         heatmapView = view.findViewById(R.id.heatmap_view);
+
         heatmapView.setToLoad(toLoad, this);
         editShowFab = false;
         noWifiView = view.findViewById(R.id.no_wifi_view);
@@ -90,10 +102,7 @@ public class FragmentHeatmap extends FragmentBase implements
 
         //start the spinning of the loading icon
         ImageView loadingIcon = view.findViewById(R.id.loading_spinner);
-        Drawable spinner = loadingIcon.getDrawable();
-        if (spinner instanceof Animatable){
-            ((Animatable) spinner).start();
-        }
+        StaticUtils.playAnimatedVectorDrawable(loadingIcon);
 
         //setup the button to go to settings if no wifi is enabled
         Button settingsBtn = noWifiView.findViewById(R.id.settings_button);
@@ -104,17 +113,8 @@ public class FragmentHeatmap extends FragmentBase implements
             }
         });
 
-        wifiHelper = new WifiHelper(getContext());
-
-        //if the background image is ready, set it
-        if (app.isBackgroundReady()){
-            setBackground();
-        }
-        //else create a function on a timer that will check to see when the background image is ready
-        else {
-            new SnapshotWaiter(app, this).startWaiting();
-        }
-
+        startLoadingSpinner(view);
+        handleBackground();
         return view;
     }
 
@@ -137,12 +137,17 @@ public class FragmentHeatmap extends FragmentBase implements
     @Override
     public void onFabPressed() {
         //set and save the current pixels when the fab is pressed
-        app.setCurrentPixels(heatmapView.getHeatmapPixels());
+        activityMain.getApp().setCurrentPixels(heatmapView.getHeatmapPixels());
+
+        setOpenPref(false);
     }
 
     @Override
     public void onStart(){
         super.onStart();
+        if(wifiHelper == null) {
+            wifiHelper = new WifiHelper(getContext());
+        }
         //start a broadcast listener to listen for wifi connection changes
         wifiHelper.startListeningForWifiChanges(this);
     }
@@ -152,6 +157,7 @@ public class FragmentHeatmap extends FragmentBase implements
         super.onStop();
         //stop the broadcast listener, dont need updates when the fragment isnt active
         wifiHelper.stopListeningForWifiChanges();
+        heatmapView.stopPixelLoad();
     }
 
     @Override
@@ -161,9 +167,13 @@ public class FragmentHeatmap extends FragmentBase implements
         activityMain.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //set the subtitle
         setSubTitle(R.string.heatmap_subtitle);
+        heatmapView.refresh();
         //start listening for wifi level changes
         heatmapView.startListeningForLevelChanges();
         doWifiCheck();
+        if (toLoad != null) {
+            activityMain.hideHelp();
+        }
     }
 
     @Override
@@ -177,7 +187,13 @@ public class FragmentHeatmap extends FragmentBase implements
     @Override
     public void snapshotReady() {
         // the background is now ready so we can set it
-        setBackground();
+        Bitmap bkg = activityMain.getApp().getBkgInProgress();
+        if (bkg != null){
+            setBackground(bkg);
+        } else {
+            //TODO: display error message
+            Log.d(BaseApplication.DEBUG_MESSAGE, "heatmap frag ERROR BKG IN PROG NULL");
+        }
     }
 
     @Override
@@ -196,15 +212,6 @@ public class FragmentHeatmap extends FragmentBase implements
         }
         //decide what to do with the fab
         showHideFab();
-    }
-
-    /**
-     * sets the background image
-     */
-    private void setBackground(){
-        //get the current background from the app and display it
-        Bitmap bkgToSet = app.getCurrentInProgress().getBackgroundImage();
-        bkgView.setImageBitmap(bkgToSet);
     }
 
     @Override
@@ -269,5 +276,50 @@ public class FragmentHeatmap extends FragmentBase implements
         } else {
             activityMain.hideFab();
         }
+    }
+
+    private void handleBackground(){
+        BaseApplication app = activityMain.getApp();
+        //if the background from the google map snapshot isnt ready wait for it
+        bkg = app == null ? null : app.getBkgInProgress();
+
+        //if the bkg is null but we are currently in the process of saving it
+        if (bkg == null && activityMain.isSavingBkg()){
+            Log.d(BaseApplication.DEBUG_MESSAGE, "heatmap frag currently saving...");
+            //wait for the snapshot to save
+            new SnapshotWaiter(activityMain, this).startWaiting();
+            showLoading();
+        }
+        //else if the bkg isn't null, we can set it
+        else if (bkg != null){
+            Log.d(BaseApplication.DEBUG_MESSAGE, "heatmap frag bkg already saved and loaded");
+            setBackground(bkg);
+        }
+    }
+
+    private void setBackground(Bitmap bkg){
+        hideLoading();
+        Log.d(BaseApplication.DEBUG_MESSAGE, "setting background");
+        bkgView.setImageBitmap(bkg);
+    }
+
+    /**
+     * checks if the app was open
+     * @return true if app was open
+     */
+    private boolean checkWasOpen(){
+        boolean wasOpen = prefs.getBoolean(HEATMAP_WAS_OPEN, false);
+        if (wasOpen){
+            activityMain.goHome();
+        } else {
+            setOpenPref(true);
+        }
+        return wasOpen;
+    }
+
+    private void setOpenPref(boolean open){
+        SharedPreferences.Editor prefEditor = prefs.edit();
+        prefEditor.putBoolean(HEATMAP_WAS_OPEN, open);
+        prefEditor.commit();
     }
 }

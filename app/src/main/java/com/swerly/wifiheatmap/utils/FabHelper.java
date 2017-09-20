@@ -20,6 +20,8 @@
 package com.swerly.wifiheatmap.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -36,6 +38,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.swerly.wifiheatmap.BaseApplication;
 import com.swerly.wifiheatmap.R;
 import com.swerly.wifiheatmap.activities.ActivityMain;
+import com.swerly.wifiheatmap.data.HeatmapData;
 import com.swerly.wifiheatmap.fragments.FragmentBase;
 import com.swerly.wifiheatmap.fragments.FragmentHeatmap;
 import com.swerly.wifiheatmap.fragments.FragmentHome;
@@ -46,69 +49,106 @@ import com.swerly.wifiheatmap.fragments.FragmentZoom;
 
 /**
  * Created by Seth on 7/6/2017.
+ *
+ * Sets up the fab and handles clicks for each different fragment
  */
 
 public class FabHelper{
     private ActivityMain context;
     private FloatingActionButton fab;
     private int prevFabIcon;
-    private FragmentBase curFrag;
 
     public FabHelper(ActivityMain context, FloatingActionButton fab){
         this.context = context;
         this.fab = fab;
-        homeInitialSetup();
+        initialSetup();
     }
 
+    /**
+     * setup fab when activity is created (could be from a resume state)
+     */
+    private void initialSetup(){
+        SharedPreferences prefs = context.getSharedPreferences(BaseApplication.PREFS, 0);
+        String lastFrag = prefs.getString(BaseApplication.LAST_FRAG_PREF, FragmentBase.HOME_FRAGMENT);
+        if (lastFrag.equals(FragmentBase.HOME_FRAGMENT)){
+            homeInitialSetup();
+        } else {
+            setupFab(lastFrag, false, false);
+        }
+    }
+
+    /**
+     * setup the fab for initial home screen
+     */
     private void homeInitialSetup(){
         prevFabIcon = R.drawable.ic_add_black_24dp;
         fab.setImageResource(prevFabIcon);
         fab.setOnClickListener(new FabClickListener(new FragmentMap(), FragmentBase.HOME_FRAGMENT));
     }
 
+    /**
+     * go to home fragment
+     */
     public void goHome(){
         fab.setOnClickListener(new FabClickListener(new FragmentMap(), FragmentBase.HOME_FRAGMENT));
         setAndPlay(R.drawable.save_to_plus);
     }
 
+    /**
+     * sets up the fab icon and click listener for the current fragment
+     * @param frag fragment to setup the fab for
+     * @param reverse if fab button animation should be played in reverse
+     * @param fromHeatmap if we are going to the next fragment from the heatmap fragment
+     */
     public void setupFab(Fragment frag, boolean reverse, boolean fromHeatmap){
-        curFrag = (FragmentBase) frag;
+        String fragName = frag.getClass().getSimpleName();
+        setupFab(fragName, reverse, fromHeatmap);
+    }
+
+    public void setupFab(String fragName, boolean reverse, boolean fromHeatmap){
         FragmentBase toSet = null;
-        String tag = null;
         int iconResId = 0;
 
-        if (frag instanceof FragmentHome){
-            toSet = new FragmentMap();
-            iconResId = reverse ? R.drawable.arrow_to_plus_avd : R.drawable.save_to_plus;
-        } else if (frag instanceof FragmentMap){
-            toSet = new FragmentHeatmap();
-            iconResId = reverse ? ( fromHeatmap ? R.drawable.save_to_arrow: R.drawable.arrow_back) : R.drawable.arrow_forward;
-        } else if (frag instanceof FragmentHeatmap){
-            toSet = new FragmentHome();
-            iconResId = R.drawable.arrow_to_save;
-        } else if (frag instanceof FragmentZoom){
-            toSet = new FragmentHeatmap();
-            iconResId = reverse ? R.drawable.save_to_arrow : R.drawable.arrow_forward;
-        } else if (frag instanceof FragmentInfo){
-            hideFab();
-            return;
-        } else if (frag instanceof FragmentView){
-            hideFab();
-            return;
+        switch (fragName){
+            case FragmentBase.HOME_FRAGMENT:
+                toSet = new FragmentMap();
+                iconResId = reverse ? R.drawable.arrow_to_plus_avd : R.drawable.save_to_plus;
+                break;
+            case FragmentBase.MAP_FRAGMENT:
+                toSet = new FragmentHeatmap();
+                iconResId = reverse ? ( fromHeatmap ? R.drawable.save_to_arrow: R.drawable.arrow_back) : R.drawable.arrow_forward;
+                break;
+            case FragmentBase.ZOOM_FRAGMENT:
+                toSet = new FragmentHeatmap();
+                iconResId = reverse ? R.drawable.save_to_arrow : R.drawable.arrow_forward;
+                break;
+            case FragmentBase.HEATMAP_FRAGMENT:
+                toSet = new FragmentHome();
+                iconResId = R.drawable.arrow_to_save;
+                break;
+            case FragmentBase.VIEW_FRAGMENT:
+                hideFab();
+                return;
+            case FragmentBase.INFO_FRAGMENT:
+                hideFab();
+                return;
         }
 
-        tag = frag.getClass().getSimpleName();
         showFab();
 
         if (toSet != null && iconResId != 0) {
             setAndPlay(iconResId);
-            fab.setOnClickListener(new FabClickListener(toSet, tag));
+            fab.setOnClickListener(new FabClickListener(toSet, fragName));
 
         } else {
             Log.d("HeatMapDebug", "Error in setting up fab");
         }
     }
 
+    /**
+     * sets the image resource and plays the animation (if animatable)
+     * @param iconResId icon to set / play
+     */
     public void setAndPlay(int iconResId){
         fab.setImageResource(iconResId);
 
@@ -168,7 +208,8 @@ public class FabHelper{
         }
 
         private void saveClicked(){
-            if (context.getApp().isEditing()){
+            HeatmapData dataToEdit = context.getApp().getDataToEdit();
+            if (dataToEdit != null){
                 saveHeatmap(null);
                 set();
                 return;
@@ -209,14 +250,26 @@ public class FabHelper{
         }
     }
 
+    /**
+     * saves the heatmap to the cache / list
+     * @param nameText name of the heatmap from the edit text. null if editing
+     */
     private void saveHeatmap(String nameText){
         BaseApplication app = context.getApp();
         View viewToScreenshot = context.findViewById(R.id.fragment_container);
-        app.setCurrentInProgressFinished(StaticUtils.getScreenShot(viewToScreenshot));
+        Bitmap finishedHeatmap = StaticUtils.getScreenShot(viewToScreenshot);
+        // if the name is null then we are creating a new heatmap data object
         if (nameText != null) {
-            app.setCurrentInProgressName(nameText);
+            HeatmapData newData = new HeatmapData();
+            newData.setBackgroundImage(app.getBkgInProgress());
+            newData.setFinishedHeatmap(finishedHeatmap);
+            newData.setName(nameText);
+            app.addNewHeatmap(newData);
         }
-        app.finishCurrentInProgress();
+        //else we are editing an existing object
+        else {
+            app.saveEditedHeatmap(finishedHeatmap);
+        }
     }
 
     public void hideFab(){

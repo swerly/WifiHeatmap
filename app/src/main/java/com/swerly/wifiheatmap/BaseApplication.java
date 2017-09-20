@@ -22,6 +22,7 @@ package com.swerly.wifiheatmap;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.swerly.wifiheatmap.data.HeatmapData;
@@ -35,33 +36,35 @@ import java.util.ArrayList;
  * Created by Seth on 7/3/2017.
  */
 
-public class BaseApplication extends Application implements
-        GoogleMap.SnapshotReadyCallback{
+public class BaseApplication extends Application{
     public final static String DEBUG_MESSAGE = "HeatmapDebug";
+    public final static String PREFS = "WifiHeatmapPrefs";
+    public final static String LAST_FRAG_PREF = "lastFragmentOpened";
+    public final static String CURRENT_VIEW_NAME = "currentViewName";
     private static Context context;
 
+    public static Context getContext(){
+        return context;
+    }
+
     private ArrayList<HeatmapData> heatmaps;
+    private Bitmap bkgInProgress;
     private CacheHelper cacheHelper;
-    private HeatmapData currentInProgress;
-    private boolean backgroundReady;
-    private boolean isEditing;
     private HeatmapPixel[][] currentPixels;
+    private HeatmapData dataToEdit;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
         context = this;
-        cacheHelper = new CacheHelper(this, null);
-        backgroundReady = false;
+        cacheHelper = new CacheHelper(this);
     }
 
-    @Override
-    public void onSnapshotReady(Bitmap bitmap) {
-        setBackgroundInProgress(bitmap);
-        setBackgroundReady();
-    }
-
+    /**
+     * sets the current heatmap list when we load it from a cache
+     * @param loadedList list that has just been loaded
+     */
     public void setLoadedList(ArrayList<HeatmapData> loadedList){
         if (loadedList == null){
             heatmaps = new ArrayList<>();
@@ -70,34 +73,101 @@ public class BaseApplication extends Application implements
         }
     }
 
-    public void setIsEditing(){
-        this.isEditing = true;
+    /**
+     * Updates the heatmap list if it has been modified
+     * @param newList the new modified list that we want to save
+     */
+    public void setModifiedList(ArrayList<HeatmapData> newList){
+        heatmaps = newList;
+        checkCacheHelper();
+        cacheHelper.saveHeatmapList(newList);
     }
 
-    public void setNotEditing(){
-        this.isEditing = false;
-    }
-
-    public boolean isEditing(){
-        return  this.isEditing;
-    }
-
-    public static Context getContext(){
-        return context;
-    }
-
-    public HeatmapData getCurrentInProgress(){
-        return currentInProgress;
-    }
-
+    /**
+     * Returns the current list of heatmaps
+     * @return current list of heatmaps
+     */
     public ArrayList<HeatmapData> getHeatmaps(){
         return heatmaps;
     }
 
-    public void setCurrentInProgress(HeatmapData currentInProgress){
-        this.currentInProgress = currentInProgress;
+
+    /**
+     * stores and saves the current background bitmap
+     * @param bkg bitmap to save/set
+     */
+    public void saveBkgInProgress(Bitmap bkg){
+        bkgInProgress = bkg;
+        checkCacheHelper();
+        cacheHelper.saveBkgInProgress(bkg);
     }
 
+    /**
+     * deletes the current in progress bkg so we aren't caching unnecessary data when we dont need to
+     */
+    public void deleteInProgressBkg(){
+        cacheHelper.deleteInProgressBkg();
+    }
+
+    /**
+     * Gets the current background bitmap
+     * @return bitmap of the current background
+     */
+    public Bitmap getBkgInProgress(){
+        return bkgInProgress;
+    }
+
+    /**
+     * set the current array of heatmap pixels
+     * @param pixelsToSet pixels to set
+     */
+    public void setCurrentPixels(HeatmapPixel[][] pixelsToSet){
+        this.currentPixels = pixelsToSet;
+    }
+
+    /**
+     * set the edited data when a user wants to edit a heatmap
+     * @param dataToEdit data that user wants to edit
+     */
+    public void setDataToEdit(HeatmapData dataToEdit){
+        this.dataToEdit = dataToEdit;
+        bkgInProgress = dataToEdit.getBackgroundImage();
+    }
+
+    /**
+     * resets the editing data to null
+     */
+    public void resetDataToEdit(){
+        this.dataToEdit = null;
+        bkgInProgress = null;
+    }
+
+    /**
+     * gets the data that is currently being edited
+     * @return the data that is currently being edited
+     */
+    public HeatmapData getDataToEdit(){
+        return dataToEdit;
+    }
+
+    public void addNewHeatmap(HeatmapData newData){
+        if (heatmaps == null){
+            heatmaps = new ArrayList<>();
+        }
+        heatmaps.add(newData);
+        cacheHelper.saveHeatmapList(heatmaps);
+        cacheHelper.savePixels(new HeatmapPixelCacheObject(currentPixels, newData.getPixelsFileName()));
+    }
+
+    public void saveEditedHeatmap(Bitmap finishedHeatmap){
+        dataToEdit.setFinishedHeatmap(finishedHeatmap);
+        checkCacheHelper();
+        cacheHelper.saveHeatmapList(heatmaps);
+        cacheHelper.savePixels(new HeatmapPixelCacheObject(currentPixels, dataToEdit.getPixelsFileName()));
+        dataToEdit = null;
+    }
+
+    /*
     public void setCurrentInProgressFinished(Bitmap finishedHeatmap){
         checkCurrentNull();
         currentInProgress.setFinishedHeatmap(finishedHeatmap);
@@ -106,10 +176,6 @@ public class BaseApplication extends Application implements
     public void setCurrentInProgressName(String name){
         checkCurrentNull();
         currentInProgress.setName(name);
-    }
-
-    public void setCurrentPixels(HeatmapPixel[][] pixelsToSet){
-        this.currentPixels = pixelsToSet;
     }
 
     public void finishCurrentInProgress(){
@@ -156,5 +222,14 @@ public class BaseApplication extends Application implements
 
     private void saveHeatmapList(){
         cacheHelper.saveHeatmapList(heatmaps);
+    }*/
+
+    /**
+     * Makes sure the cache helper isn't null before we want to use it
+     */
+    private void checkCacheHelper(){
+        if (cacheHelper == null){
+            cacheHelper = new CacheHelper(this);
+        }
     }
 }
